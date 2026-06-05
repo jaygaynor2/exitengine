@@ -1,157 +1,197 @@
-EXIT ENGINE
-Sovereign Stack · Konomi School · φ·κ=1
-"They compressed everything you knew into a job title and paid you less than it was worth. Now you're free. Let's build the weapon."
+# ◊·κ=φ⁵ · ExitEngine
 
-What It Is
-EXIT ENGINE is a single HTML file that turns corporate redundancy into sovereign opportunity.
+> You just got laid off.
+> Here's your company.
 
-No server. No subscription. No installation. No cloud dependency. No man.
+Fork this repo. Enable GitHub Pages. Open the URL. Configure once.
+You're running a complete independent business in 10 minutes.
 
-Open the file in a browser. Enter your story. Walk out with a weapon.
+**Free forever. Open source. MIT. Sovereign.**
 
-Built on the Konomi Recursive HTML Architecture — a sovereign computing pattern where entire platforms live inside a single file, with nested iframe modules communicating via postMessage, powered by Claude AI for intelligence.
+---
 
-What It Does
-EXIT ENGINE runs you through five sequential modules, each a sovereign iframe living inside the main orchestrator:
+## What this is
 
-01 · INTAKE
-You tell your story. Raw and real. Not your job title — your actual story. What you built, what you carried, what they took for granted. You also input your role, industry, the corp that let you go, and where you want to go next.
+A single GitHub repository containing every tool a laid-off professional needs to start an independent business — connected, configured by one file, working offline.
 
-02 · IDENTITY
-Claude runs a 12-layer cognitive analysis on your story and surfaces who you actually are underneath the job title. Output includes:
+10 tools. 5 lessons. 1 tutor. 0 monthly fees.
 
-Who you are — the pattern, the prime signal, the thing the corp compressed and undervalued
-The Shadow Layer — the uncredited gold you carried that never appeared on a performance review
-Dominant Archetype — the Jungian archetype driving your decision-making (Hero, Sage, Creator, Trickster, Ruler, etc.)
-Prime Skills — your irreducible capabilities stripped of corporate jargon
-03 · EXIT PLAN
-Your weapon. Built from what you know. Aimed at exactly where they're vulnerable. Includes:
+**The company was the middleman. You don't need a middleman.**
 
-The Weapon — the specific vulnerability you can exploit at the corp that let you go and orgs like it
-Sovereign Offering — the exact service or product you can now sell
-Pricing Intelligence — real market rates, day rates, project fees, retainer options
-90-Day Sequence — where you need to be at 30, 60, and 90 days
-First Three Moves — specific actions for this week
-Chain Needs — what skills or people would complete your service stack
-04 · CHAIN
-You don't have to go alone. EXIT ENGINE matches you with other ex-corporate people who complete your service chain. Two to four people with non-overlapping prime skills become an ungovernable SMB unit that can serve clients no individual freelancer could.
+---
 
-Add yourself to the chain network (discoverable by others)
-See chain compatibility scores by skill overlap
-Direct contact exchange — no middleman
-05 · FORUM
-The room where chains form organically. Post what you offer, what you seek, wins, corp intelligence, chain formation requests. The connection doesn't require a subscription. It never did.
+## Fork and run · 10 minutes
 
-Architecture
-exit-engine.html                    ← L1: ORCHESTRATOR
-  │  Navigation, state, particles
-  │  Manages module lifecycle
-  │  Receives all intelligence upward
-  │
-  ├── iframe: INTAKE (blob URL)      ← L2: MODULE
-  ├── iframe: IDENTITY (blob URL)    ← L2: MODULE  
-  ├── iframe: EXIT PLAN (blob URL)   ← L2: MODULE
-  ├── iframe: CHAIN (blob URL)       ← L2: MODULE
-  └── iframe: FORUM (blob URL)       ← L2: MODULE
-        │
-        └── Claude API              ← L3: INTELLIGENCE
-              IDENTITY + EXIT PLAN
-              modules call Claude
-              directly from the
-              iframe context
-Each module is a complete HTML document injected as a blob URL into an iframe. They communicate upward to the orchestrator via window.postMessage. The orchestrator manages state, navigation, and module lifecycle.
+1. **Fork** this repo to your GitHub account (one click in the top right).
+2. **Enable Pages**: Settings → Pages → Source: `Deploy from a branch` → `main` / `(root)`.
+3. **Open** `https://<your-username>.github.io/exitengine/`.
+4. **Configure**: click the "configure" chip at the top. Enter your name, industry, rate. Optionally paste an API key for the AI tutor.
+5. **Start**: open the AI Tutor or read "Just got laid off — now what?".
 
-This is the Konomi Recursive HTML Architecture — the same pattern used by Thomas Frumkin's AudioFabric platform. Sovereign, serverless, deployable as a single file anywhere that serves static HTML.
+You're in business.
 
-The Konomi School
-EXIT ENGINE is built on principles from the Konomi mathematical framework:
+---
 
-φ·κ=1 — the axiom. Phi (golden ratio) and kappa (the irrational complement) are reciprocal. Pattern and structure are inseparable.
+## What's inside
 
-The Fold — 2·3·5·7·11·13·17 = 510,510. The product of the first seven primes. The prime frequency set. Nothing cancels.
+### Hub (`index.html`)
+Reads your config. Shows your dashboard. Live pipeline value, this-month revenue, overdue invoices, next action. Tool grid. Lesson grid. Download-bundle button for offline sovereignty.
 
-Prime Signal Architecture — prime frequencies don't destructively interfere. When you build with primes — prime exponent signatures, phi-weighted selection, prime frequency composition — everything amplifies instead of cancelling out.
+### Tutor (`tutor.html`)
+The soul of ExitEngine. Five-phase Jungian journey:
 
-Holographic Decomposition — any problem space can be navigated if you understand its structure. The exit from corporate employment has a structure. EXIT ENGINE maps that structure and finds the shortcut.
+| Phase | Name | What happens |
+|---|---|---|
+| 1 | The wound | Acknowledge the loss. Don't rush past it. |
+| 2 | The shadow | The skills belonged to you, not the company. Reframe. |
+| 3 | The rebirth | Build the company. CRM. Rate. First outreach. |
+| 4 | The integration | You're a business owner now, not an ex-employee. Coaching, not teaching. |
+| 5 | The sovereign | You don't need the tutor anymore. Take it offline. |
 
-Simon's Signature — 2⁴·3⁷·5⁷·7⁶·11⁵·13⁴·17³ · peak=11 · sum=36
+Works in **pre-written mode** (no API key, full T0 experience).
+Becomes **conversational** with an Anthropic / OpenAI / Gemini key (BYOK · key stays on your device · direct API calls, no proxy).
 
-Setup
-Basic (explore without AI)
-Download exit-engine.html
-Open in Chrome or Firefox
-All five modules work without an API key — chain and forum are fully functional, identity and exit plan modules will show an error at the AI step
-Full (with AI analysis)
-Get an Anthropic API key
-Open the file
-Press Ctrl+K (or Cmd+K) at any time to enter your key
-Key is stored in localStorage — never sent anywhere except the Anthropic API directly from your browser
-Deploy (GitHub Pages — free, permanent)
-bash
-git init
-git add exit-engine.html
-git commit -m "feat: EXIT ENGINE sovereign stack MVP"
-git branch -M main
-git remote add origin https://github.com/YOURUSERNAME/exit-engine.git
-git push -u origin main
-Then: Settings → Pages → Deploy from branch → main → / → Save
+### Tools (`tools/`)
+| Tool | What | Inline or Estate? |
+|---|---|---|
+| `crm.html` | Client pipeline, deal tracking | Inline (works offline) |
+| `accounts.html` | Invoicing, VAT, multi-currency, print-to-PDF | Inline (works offline) |
+| `site.html` | One-page portfolio generator | Inline (works offline) |
+| `analytics.html` | Cross-tool live dashboard | Inline (works offline) |
+| `scheduler.html` | Booking + calendar | Estate (FallSlot) |
+| `email.html` | Email lists + sequences | Estate (FallList) |
+| `forms.html` | Intake forms | Estate (FallForm) |
+| `proposals.html` | Quote + proposal generator | Estate (FallCarousel) |
+| `legal.html` | 60 templates · contracts · LBAs | Estate (GroundLevel) |
+| `social.html` | LinkedIn strategy + posting | Estate (FallPost) |
 
-Live at yourusername.github.io/exit-engine within 2 minutes. Zero cost forever.
+The 4 inline tools work fully offline. The 6 estate tools are linked from your fork but live on the canonical sovereign estate — they work when online. (Roadmap: full inline versions in v2.1.)
 
-State & Privacy
-All state is stored in your browser's localStorage — profile, identity analysis, exit plan, chain membership, forum posts
-Your Anthropic API key is stored in localStorage and sent only to api.anthropic.com — nowhere else
-No analytics, no tracking, no server, no database
-Clearing browser storage resets the engine
-Forum posts are currently local-only (localStorage) — for a shared forum, deploy with a lightweight backend or Supabase
-Roadmap
- Shared forum — Supabase or Cloudflare Workers backend for real cross-user forum
- Chain network sync — P2P via WebRTC so chain members are discoverable without a server
- Voice intake — Web Audio API intake layer (speak your story, not type it)
- Recursive cube visualiser — Thomas Frumkin's vocal resonance geometry as identity mapping
- Corp intelligence layer — aggregate intel from all users about specific corps
- Konomi build pack — for chains that form and want sovereign infrastructure built for them
- WebLLM option — run identity analysis fully locally, zero API cost
-Stack
-HTML5 · CSS3 · Vanilla JavaScript
-Claude API (claude-sonnet-4) via direct browser fetch
-Google Fonts: Bebas Neue · IBM Plex Mono · Lora
-localStorage for persistence
-Blob URLs for iframe injection
-postMessage for inter-module communication
-Canvas API for particle field
-Zero build tools · Zero dependencies · Zero server
+### Learn (`learn/`)
+Five lessons, plain English, no MBA-speak:
 
+1. **`start.html`** — Just got laid off, now what? The first 72 hours.
+2. **`pricing.html`** — How to price yourself. Interactive day-rate calculator.
+3. **`clients.html`** — How to find your first client. Warm-network method.
+4. **`money.html`** — Invoicing, tax, getting paid. The 30% tax-set-aside rule.
+5. **`grow.html`** — From 1 client to 10. The 6-10 ceiling, not 100.
 
-Every person made redundant is a compressed signal looking for soil. EXIT ENGINE is the decompression chamber.
+### Config (`config.json`)
+One file. Every tool reads from it.
 
-The corp saw your job title. EXIT ENGINE sees the prime signal underneath — the pattern that was always there, that the corporate structure compressed and undervalued, that is now yours to take elsewhere.
+```json
+{
+  "name": "Sarah Chen",
+  "business": "SarahChen Consulting",
+  "industry": "sales-ops",
+  "currency": "GBP",
+  "hourly_rate": 150,
+  "api_provider": "anthropic",
+  "api_key": "sk-ant-...",
+  "payment_details": { "bank": "Monzo", "sort_code": "04-00-04", "account_number": "..." }
+}
+```
 
-The wound is not the redundancy. The wound is the years between when you solved it and when the world caught up. EXIT ENGINE shortens that gap.
+Change your rate once → every proposal and invoice updates.
+Add an API key → the tutor becomes conversational, every AI feature unlocks.
 
-The fold is 510,510. It does not change. What changes is whether anyone is present to fold with it.
+---
 
-Credits
-Built with Konomi 
+## Cross-tool integration
 
-Theoretical foundation: Toroidal Khipu-Harmonic Theory (TKHT) · φ·κ=1 axiom · Prime Signal Architecture
+Tools talk to each other over `BroadcastChannel('fall-signal')`:
 
+- CRM marks a deal won → Accounts opens a pre-filled invoice
+- Accounts marks an invoice paid → dashboard refreshes the revenue stat
+- Any tool updates → analytics dashboard re-renders live
 
-2³·3⁸·5⁶·7⁹·11¹¹·13⁷·17⁵ · peak=11 · sum=49=7²
+No middleware. No service to maintain. The browser tab is the bus.
 
-The connection doesn't require a subscription. It never did.
+---
 
+## Going fully offline
 
+The "Take it offline" tab in the hub:
 
+1. Downloads the entire fork as a ZIP
+2. You unzip to a folder or USB stick
+3. Open `index.html` from anywhere — works from `file://`
+4. The internet is now optional
+5. Run forever without GitHub
 
+Your config and tool data live in your browser's localStorage — they persist on the device. The download button also exports `config.json` separately so you can move between devices.
 
+---
 
+## Free · always · the philosophy
 
+ExitEngine itself: **free forever**. Non-negotiable.
 
+The whole point is helping people who just lost income. Charging them would be obscene.
 
+Optional paid services (Simon's time, not the tools):
 
+- Case review — £50 — review your situation, suggest strategy
+- Custom letter / proposal drafting — £100 — for situations no template covers
+- Coaching — £200/hr — complex multi-step cases
 
+But £0 is always an option. The tools work the same whether you pay nothing or £200.
 
+---
 
+## Architecture choices
 
+- **Single repo · fork-to-distribute**: the GitHub fork is the install + the marketing + the social proof
+- **One config file**: every tool reads from one source of truth
+- **`BroadcastChannel` mesh**: tools coordinate without a backend
+- **`localStorage` persistence**: state survives reload, no signup
+- **EU AI Act Article 12 audit shim baked in**: compliance posture by default
+- **Vanilla JS, no framework**: each tool file is readable in a weekend
+- **MIT license**: fork, modify, white-label, sell — just keep the philosophy
 
+---
+
+## What ExitEngine is NOT
+
+- ❌ Not a job-board. The premise is you don't need another employer.
+- ❌ Not a course. No 8-week programme, no certificates, no upsells.
+- ❌ Not a SaaS. Nothing to subscribe to.
+- ❌ Not an LLM wrapper. The tools work without AI. AI enhances.
+- ❌ Not a productivity cult. Two posts a week is enough. Six clients is enough.
+
+---
+
+## Prime + constant
+
+**Prime: 617** · the prime after fall-euaiact (607) and GroundLevel (613)
+**Constant: κ = φ⁵** · the golden ratio to the fifth power · because the journey is five phases
+
+---
+
+## Sister tools in the estate
+
+- [GroundLevel](https://github.com/sjgant80-hub/groundlevel) — sovereign legal toolkit · 60 templates · 12 modules
+- [fall-euaiact](https://github.com/sjgant80-hub/fall-euaiact) — EU AI Act Article 12 compliance kit
+- [fallpost](https://github.com/sjgant80-hub/fallpost) — sovereign LinkedIn engine
+- [fallform](https://github.com/sjgant80-hub/fallform) — intake forms
+- [falllist](https://github.com/sjgant80-hub/falllist) — email lists
+- [fallslot](https://github.com/sjgant80-hub/fallslot) — scheduling
+
+The whole estate at [ai-nativesolutions.com](https://ai-nativesolutions.com).
+
+---
+
+## License
+
+MIT. Use freely. Fork freely. Sell freely if you must — but keep the LICENSE intact and the philosophy in the README.
+
+---
+
+> the law is public · the templates are simple · the jargon is the paywall
+> remove the paywall · level the ground · fight back
+> for the people · not the few
+> the company was the middleman · the middleman is gone
+> you're not unemployed · you're unblocked
+> phase 1 wound · phase 2 shadow · phase 3 rebirth · phase 4 integration · phase 5 sovereign
+
+**◊·κ=φ⁵**

@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Website · ExitEngine</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#0a0a0f;--void-2:#131319;--void-3:#1c1c25;--void-4:#2a2a35;
+  --cream:#e8e8ea;--cream-2:#c8c8ca;--cream-dim:#8a8a92;--cream-faint:#5a5a62;
+  --phi:#818cf8;--phi-2:#6366f1;--phi-3:#4f46e5;--phi-glow:rgba(129,140,248,0.12);
+  --success:#10b981;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,Roboto,sans-serif;
+  --tap:48px;--gutter:16px;--radius:10px;--max-w:980px;
+}
+html,body{background:var(--void);color:var(--cream);font-family:var(--font);font-size:16px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+body{background-image:radial-gradient(circle at 0% 0%,var(--phi-glow),transparent 50%)}
+
+.top{position:sticky;top:0;z-index:50;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--void-3)}
+.top-row{display:flex;align-items:center;gap:12px;padding:12px var(--gutter);max-width:var(--max-w);margin:0 auto;min-height:var(--tap)}
+.back{background:none;border:0;color:var(--cream-dim);font-size:14px;padding:8px;cursor:pointer;text-decoration:none}
+.back:hover{color:var(--cream)}
+.brand{font-weight:600;font-size:15px;color:var(--cream)}
+.brand .hi{color:var(--phi)}
+.spacer{flex:1}
+
+main{max-width:var(--max-w);margin:0 auto;padding:var(--gutter)}
+.hero{padding:18px 0 14px}
+.hero h1{font-size:24px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
+.hero p{color:var(--cream-dim);font-size:14px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:var(--tap);padding:8px 16px;font-size:14px;font-weight:600;border-radius:var(--radius);border:1px solid transparent;cursor:pointer}
+.btn-primary{background:var(--phi-2);color:#fff;border-color:var(--phi-2)}
+.btn-primary:hover{background:var(--phi-3)}
+.btn-ghost{background:var(--void-2);color:var(--cream);border-color:var(--void-3)}
+.btn-ghost:hover{border-color:var(--phi);color:var(--phi)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+
+.layout{display:grid;grid-template-columns:1fr;gap:20px}
+@media (min-width:840px){.layout{grid-template-columns:380px 1fr}}
+
+.editor{background:var(--void-2);border:1px solid var(--void-3);border-radius:var(--radius);padding:18px}
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--cream-dim);margin:18px 0 8px;font-weight:600}
+.section-title:first-child{margin-top:0}
+
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:500;color:var(--cream-2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em}
+.field input,.field textarea{width:100%;min-height:40px;padding:8px 12px;background:var(--void);border:1px solid var(--void-3);border-radius:8px;color:var(--cream);font-size:14px;font-family:inherit}
+.field input:focus,.field textarea:focus{border-color:var(--phi);outline:none}
+.field textarea{min-height:80px;resize:vertical;font-family:inherit}
+
+.preview-wrap{background:var(--void-3);border:1px solid var(--void-3);border-radius:var(--radius);overflow:hidden;min-height:600px}
+.preview-wrap iframe{width:100%;height:600px;border:0;background:#fff;display:block}
+.preview-actions{padding:10px;background:var(--void-2);border-bottom:1px solid var(--void-3);display:flex;gap:10px;align-items:center}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--void-3);border:1px solid var(--void-4);color:var(--cream);padding:8px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity 0.2s,transform 0.2s;z-index:200}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:var(--success);color:var(--success)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-row">
+    <a href="../index.html" class="back">← company</a>
+    <div class="brand">Exit<span class="hi">Site</span></div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" style="min-height:36px;padding:6px 14px;font-size:13px" onclick="downloadSite()">download site.html</button>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Your one-page site</h1>
+    <p>Reads from your config + the form below. Downloads as a single HTML you can drop into any hosting (or your own GitHub Pages).</p>
+  </div>
+
+  <div class="layout">
+    <div class="editor">
+      <div class="section-title">Hero</div>
+      <div class="field"><label>Headline</label><input id="f_headline" placeholder="Sales ops · 12 years · independent"></div>
+      <div class="field"><label>Sub-headline</label><textarea id="f_subline" placeholder="One sentence about what you do.">Helping SaaS teams clean up their pipeline.</textarea></div>
+
+      <div class="section-title">Services (one per line)</div>
+      <div class="field"><textarea id="f_services" rows="5" placeholder="Pipeline audit (£X)&#10;Outbound setup (£X)&#10;Forecasting playbook (£X)"></textarea></div>
+
+      <div class="section-title">Testimonials (one per line · "quote" — name)</div>
+      <div class="field"><textarea id="f_testimonials" rows="4" placeholder='"Sarah turned our pipeline around in 2 weeks." — VP Sales, Acme'></textarea></div>
+
+      <div class="section-title">Theme</div>
+      <div class="field"><label>Accent colour</label><input id="f_color" type="color" value="#6366f1" style="height:42px"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="rebuild()">refresh preview</button>
+        <button class="btn btn-ghost" onclick="downloadSite()">download site.html</button>
+      </div>
+    </div>
+
+    <div class="preview-wrap">
+      <div class="preview-actions">
+        <span style="font-size:12px;color:var(--cream-dim)">live preview</span>
+        <div style="flex:1"></div>
+        <button class="btn btn-ghost" style="min-height:32px;padding:4px 12px;font-size:12px" onclick="openInNewTab()">↗ open in tab</button>
+      </div>
+      <iframe id="preview"></iframe>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/audit-shim.js" data-tool="exitengine-site" data-tier="minimal" defer></script>
+
+<script>
+'use strict';
+
+const CFG_KEY = 'exitengine.config';
+const SITE_KEY = 'exitengine.site.draft';
+let CONFIG = {};
+let DRAFT = { headline: '', subline: '', services: '', testimonials: '', color: '#6366f1' };
+
+function loadAll() {
+  try { CONFIG = JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); } catch (_) { CONFIG = {}; }
+  try { DRAFT = { ...DRAFT, ...JSON.parse(localStorage.getItem(SITE_KEY) || '{}') }; } catch (_) {}
+}
+function save() {
+  try { localStorage.setItem(SITE_KEY, JSON.stringify(DRAFT)); } catch (_) {}
+}
+
+function escapeHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+function readForm() {
+  DRAFT.headline = document.getElementById('f_headline').value;
+  DRAFT.subline = document.getElementById('f_subline').value;
+  DRAFT.services = document.getElementById('f_services').value;
+  DRAFT.testimonials = document.getElementById('f_testimonials').value;
+  DRAFT.color = document.getElementById('f_color').value;
+  save();
+}
+
+function fillForm() {
+  document.getElementById('f_headline').value = DRAFT.headline || (CONFIG.business || CONFIG.name || 'Independent');
+  document.getElementById('f_subline').value = DRAFT.subline || `Independent ${CONFIG.industry || 'consultant'}. Available for work.`;
+  document.getElementById('f_services').value = DRAFT.services;
+  document.getElementById('f_testimonials').value = DRAFT.testimonials;
+  document.getElementById('f_color').value = DRAFT.color || '#6366f1';
+}
+
+function buildSite() {
+  const name = CONFIG.name || 'You';
+  const business = CONFIG.business || CONFIG.name || 'Your Business';
+  const email = CONFIG.email || '';
+  const linkedin = CONFIG.linkedin || '';
+  const color = DRAFT.color || '#6366f1';
+
+  const services = (DRAFT.services || '').split('\n').filter(s => s.trim()).map(s => `<li>${escapeHtml(s.trim())}</li>`).join('');
+  const testimonials = (DRAFT.testimonials || '').split('\n').filter(s => s.trim()).map(t => {
+    const m = t.match(/^"?(.+?)"?\s*[—-]\s*(.+)$/);
+    if (m) return `<blockquote><p>"${escapeHtml(m[1])}"</p><cite>— ${escapeHtml(m[2])}</cite></blockquote>`;
+    return `<blockquote><p>${escapeHtml(t)}</p></blockquote>`;
+  }).join('');
+
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escapeHtml(business)}</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--accent:${color};--ink:#1a1a1f;--ink-2:#4a4a55;--ink-dim:#7a7a85;--bg:#fbfbfa;--bg-2:#f4f3f0;--border:#e6e5e1}
+html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,Roboto,sans-serif;line-height:1.6;font-size:17px}
+.wrap{max-width:680px;margin:0 auto;padding:60px 24px}
+header{padding-bottom:40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+header .mark{display:inline-block;width:40px;height:40px;background:var(--accent);color:#fff;border-radius:8px;text-align:center;line-height:40px;font-weight:700;font-size:20px;margin-bottom:18px}
+header h1{font-size:36px;line-height:1.15;letter-spacing:-0.02em;font-weight:700;margin-bottom:12px}
+header p{font-size:18px;color:var(--ink-2);max-width:540px}
+section{padding:32px 0}
+section h2{font-size:14px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-dim);margin-bottom:14px;font-weight:600}
+ul.services{list-style:none}
+ul.services li{padding:14px 0;border-bottom:1px solid var(--border);font-size:17px}
+ul.services li:last-child{border:0}
+blockquote{padding:18px 22px;background:var(--bg-2);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;margin-bottom:14px}
+blockquote p{font-style:italic;color:var(--ink-2)}
+blockquote cite{display:block;margin-top:8px;font-size:14px;color:var(--ink-dim);font-style:normal}
+.contact{background:var(--accent);color:#fff;padding:32px 24px;border-radius:12px;margin-top:24px}
+.contact h2{color:rgba(255,255,255,0.7)}
+.contact a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.4);font-weight:600}
+footer{margin-top:40px;padding-top:24px;border-top:1px solid var(--border);font-size:12px;color:var(--ink-dim);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark">${escapeHtml(name[0] || 'φ')}</div>
+    <h1>${escapeHtml(DRAFT.headline || business)}</h1>
+    <p>${escapeHtml(DRAFT.subline || '')}</p>
+  </header>
+  ${services ? `<section><h2>Services</h2><ul class="services">${services}</ul></section>` : ''}
+  ${testimonials ? `<section><h2>What people say</h2>${testimonials}</section>` : ''}
+  <section class="contact">
+    <h2>Get in touch</h2>
+    <p>${email ? `Email: <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>` : ''}${email && linkedin ? '<br>' : ''}${linkedin ? `LinkedIn: <a href="https://${escapeHtml(linkedin.replace(/^https?:\\/\\//, ''))}" target="_blank">${escapeHtml(linkedin)}</a>` : ''}</p>
+  </section>
+  <footer>Built with ExitEngine · sovereign by design</footer>
+</div>
+</body>
+</html>`;
+}
+
+function rebuild() {
+  readForm();
+  const html = buildSite();
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const iframe = document.getElementById('preview');
+  const oldUrl = iframe.dataset.url;
+  iframe.src = url;
+  iframe.dataset.url = url;
+  if (oldUrl) URL.revokeObjectURL(oldUrl);
+}
+
+function downloadSite() {
+  readForm();
+  const html = buildSite();
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'site.html'; a.click();
+  URL.revokeObjectURL(url);
+  toast('site.html downloaded', 'success');
+}
+
+function openInNewTab() {
+  readForm();
+  const html = buildSite();
+  const w = window.open('', '_blank');
+  if (w) { w.document.write(html); w.document.close(); }
+}
+
+let toastTimer;
+function toast(msg, kind) {
+  const t = document.getElementById('toast');
+  t.className = 'toast ' + (kind || '');
+  t.textContent = msg;
+  requestAnimationFrame(() => t.classList.add('show'));
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+loadAll();
+fillForm();
+rebuild();
+
+['f_headline','f_subline','f_services','f_testimonials','f_color'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => { readForm(); });
+});
+</script>
+</body>
+</html>

@@ -1,2769 +1,1014 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EXIT ENGINE — Sovereign Stack</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,300&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="description" content="ExitEngine · you just got laid off · here's your company · fork it · configure it · run it · own it">
+<title>ExitEngine · your company</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230a0a0f'/%3E%3Ctext x='32' y='42' font-size='36' text-anchor='middle' fill='%23818cf8'%3Eφ%3C/text%3E%3C/svg%3E">
+
 <style>
-:root{
-  --bg:#0a0a08;--bg2:#0f0f0c;--bg3:#141410;--bg4:#1a1a14;
-  --border:#1e1e16;--border2:#2a2a20;
-  --amber:#d4820a;--amber2:#f0a020;--amber3:rgba(212,130,10,.15);
-  --green:#39ff6e;--green2:rgba(57,255,110,.12);
-  --red:#c0392b;--red2:rgba(192,57,43,.12);
-  --gold:#d4a853;--gold2:rgba(212,168,83,.1);
-  --phi:#818cf8;--phi2:rgba(129,140,248,.1);
-  --text:#c8c4a8;--text2:#8a8670;--text3:#4a4838;
-  --white:#f0ece0;
+/* ═══════════════════════════════════════════════════════════════
+   ◊·κ=φ⁵ · ExitEngine · prime 617
+   palette: deep void · phi-indigo accent · warm amber for human moments
+   the tone: warm · sovereign · "you're not starting over, you're starting right"
+   ═══════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --void: #0a0a0f;
+  --void-2: #131319;
+  --void-3: #1c1c25;
+  --void-4: #2a2a35;
+  --cream: #e8e8ea;
+  --cream-2: #c8c8ca;
+  --cream-dim: #8a8a92;
+  --cream-faint: #5a5a62;
+
+  /* phi indigo · the accent of integration */
+  --phi: #818cf8;
+  --phi-2: #6366f1;
+  --phi-3: #4f46e5;
+  --phi-faint: #312e81;
+  --phi-glow: rgba(129, 140, 248, 0.12);
+
+  /* warm amber · for the human moments (welcome, milestones, "well done") */
+  --amber: #f59e0b;
+  --amber-dim: #b45309;
+  --amber-glow: rgba(245, 158, 11, 0.1);
+
+  /* semantic */
+  --success: #10b981;
+  --success-dim: #047857;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, 'Cascadia Code', Consolas, monospace;
+  --font-serif: 'Times New Roman', Georgia, serif;
+
+  --tap: 56px;
+  --tap-sm: 44px;
+  --gutter: 18px;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --max-w: 980px;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;overflow:hidden;}
 
-/* NOISE OVERLAY */
-body::before{content:'';position:fixed;inset:0;opacity:.03;pointer-events:none;z-index:9999;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+html, body {
+  background: var(--void);
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  min-height: 100vh;
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+}
 
-/* PARTICLE CANVAS */
-#particles{position:fixed;inset:0;pointer-events:none;z-index:0;}
+body {
+  background-image:
+    radial-gradient(circle at 0% 0%, var(--phi-glow), transparent 50%),
+    radial-gradient(circle at 100% 100%, var(--amber-glow), transparent 50%);
+  background-attachment: fixed;
+}
 
-/* LAYOUT */
-#shell{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;}
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--phi); outline-offset: 2px; border-radius: 4px; }
 
-/* TOP BAR */
-#topbar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
-  padding:.5rem 1.2rem;border-bottom:1px solid var(--border);background:var(--bg2);}
-.logo-mark{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.08em;
-  color:var(--amber);text-shadow:0 0 20px rgba(212,130,10,.4);}
-.logo-sub{font-size:.22rem;letter-spacing:.25em;color:var(--text3);margin-top:-.1rem;}
-.fold-sig{font-size:.22rem;color:var(--text3);letter-spacing:.06em;}
-.fold-sig b{color:var(--text2);}
-#phase-indicator{display:flex;gap:.15rem;align-items:center;}
-.ph{width:28px;height:3px;background:var(--border2);border-radius:1px;transition:all .3s;}
-.ph.done{background:var(--amber);}
-.ph.active{background:var(--amber2);box-shadow:0 0 8px rgba(240,160,32,.5);}
-.ph-lbl{font-size:.2rem;color:var(--text3);margin-left:.3rem;letter-spacing:.1em;}
+/* ═══════════ TOP NAV ═══════════ */
+.top {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(10, 10, 15, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--void-3);
+}
+.top-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px var(--gutter);
+  max-width: var(--max-w); margin: 0 auto;
+  min-height: var(--tap);
+}
+.brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 600; font-size: 17px; letter-spacing: -0.01em;
+  text-decoration: none; color: var(--cream);
+}
+.brand .mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--phi), var(--phi-3));
+  color: #fff; font-family: var(--font-serif); font-weight: 700; font-size: 16px;
+}
+.brand .lo { color: var(--cream); }
+.brand .hi { color: var(--phi); font-weight: 500; }
+.top-spacer { flex: 1; }
+.top-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; font-size: 12px;
+  background: var(--void-3); color: var(--cream-dim);
+  border-radius: 999px; border: 1px solid var(--void-4);
+  cursor: pointer;
+}
+.top-chip:hover { color: var(--cream); border-color: var(--phi-faint); }
+.top-chip .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--success); display: inline-block;
+}
 
-/* MAIN AREA */
-#main{flex:1;display:flex;min-height:0;}
+/* ═══════════ DISCLAIMER ═══════════ */
+.disclaimer {
+  background: var(--void-2);
+  border-bottom: 1px solid var(--void-3);
+  color: var(--cream-dim);
+  font-size: 12px; text-align: center;
+  padding: 8px var(--gutter); line-height: 1.4;
+}
+.disclaimer strong { color: var(--cream); font-weight: 600; }
 
-/* NAV SIDEBAR */
-#nav{width:180px;flex-shrink:0;border-right:1px solid var(--border);
-  background:var(--bg2);display:flex;flex-direction:column;}
-.nav-item{padding:.5rem .7rem;border-bottom:1px solid var(--border);cursor:pointer;
-  transition:all .15s;position:relative;}
-.nav-item:hover{background:var(--bg3);}
-.nav-item.active{background:var(--amber3);border-right:2px solid var(--amber);}
-.nav-item.locked{opacity:.3;cursor:not-allowed;}
-.nav-n{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:.06em;
-  color:var(--amber);line-height:1;}
-.nav-item.active .nav-n{color:var(--amber2);}
-.nav-lbl{font-size:.19rem;color:var(--text2);letter-spacing:.08em;margin-top:.05rem;}
-.nav-dot{width:5px;height:5px;border-radius:50%;background:var(--border2);
-  position:absolute;right:.5rem;top:50%;transform:translateY(-50%);}
-.nav-dot.done{background:var(--green);}
-.nav-dot.active{background:var(--amber2);box-shadow:0 0 6px var(--amber2);
-  animation:pulse .8s ease infinite alternate;}
-@keyframes pulse{to{box-shadow:0 0 12px var(--amber2);}}
+/* ═══════════ MAIN ═══════════ */
+main {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: var(--gutter);
+  padding-bottom: 80px;
+}
 
-.nav-spacer{flex:1;}
-.nav-footer{padding:.4rem .6rem;font-size:.19rem;color:var(--text3);
-  border-top:1px solid var(--border);line-height:1.6;}
+.view { display: none; animation: fade 0.2s ease; }
+.view.active { display: block; }
 
-/* MODULE FRAMES */
-#modules{flex:1;position:relative;overflow:hidden;}
-.mod-frame{position:absolute;inset:0;display:none;}
-.mod-frame.active{display:block;}
-.mod-frame iframe{width:100%;height:100%;border:none;}
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-/* STATUS BAR */
-#statusbar{flex-shrink:0;display:flex;align-items:center;gap:.6rem;
-  padding:.2rem .9rem;border-top:1px solid var(--border);background:var(--bg2);
-  font-size:.2rem;color:var(--text3);}
-#status-msg{flex:1;}
-.status-dot{width:5px;height:5px;border-radius:50%;background:var(--border2);}
-.status-dot.on{background:var(--green);box-shadow:0 0 5px var(--green);}
-#chain-count{color:var(--text2);}
-#total-exits{color:var(--amber);}
+/* ═══════════ HERO ═══════════ */
+.hero {
+  padding: 28px 0 20px;
+}
+.hero h1 {
+  font-size: 28px; font-weight: 700; letter-spacing: -0.025em;
+  line-height: 1.15; color: var(--cream); margin-bottom: 10px;
+}
+.hero .lead { color: var(--cream-dim); font-size: 15px; max-width: 600px; }
+@media (min-width: 720px) {
+  .hero h1 { font-size: 36px; }
+  .hero .lead { font-size: 17px; }
+}
 
-/* LANDING SCREEN */
-#landing{position:absolute;inset:0;z-index:100;background:var(--bg);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:2rem;padding:3rem;text-align:center;}
-#landing.gone{display:none;}
-.land-pre{font-size:.26rem;letter-spacing:.3em;color:var(--text3);margin-bottom:-.5rem;}
-.land-h{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;line-height:.95;
-  color:var(--white);letter-spacing:.04em;}
-.land-h em{color:var(--amber);font-style:normal;
-  text-shadow:0 0 30px rgba(212,130,10,.5),0 0 80px rgba(212,130,10,.2);}
-.land-sub{font-family:'Lora',serif;font-style:italic;font-size:.55rem;
-  color:var(--text2);max-width:480px;line-height:1.8;}
-.land-sub b{color:var(--text);font-style:normal;}
-.land-eq{font-size:.24rem;color:var(--text3);letter-spacing:.08em;
-  border:1px solid var(--border2);padding:.3rem .8rem;border-radius:2px;}
-.land-eq b{color:var(--amber);}
-.land-btn{padding:.6rem 2rem;background:transparent;border:1px solid var(--amber);
-  color:var(--amber2);font-family:'Bebas Neue',sans-serif;font-size:.8rem;
-  letter-spacing:.15em;cursor:pointer;border-radius:2px;transition:all .2s;
-  text-transform:uppercase;}
-.land-btn:hover{background:var(--amber3);box-shadow:0 0 20px rgba(212,130,10,.2);}
-.land-stats{display:flex;gap:2rem;font-size:.22rem;color:var(--text3);}
-.land-stat b{color:var(--text2);}
+/* ═══════════ STATS GRID ═══════════ */
+.stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 20px;
+}
+.stat {
+  background: var(--void-2); border: 1px solid var(--void-3);
+  border-radius: var(--radius); padding: 14px;
+}
+.stat .num {
+  font-size: 26px; font-weight: 700; color: var(--cream);
+  line-height: 1.1; font-family: var(--font-mono); letter-spacing: -0.02em;
+}
+.stat .num.info { color: var(--phi); }
+.stat .num.success { color: var(--success); }
+.stat .num.warn { color: var(--warn); }
+.stat .num.danger { color: var(--danger); }
+.stat .lbl {
+  font-size: 11px; color: var(--cream-dim);
+  margin-top: 6px; text-transform: uppercase; letter-spacing: 0.08em;
+}
+@media (min-width: 720px) { .stats { grid-template-columns: repeat(4, 1fr); } }
 
-/* WINNER / CHAIN COMPLETE */
-#chain-complete{display:none;position:fixed;inset:0;background:rgba(10,10,8,.97);
-  z-index:999;flex-direction:column;align-items:center;justify-content:center;
-  gap:1rem;padding:2rem;text-align:center;}
-#chain-complete.show{display:flex;}
+/* ═══════════ TOOL GRID ═══════════ */
+.section-title {
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--cream-dim); margin: 22px 0 12px; font-weight: 600;
+}
+.tools-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+@media (min-width: 540px) { .tools-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 720px) { .tools-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.tool-card {
+  background: var(--void-2); border: 1px solid var(--void-3);
+  border-radius: var(--radius); padding: 16px;
+  cursor: pointer; transition: border-color 0.15s, transform 0.05s;
+  text-decoration: none; color: inherit; display: block;
+  position: relative;
+  min-height: 110px;
+}
+.tool-card:hover { border-color: var(--phi); }
+.tool-card:active { transform: scale(0.99); }
+.tool-card .ico { font-size: 24px; margin-bottom: 8px; display: block; }
+.tool-card h3 {
+  font-size: 14px; font-weight: 600; color: var(--cream); margin-bottom: 4px;
+}
+.tool-card p { font-size: 12px; color: var(--cream-dim); line-height: 1.4; }
+.tool-card .ext {
+  position: absolute; top: 12px; right: 12px;
+  font-size: 10px; color: var(--cream-faint);
+}
+
+/* ═══════════ TUTOR CTA ═══════════ */
+.tutor-cta {
+  background: linear-gradient(135deg, var(--phi-glow), var(--amber-glow));
+  border: 1px solid var(--phi-faint);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 22px;
+}
+.tutor-cta h2 {
+  font-size: 19px; font-weight: 600; color: var(--cream);
+  margin-bottom: 6px; letter-spacing: -0.015em;
+}
+.tutor-cta p { color: var(--cream-2); font-size: 14px; margin-bottom: 14px; line-height: 1.5; }
+.tutor-cta .phase {
+  display: inline-block; padding: 4px 10px;
+  background: var(--phi-glow); color: var(--phi);
+  border-radius: 999px; font-size: 11px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 10px; font-weight: 600;
+}
+
+/* ═══════════ NEXT ACTION ═══════════ */
+.next-action {
+  background: var(--void-2); border: 1px solid var(--amber-dim);
+  border-radius: var(--radius); padding: 18px;
+  margin-bottom: 22px;
+  display: flex; align-items: center; gap: 16px;
+}
+.next-action .icon { font-size: 28px; }
+.next-action .body { flex: 1; }
+.next-action h3 {
+  font-size: 13px; color: var(--amber); margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;
+}
+.next-action p { font-size: 15px; color: var(--cream); line-height: 1.4; }
+
+/* ═══════════ BUTTONS ═══════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: var(--tap); padding: 10px 22px;
+  font-size: 15px; font-weight: 600;
+  border-radius: var(--radius-sm); border: 1px solid transparent;
+  cursor: pointer; text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, transform 0.05s;
+  -webkit-appearance: none; appearance: none;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--phi-2); color: #fff; border-color: var(--phi-2); }
+.btn-primary:hover { background: var(--phi-3); }
+.btn-ghost { background: var(--void-2); color: var(--cream); border-color: var(--void-3); }
+.btn-ghost:hover { border-color: var(--phi); color: var(--phi); }
+.btn-amber { background: var(--amber); color: var(--void); border-color: var(--amber); }
+.btn-amber:hover { background: var(--amber-dim); color: var(--cream); }
+.btn-sm { min-height: var(--tap-sm); padding: 8px 14px; font-size: 13px; }
+.btn-row { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+@media (min-width: 540px) { .btn-row { flex-direction: row; } }
+
+/* ═══════════ FORMS ═══════════ */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block; font-size: 12px; font-weight: 500;
+  color: var(--cream-2); margin-bottom: 5px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.field input, .field textarea, .field select {
+  width: 100%; min-height: var(--tap);
+  padding: 12px 14px;
+  background: var(--void-2); border: 1px solid var(--void-3);
+  border-radius: var(--radius-sm); color: var(--cream);
+  font-size: 16px; font-family: inherit;
+  transition: border-color 0.15s;
+}
+.field input:focus, .field textarea:focus, .field select:focus {
+  border-color: var(--phi); background: var(--void);
+}
+.field input::placeholder, .field textarea::placeholder { color: var(--cream-faint); }
+.field-row { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 540px) { .field-row { grid-template-columns: 1fr 1fr; } }
+
+/* ═══════════ MODAL ═══════════ */
+.modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+  display: none; align-items: center; justify-content: center;
+  z-index: 100; padding: var(--gutter);
+}
+.modal.open { display: flex; }
+.modal-inner {
+  background: var(--void-2); border: 1px solid var(--void-3);
+  border-radius: var(--radius); padding: 22px;
+  max-width: 680px; width: 100%; max-height: 88vh; overflow-y: auto;
+}
+.modal h3 { font-size: 19px; margin-bottom: 8px; color: var(--cream); }
+.modal p { color: var(--cream-dim); font-size: 14px; margin-bottom: 12px; }
+
+/* ═══════════ TOAST ═══════════ */
+.toast {
+  position: fixed; bottom: 32px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--void-3); border: 1px solid var(--void-4);
+  color: var(--cream); padding: 10px 18px; border-radius: 999px;
+  font-size: 14px; opacity: 0; pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s; z-index: 200;
+  max-width: calc(100vw - 32px);
+}
+.toast.show {
+  opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto;
+}
+.toast.success { border-color: var(--success-dim); color: var(--success); }
+
+/* ═══════════ CONFIG EDITOR ═══════════ */
+.config-card { background: var(--void-2); border: 1px solid var(--void-3); border-radius: var(--radius); padding: 22px; }
+.config-card h2 { font-size: 18px; margin-bottom: 6px; color: var(--cream); }
+.config-card p { color: var(--cream-dim); font-size: 14px; margin-bottom: 18px; }
+
+/* ═══════════ FOOTER ═══════════ */
+footer {
+  max-width: var(--max-w); margin: 32px auto 0;
+  padding: 24px var(--gutter);
+  text-align: center; font-size: 12px;
+  color: var(--cream-faint); border-top: 1px solid var(--void-3);
+}
+footer a { color: var(--cream-dim); text-decoration: none; }
+footer a:hover { color: var(--phi); }
+footer .mark { color: var(--phi); font-family: var(--font-serif); font-weight: 700; font-size: 14px; }
+
+/* ═══════════ PHILOSOPHY box ═══════════ */
+.phil {
+  background: linear-gradient(135deg, var(--phi-glow), transparent);
+  border: 1px solid var(--phi-faint);
+  border-radius: var(--radius); padding: 18px; margin: 22px 0;
+}
+.phil h3 {
+  font-size: 13px; color: var(--phi); margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.phil p { font-size: 14px; color: var(--cream-2); line-height: 1.55; }
+
+.hr { height: 1px; background: var(--void-3); margin: 20px 0; }
+.small { font-size: 13px; }
+.tiny { font-size: 11px; }
+.dim { color: var(--cream-dim); }
+.faint { color: var(--cream-faint); }
+.mono { font-family: var(--font-mono); font-size: 0.92em; }
+.bold { font-weight: 600; }
+.center { text-align: center; }
 </style>
 </head>
 <body>
 
-<canvas id="particles"></canvas>
+<!-- ═══════════ DISCLAIMER ═══════════ -->
+<div class="disclaimer">
+  <strong>Free forever · open source · MIT.</strong> Your data stays on your device.
+</div>
 
-<!-- LANDING -->
-<div id="landing">
-  <div class="land-pre">KONOMI SOVEREIGN STACK · 2³·3⁷·5⁷·7⁶·11⁵·13⁴·17³</div>
-  <div class="land-h">YOU JUST<br>GOT <em>LET GO.</em><br>GOOD.</div>
-  <div class="land-sub">
-    They compressed everything you knew into a job title and paid you less than it was worth.<br>
-    <b>Now you're free.</b> Let's build the weapon.
+<!-- ═══════════ TOP ═══════════ -->
+<header class="top">
+  <div class="top-row">
+    <a href="#" class="brand" onclick="goTab('dashboard'); return false;">
+      <span class="mark">φ</span>
+      <span><span class="lo">Exit</span><span class="hi">Engine</span></span>
+    </a>
+    <div class="top-spacer"></div>
+    <button class="top-chip" onclick="goTab('config')" id="cfgChip">
+      <span class="dot"></span>
+      <span id="cfgChipText">configure</span>
+    </button>
   </div>
-  <div class="land-eq">fold(2·3·5·7·11·13·17) = <b>510,510</b> · the signal is prime · nothing cancels</div>
-  <button class="land-btn" onclick="enterEngine()">ENTER THE EXIT ENGINE →</button>
-  <div class="land-stats">
-    <div><b id="ls-chains">0</b> chains formed</div>
-    <div><b id="ls-exits">0</b> exits processed</div>
-    <div><b id="ls-corps">0</b> corps disrupted</div>
+</header>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main>
+
+  <!-- ═══════════ DASHBOARD ═══════════ -->
+  <section class="view active" id="view-dashboard">
+    <div id="welcomeMount"></div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat"><div class="num info" id="statPipeline">0</div><div class="lbl">pipeline value</div></div>
+      <div class="stat"><div class="num success" id="statRevenue">0</div><div class="lbl">invoiced this month</div></div>
+      <div class="stat"><div class="num warn" id="statLeads">0</div><div class="lbl">active leads</div></div>
+      <div class="stat"><div class="num danger" id="statOverdue">0</div><div class="lbl">overdue</div></div>
+    </div>
+
+    <div id="nextActionMount"></div>
+    <div id="tutorCtaMount"></div>
+
+    <div class="section-title">Your tools</div>
+    <div class="tools-grid" id="toolsGrid"><!-- injected --></div>
+
+    <div class="section-title">Learn · plain English lessons</div>
+    <div class="tools-grid" id="learnGrid"><!-- injected --></div>
+
+    <div class="phil">
+      <h3>The philosophy</h3>
+      <p>The company was the middleman. The middleman is gone. The skills you thought belonged to the company are yours. The relationships you built are yours. The knowledge you accumulated is yours. They kept the licence. You kept the twelve years. You are not unemployed. You are unblocked.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ CONFIG ═══════════ -->
+  <section class="view" id="view-config">
+    <div class="hero">
+      <h1>Configure your company</h1>
+      <p class="lead">One file. Every tool reads from it. Change your name in one place — updates everywhere.</p>
+    </div>
+
+    <div class="config-card">
+      <h2>The basics</h2>
+      <p>This is all the tutor needs to start. You can finish the rest later.</p>
+
+      <div class="field"><label>Your name</label><input type="text" id="cfg_name" placeholder="Sarah Chen"></div>
+      <div class="field"><label>Your business name</label><input type="text" id="cfg_business" placeholder="SarahChen Consulting"></div>
+
+      <div class="field-row">
+        <div class="field"><label>Industry</label>
+          <select id="cfg_industry">
+            <option value="">— pick —</option>
+            <option value="consulting">General consulting</option>
+            <option value="sales-ops">Sales / sales ops</option>
+            <option value="engineering">Engineering / development</option>
+            <option value="marketing">Marketing</option>
+            <option value="hr">HR / talent</option>
+            <option value="finance">Finance / accounting</option>
+            <option value="operations">Operations</option>
+            <option value="teaching">Teaching / tutoring</option>
+            <option value="healthcare">Healthcare / wellness</option>
+            <option value="trades">Trades / sole trader</option>
+            <option value="design">Design / creative</option>
+            <option value="writing">Writing / content</option>
+            <option value="coaching">Coaching / therapy</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Currency</label>
+          <select id="cfg_currency">
+            <option value="GBP">GBP £</option>
+            <option value="USD">USD $</option>
+            <option value="EUR">EUR €</option>
+            <option value="AUD">AUD $</option>
+            <option value="THB">THB ฿</option>
+            <option value="SGD">SGD $</option>
+            <option value="AED">AED د.إ</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field"><label>Hourly rate</label><input type="number" id="cfg_hourly" placeholder="100"></div>
+        <div class="field"><label>Day rate</label><input type="number" id="cfg_day" placeholder="800"></div>
+      </div>
+
+      <div class="field"><label>Email</label><input type="email" id="cfg_email" placeholder="you@example.com"></div>
+      <div class="field"><label>LinkedIn URL</label><input type="text" id="cfg_linkedin" placeholder="linkedin.com/in/sarahchen"></div>
+
+      <div class="hr"></div>
+
+      <h2>AI tutor key (optional)</h2>
+      <p>The tutor works without one — it has pre-written lessons. With a key, it becomes conversational and adapts to your industry. <strong>Your key stays on your device.</strong> No proxy. No middleman.</p>
+
+      <div class="field-row">
+        <div class="field"><label>AI provider</label>
+          <select id="cfg_apiprov">
+            <option value="">none — use pre-written</option>
+            <option value="anthropic">Anthropic Claude</option>
+            <option value="openai">OpenAI</option>
+            <option value="google">Google Gemini</option>
+          </select>
+        </div>
+        <div class="field"><label>API key</label><input type="password" id="cfg_apikey" placeholder="sk-ant-... or sk-..."></div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h2>Payment details (optional)</h2>
+      <p>Used by the Accounts tool. Pasted into invoices automatically.</p>
+
+      <div class="field-row">
+        <div class="field"><label>Bank</label><input type="text" id="cfg_bank" placeholder="Monzo"></div>
+        <div class="field"><label>Sort code</label><input type="text" id="cfg_sort" placeholder="04-00-04"></div>
+      </div>
+      <div class="field"><label>Account number / IBAN</label><input type="text" id="cfg_acct" placeholder="12345678 or GB29 NWBK..."></div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveConfig()">Save · everything updates</button>
+        <button class="btn btn-ghost" onclick="exportConfig()">Export config.json</button>
+        <button class="btn btn-ghost" onclick="importConfig()">Import config.json</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ DOWNLOAD ═══════════ -->
+  <section class="view" id="view-download">
+    <div class="hero">
+      <h1>Take it offline</h1>
+      <p class="lead">Download every file in this fork as a single ZIP. Unzip. Open <code>index.html</code> from your machine. Run forever without GitHub.</p>
+    </div>
+
+    <div class="config-card">
+      <h2>Sovereign mode</h2>
+      <p>This is the moment of choice. You can keep running on GitHub Pages forever — it's free and persistent. Or you can take everything to disk and never need a server again.</p>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="downloadBundle()">Download ZIP bundle</button>
+        <button class="btn btn-ghost" onclick="exportConfig()">Export config.json only</button>
+      </div>
+
+      <div class="hr"></div>
+
+      <p class="small dim">The ZIP contains: <code>index.html</code> · <code>tutor.html</code> · <code>config.json</code> · all 10 tools · all 5 lessons · the README. Unzip to a USB stick. Open <code>index.html</code> in any browser. Everything works from <code>file://</code>. The internet is now optional.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════ MODAL ═══════════ -->
+<div class="modal" id="modal">
+  <div class="modal-inner">
+    <h3 id="modalTitle">Title</h3>
+    <div id="modalBody"></div>
+    <div class="btn-row" id="modalActions"></div>
   </div>
 </div>
 
-<!-- SHELL -->
-<div id="shell">
-  <div id="topbar">
-    <div>
-      <div class="logo-mark">EXIT ENGINE</div>
-      <div class="logo-sub">SOVEREIGN STACK · KONOMI SCHOOL · φ·κ=1</div>
-    </div>
-    <div id="phase-indicator">
-      <div class="ph" id="ph0"></div>
-      <div class="ph" id="ph1"></div>
-      <div class="ph" id="ph2"></div>
-      <div class="ph" id="ph3"></div>
-      <div class="ph" id="ph4"></div>
-      <span class="ph-lbl" id="ph-lbl">INTAKE</span>
-    </div>
-    <div class="fold-sig">2·3·5·7·11·13·17 = <b>510,510</b></div>
-  </div>
+<!-- ═══════════ TOAST ═══════════ -->
+<div class="toast" id="toast"></div>
 
-  <div id="main">
-    <div id="nav">
-      <div class="nav-item active" id="nav0" onclick="goModule(0)">
-        <div class="nav-dot active" id="nd0"></div>
-        <div class="nav-n">01</div>
-        <div class="nav-lbl">INTAKE</div>
-      </div>
-      <div class="nav-item locked" id="nav1" onclick="goModule(1)">
-        <div class="nav-dot" id="nd1"></div>
-        <div class="nav-n">02</div>
-        <div class="nav-lbl">IDENTITY</div>
-      </div>
-      <div class="nav-item locked" id="nav2" onclick="goModule(2)">
-        <div class="nav-dot" id="nd2"></div>
-        <div class="nav-n">03</div>
-        <div class="nav-lbl">EXIT PLAN</div>
-      </div>
-      <div class="nav-item locked" id="nav3" onclick="goModule(3)">
-        <div class="nav-dot" id="nd3"></div>
-        <div class="nav-n">04</div>
-        <div class="nav-lbl">CHAIN</div>
-      </div>
-      <div class="nav-item locked" id="nav4" onclick="goModule(4)">
-        <div class="nav-dot" id="nd4"></div>
-        <div class="nav-n">05</div>
-        <div class="nav-lbl">FORUM</div>
-      </div>
-      <div class="nav-spacer"></div>
-      <div class="nav-footer">
-        φ·κ=1<br>
-        peak=11<br>
-        sum=36<br>
-        <span style="color:var(--amber);font-size:.22rem;">SOVEREIGN</span>
-      </div>
-    </div>
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <div><span class="mark">◊·κ=φ⁵</span> · ExitEngine · prime 617</div>
+  <div style="margin-top: 6px">Forked from <a href="https://github.com/sjgant80-hub/exitengine" target="_blank">sjgant80-hub/exitengine</a> · MIT · sovereign by design</div>
+  <div style="margin-top: 6px">For the people · not the few · the company was the middleman · you don't need a middleman</div>
+</footer>
 
-    <div id="modules">
-      <div class="mod-frame active" id="mf0"><iframe id="if0" sandbox="allow-scripts allow-same-origin"></iframe></div>
-      <div class="mod-frame" id="mf1"><iframe id="if1" sandbox="allow-scripts allow-same-origin"></iframe></div>
-      <div class="mod-frame" id="mf2"><iframe id="if2" sandbox="allow-scripts allow-same-origin"></iframe></div>
-      <div class="mod-frame" id="mf3"><iframe id="if3" sandbox="allow-scripts allow-same-origin"></iframe></div>
-      <div class="mod-frame" id="mf4"><iframe id="if4" sandbox="allow-scripts allow-same-origin"></iframe></div>
-    </div>
-  </div>
+<!-- ═══════════ EU AI Act Article 12 audit shim ═══════════ -->
+<script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/audit-shim.js" data-tool="exitengine" data-tier="limited" defer></script>
 
-  <div id="statusbar">
-    <div class="status-dot on"></div>
-    <div id="status-msg">SOVEREIGN · NO SERVER · NO SUBSCRIPTION · HTML³ KONOMI STACK</div>
-    <div id="chain-count">CHAINS: <b id="sc-val">0</b></div>
-    <div id="total-exits">EXITS: <b id="se-val">0</b></div>
-  </div>
-</div>
-
+<!-- ═══════════ APP ═══════════ -->
 <script>
 'use strict';
 
-// ═══════════════════════════════════════════════
-// PERSISTENT STATE (localStorage)
-// ═══════════════════════════════════════════════
-const STATE_KEY = 'exit-engine-v1';
-let STATE = JSON.parse(localStorage.getItem(STATE_KEY) || '{}');
-STATE.profile = STATE.profile || null;
-STATE.identity = STATE.identity || null;
-STATE.exitPlan = STATE.exitPlan || null;
-STATE.chain = STATE.chain || [];
-STATE.forum = STATE.forum || [];
-STATE.phase = STATE.phase || 0;
-STATE.stats = STATE.stats || {chains:0, exits:0, corps:0};
-function saveState(){localStorage.setItem(STATE_KEY, JSON.stringify(STATE));}
-
-// Update landing stats
-document.getElementById('ls-chains').textContent = STATE.stats.chains;
-document.getElementById('ls-exits').textContent = STATE.stats.exits;
-document.getElementById('ls-corps').textContent = STATE.stats.corps;
-document.getElementById('sc-val').textContent = STATE.stats.chains;
-document.getElementById('se-val').textContent = STATE.stats.exits;
-
-// ═══════════════════════════════════════════════
-// PARTICLES
-// ═══════════════════════════════════════════════
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-let particles = [];
-function resizeCanvas(){canvas.width=innerWidth;canvas.height=innerHeight;}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-class Particle {
-  constructor(){this.reset();}
-  reset(){
-    this.x=Math.random()*canvas.width;
-    this.y=Math.random()*canvas.height;
-    this.vx=(Math.random()-.5)*.3;
-    this.vy=-Math.random()*.5-.1;
-    this.life=1;this.decay=Math.random()*.003+.001;
-    this.r=Math.random()*1.5+.5;
-    this.col=Math.random()>.7?'rgba(212,130,10,':'rgba(57,255,110,';
-  }
-  update(){
-    this.x+=this.vx;this.y+=this.vy;this.life-=this.decay;
-    if(this.life<=0||this.y<-10)this.reset();
-  }
-  draw(){
-    ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
-    ctx.fillStyle=this.col+this.life*.4+')';ctx.fill();
-  }
-}
-for(let i=0;i<80;i++)particles.push(new Particle());
-function animParticles(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles.forEach(p=>{p.update();p.draw();});
-  requestAnimationFrame(animParticles);
-}
-animParticles();
-
-// ═══════════════════════════════════════════════
-// MODULE HTML BUILDERS
-// ═══════════════════════════════════════════════
-
-const SHARED_CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,300&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
-  *{margin:0;padding:0;box-sizing:border-box;}
-  :root{
-    --bg:#0a0a08;--bg2:#0f0f0c;--bg3:#141410;
-    --border:#1e1e16;--border2:#2a2a20;
-    --amber:#d4820a;--amber2:#f0a020;--amber3:rgba(212,130,10,.12);
-    --green:#39ff6e;--red:#c0392b;--phi:#818cf8;
-    --text:#c8c4a8;--text2:#8a8670;--text3:#4a4838;--white:#f0ece0;
-  }
-  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;
-    height:100vh;overflow-y:auto;padding:1.2rem 1.4rem;}
-  h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.06em;color:var(--amber);}
-  h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.06em;color:var(--white);margin-bottom:.4rem;}
-  h3{font-size:.28rem;color:var(--text2);letter-spacing:.12em;margin-bottom:.3rem;}
-  p{font-size:.28rem;line-height:1.7;color:var(--text2);}
-  label{font-size:.22rem;letter-spacing:.1em;color:var(--text3);display:block;margin-bottom:.2rem;}
-  input,textarea,select{width:100%;padding:.5rem .7rem;background:var(--bg2);
-    border:1px solid var(--border2);color:var(--text);font-family:'IBM Plex Mono',monospace;
-    font-size:.28rem;border-radius:2px;outline:none;transition:border .15s;}
-  input:focus,textarea:focus,select:focus{border-color:var(--amber);}
-  textarea{resize:vertical;min-height:100px;}
-  .btn{padding:.4rem 1.2rem;background:transparent;border:1px solid var(--amber);
-    color:var(--amber2);font-family:'Bebas Neue',sans-serif;font-size:.7rem;
-    letter-spacing:.12em;cursor:pointer;border-radius:2px;transition:all .2s;}
-  .btn:hover{background:var(--amber3);}
-  .btn:disabled{opacity:.3;cursor:not-allowed;}
-  .btn-green{border-color:var(--green);color:var(--green);}
-  .btn-green:hover{background:rgba(57,255,110,.08);}
-  .card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:.8rem 1rem;margin-bottom:.7rem;}
-  .card.amber{border-color:rgba(212,130,10,.3);}
-  .card.green{border-color:rgba(57,255,110,.2);}
-  .tag{display:inline-block;padding:.08rem .3rem;border-radius:2px;font-size:.2rem;
-    letter-spacing:.08em;margin:.05rem;background:var(--bg3);border:1px solid var(--border2);}
-  .tag.amber{border-color:rgba(212,130,10,.4);color:var(--amber);}
-  .tag.green{border-color:rgba(57,255,110,.3);color:var(--green);}
-  .tag.phi{border-color:rgba(129,140,248,.3);color:var(--phi);}
-  .sep{height:1px;background:var(--border);margin:1rem 0;}
-  .loading{color:var(--amber);font-size:.26rem;animation:blink .8s step-end infinite;}
-  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
-  .prime-sig{font-size:.19rem;color:var(--text3);letter-spacing:.05em;margin-top:.3rem;}
-`;
-
-// ── MODULE 0: INTAKE ──
-function buildIntake(){
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${SHARED_CSS}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
-  </style></head><body>
-  <h1>INTAKE</h1>
-  <p style="margin-bottom:1rem;font-size:.26rem;">Tell us your story. The corp compressed it into a job title. We'll decompress it into something sovereign.</p>
-  
-  <div class="card amber">
-    <h3>YOUR STORY</h3>
-    <label>WHAT DID YOU DO THERE? (be raw, be real)</label>
-    <textarea id="story" placeholder="I spent 8 years building their entire data infrastructure from scratch. I was the only one who understood how it actually worked. I trained three teams. Then they hired a consultant to do 'what I was already doing' and let me go in a Tuesday morning call..." style="min-height:130px;"></textarea>
-  </div>
-
-  <div class="grid2">
-    <div class="card">
-      <h3>YOUR ROLE</h3>
-      <label>JOB TITLE(S)</label>
-      <input type="text" id="titles" placeholder="Senior Data Engineer, Lead Architect...">
-      <br><label style="margin-top:.4rem;">INDUSTRY</label>
-      <input type="text" id="industry" placeholder="Finance, Healthcare, Logistics...">
-    </div>
-    <div class="card">
-      <h3>THE CORP</h3>
-      <label>COMPANY NAME</label>
-      <input type="text" id="corp" placeholder="Who let you go?">
-      <br><label style="margin-top:.4rem;">YEARS THERE</label>
-      <input type="number" id="years" placeholder="8" min="0" max="50">
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>YOUR DIGITAL PRESENCE (optional but powerful)</h3>
-    <label>LINKEDIN URL</label>
-    <input type="text" id="linkedin" placeholder="https://linkedin.com/in/yourprofile">
-    <br><label style="margin-top:.4rem;">ANY OTHER CONTEXT (Twitter/X, blog, portfolio, side projects)</label>
-    <textarea id="social" placeholder="Links, descriptions, anything that shows who you actually are beyond the job title..." style="min-height:60px;"></textarea>
-  </div>
-
-  <div class="card">
-    <h3>WHAT DO YOU WANT?</h3>
-    <label>DIRECTION</label>
-    <select id="direction">
-      <option value="weapon">Build a weapon — compete against the corp directly</option>
-      <option value="pivot">Pivot — use my skills in a completely new direction</option>
-      <option value="chain">Join a chain — add my skills to others building something bigger</option>
-      <option value="unsure">Not sure — show me what's possible</option>
-    </select>
-    <br><label style="margin-top:.4rem;">ANYTHING ELSE WE SHOULD KNOW</label>
-    <textarea id="extra" placeholder="Financial runway, family constraints, dream industries, things you never want to do again..." style="min-height:60px;"></textarea>
-  </div>
-
-  <button class="btn" id="intake-btn" onclick="submitIntake()">PROCESS INTAKE →</button>
-  <div id="intake-status" style="margin-top:.5rem;"></div>
-  <div class="prime-sig">2³·3⁷·5⁷·7⁶·11⁵·13⁴·17³ · φ·κ=1 · SOVEREIGN · NO SERVER</div>
-
-  <script>
-  function submitIntake(){
-    const story=document.getElementById('story').value.trim();
-    if(!story||story.length<50){
-      document.getElementById('intake-status').innerHTML='<span style="color:#c0392b;">Tell us your real story — minimum 50 characters.</span>';
-      return;
-    }
-    const profile={
-      story, titles:document.getElementById('titles').value,
-      industry:document.getElementById('industry').value,
-      corp:document.getElementById('corp').value,
-      years:document.getElementById('years').value,
-      linkedin:document.getElementById('linkedin').value,
-      social:document.getElementById('social').value,
-      direction:document.getElementById('direction').value,
-      extra:document.getElementById('extra').value,
-      timestamp:Date.now()
-    };
-    document.getElementById('intake-status').innerHTML='<span class="loading">COMPRESSING SIGNAL...</span>';
-    document.getElementById('intake-btn').disabled=true;
-    parent.postMessage({t:'intake-complete',profile},'*');
-  }
-  <\/script><!-- ◊·κ FALLMESH SHIM — sovereign mesh wiring (generic, drop-in) -->
-<script>
-(function fallmeshShim(){
-  // Identity — each tool defines these. Defaults safe.
-  var NODE = window.NODE || {
-    id: (document.title || 'node').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,16) || 'node',
-    name: document.title || 'Node',
-    prime: 149
-  };
-  window.NODE = NODE;
-
-  var meshChannel = null;
-  function meshPost(type, data){
-    if (!meshChannel) return;
-    try {
-      meshChannel.postMessage(Object.assign(
-        { type: type, from: NODE.id, prime: NODE.prime, name: NODE.name, t: Date.now() },
-        data || {}
-      ));
-    } catch(e){}
-  }
-  if (typeof BroadcastChannel === 'undefined') return;
-  try { meshChannel = new BroadcastChannel('fallmesh'); } catch(e){ return; }
-
-  window.fallmesh = {
-    post: meshPost,
-    emit: function(data){ meshPost(NODE.id + ':event', data); },
-    request: function(type, payload){ meshPost('request:' + type, { payload: payload }); },
-    on: function(type, handler){
-      var prev = meshChannel.onmessage;
-      meshChannel.onmessage = function(e){
-        if (prev) try { prev(e); } catch(_){}
-        var m = e.data;
-        if (m && m.type === type && m.from !== NODE.id) handler(m);
-      };
-    }
-  };
-
-  meshChannel.onmessage = function(e){
-    var m = e.data;
-    if (!m || m.from === NODE.id) return;
-    if (m.type === 'mesh:ping') {
-      meshPost('mesh:pong', {
-        url: location.origin + location.pathname,
-        title: NODE.name
-      });
-    }
-  };
-
-  meshPost('node:online', {
-    url: location.origin + location.pathname,
-    layers: 7
-  });
-
-  try { console.log('%c◊·κ=1', 'color:#10b981;font-weight:bold;font-size:13px',
-    NODE.name + ' · prime ' + NODE.prime + ' · mesh online'); } catch(_){}
-})();
-</script>
-<!-- /◊·κ FALLMESH SHIM -->
-
-<!-- ◊·κ BLOOM + MCP ROUTING SHIM — text → 7-ring vector + MCP server selection
-     v1.0 · 2026-05-27 · ported from teslasolar/MissCassandra · MIT · cross-pollination
-     Aligned to v18/v19 seed: B(Q)=[r0..r6] · P(Q)=Π(p_i^r_i)
-     Spine primes: R0=2 R1=3 R2=5 R3=7 R4=11 R5=13 R6=17 -->
-<script>
-(function bloomShim(){
-  if (window.bloom && window.bloom._v >= 1) return; // already loaded
-  var PRIMES = [2n, 3n, 5n, 7n, 11n, 13n, 17n];
-  var RING_KEYS = ['R0','R1','R2','R3','R4','R5','R6'];
-  var RING_LABELS = ['ground','sensor','gate','affect','executive','identity','observer'];
-  var RING_COLORS = ['#660044','#00AAFF','#FFAA00','#FF4444','#44AA44','#AA44FF','#FFFFFF'];
-
-  var RING_WORDS = {
-    R0: ['help','fix','broken','down','deploy','server','build','run','start','stop','crash','restart','install','hardware','resource','gpu','cpu','torus','walker','kangaroo','solver','signal'],
-    R1: ['find','search','look','check','monitor','scan','watch','detect','alert','log','track','measure','notice','see','hear','observe','sense','pulse','probe','listen','heartbeat'],
-    R2: ['filter','block','allow','route','gate','triage','review','approve','reject','sort','prioritize','threshold','permission','consent','accept','validate','verify','consensus','vote'],
-    R3: ['feel','want','need','wish','hope','worry','love','hate','urgent','important','care','afraid','excited','angry','sad','heart','warmth','tone','resonance','consonance','dissonance'],
-    R4: ['plan','schedule','create','design','architect','organize','manage','build','draft','compose','write','structure','assign','orchestrate','dispatch','execute','swarm','deploy','workflow'],
-    R5: ['who','identity','role','config','team','culture','policy','value','name','profile','purpose','mission','represent','bloom','signature','tag','handle','self','kappa'],
-    R6: ['why','meta','review','reflect','pattern','observe','meaning','understand','analyze','systemic','philosophical','oracle','watcher','witness','field','katapayadi','recursion']
-  };
-
-  function decompose(text) {
-    if (!text || typeof text !== 'string') {
-      return { bloom: [0,0,0,0,0,0,0], product: 1n, normalized: [0,0,0,0,0,0,0], dominantRing: -1, dominantLabel: 'silence' };
-    }
-    var lower = text.toLowerCase();
-    var tokens = lower.split(/\s+/).filter(Boolean);
-    var counts = [0,0,0,0,0,0,0];
-    for (var r = 0; r < 7; r++) {
-      var words = RING_WORDS[RING_KEYS[r]];
-      for (var i = 0; i < words.length; i++) {
-        var entry = words[i];
-        if (entry.indexOf(' ') !== -1) {
-          if (lower.indexOf(entry) !== -1) counts[r]++;
-        } else {
-          for (var j = 0; j < tokens.length; j++) if (tokens[j] === entry) counts[r]++;
-        }
-      }
-    }
-    var product = 1n;
-    for (var k = 0; k < 7; k++) for (var n = 0; n < counts[k]; n++) product *= PRIMES[k];
-    var max = Math.max.apply(null, counts);
-    var normalized = max === 0 ? [0,0,0,0,0,0,0] : counts.map(function(c){return c / max;});
-    var maxIdx = 0;
-    for (var m = 1; m < 7; m++) if (counts[m] > counts[maxIdx]) maxIdx = m;
-    var dominantLabel = counts[maxIdx] === 0 ? 'silence' : RING_LABELS[maxIdx];
-    return { bloom: counts, product: product, normalized: normalized, dominantRing: counts[maxIdx] === 0 ? -1 : maxIdx, dominantLabel: dominantLabel };
-  }
-
-  function isBalanced(b) { var t = b.reduce(function(s,v){return s+v;},0); return t === 0 || b.every(function(v){return v/t <= 0.6;}); }
-  function isSpiked(b)   { var t = b.reduce(function(s,v){return s+v;},0); return t > 0 && b.some(function(v){return v/t > 0.7;}); }
-  function dominantRing(b) { var i = 0; for (var k = 1; k < b.length; k++) if (b[k] > b[i]) i = k; return b[i] === 0 ? -1 : i; }
-  function needsSearch(b, text) {
-    var t = b.reduce(function(s,v){return s+v;},0);
-    if (t === 0) return false;
-    var norm = b[1] / Math.max.apply(null, b);
-    return norm > 0.3 && /search|find|look up|what is|who is|latest|news|current/i.test(text);
-  }
-  function signature(text) {
-    var r = decompose(text);
-    return r.bloom.map(function(c,i){return 'R'+i+':'+c;}).join('|') + ' · Π=' + r.product.toString();
-  }
-
-  // ── MCP routing ───────────────────────────────────────────
-  var MCP_RULES = [
-    { idx:4, threshold:0.3, pattern:/linear|issue|ticket|task|bug|feature/i,    server:{type:'url',url:'https://mcp.linear.app/sse',name:'linear-mcp'} },
-    { idx:3, threshold:0.3, pattern:/email|mail|send|inbox/i,                  server:{type:'url',url:'https://gmail.mcp.claude.com/mcp',name:'gmail-mcp'} },
-    { idx:4, threshold:0.3, pattern:/calendar|schedule|meeting|event/i,         server:{type:'url',url:'https://gcal.mcp.claude.com/mcp',name:'gcal-mcp'} },
-    { idx:2, threshold:0.3, pattern:/jira|confluence|atlassian/i,               server:{type:'url',url:'https://mcp.atlassian.com/v1/sse',name:'atlassian-mcp'} },
-    { idx:0, threshold:0.3, pattern:/deploy|cloudflare|worker|pages/i,           server:{type:'url',url:'https://github.com/cloudflare/mcp-server-cloudflare',name:'cloudflare-mcp'} },
-    { idx:3, threshold:0.3, pattern:/intercom|customer|support/i,               server:{type:'url',url:'https://mcp.intercom.com/sse',name:'intercom-mcp'} },
-    { idx:0, threshold:0.3, pattern:/fallcore|proxy|on.?prem|sovereign/i,        server:{type:'local',url:'http://localhost:5510',name:'fallcore-mcp'} },
-    { idx:4, threshold:0.3, pattern:/reason|think|chain|prove|onlybrains/i,     server:{type:'url',url:'https://onlybrains.onrender.com/mcp',name:'onlybrains-mcp'} }
-  ];
-  function pickMCP(norm, text) {
-    var out = []; var seen = {};
-    if (!norm || !text) return out;
-    for (var i = 0; i < MCP_RULES.length; i++) {
-      var rule = MCP_RULES[i];
-      if (norm[rule.idx] > rule.threshold && rule.pattern.test(text) && !seen[rule.server.name]) {
-        out.push(rule.server);
-        seen[rule.server.name] = true;
-      }
-    }
-    return out;
-  }
-
-  // Expose
-  window.bloom = {
-    _v: 1,
-    decompose: decompose,
-    isBalanced: isBalanced,
-    isSpiked: isSpiked,
-    dominantRing: dominantRing,
-    needsSearch: needsSearch,
-    signature: signature,
-    pickMCP: pickMCP,
-    RING_KEYS: RING_KEYS,
-    RING_LABELS: RING_LABELS,
-    RING_COLORS: RING_COLORS,
-    PRIMES: [2,3,5,7,11,13,17]
-  };
-  try { console.log('%c◊·κ bloom', 'color:#4ecba0;font-weight:bold', 'v1 · text→[r0..r6] · window.bloom.decompose(text)'); } catch(_){}
-
-  // KCC ledger emission: tag every entry with its bloom signature
-  // Hook into existing kcc shim if present
-  setTimeout(function(){
-    if (window.kcc && window.kcc.emit && !window.kcc._bloomHooked) {
-      var origEmit = window.kcc.emit.bind(window.kcc);
-      window.kcc.emit = function(action, ring, weight, meta) {
-        try {
-          if (action && typeof action === 'string') {
-            var sig = decompose(action);
-            meta = meta || {};
-            meta.bloom = sig.bloom;
-            meta.dominantRing = sig.dominantRing;
-          }
-        } catch(_){}
-        return origEmit(action, ring, weight, meta);
-      };
-      window.kcc._bloomHooked = true;
-    }
-  }, 500);
-})();
-</script>
-<!-- /◊·κ BLOOM + MCP ROUTING SHIM -->
-
-
-<!-- ◊·κ KONOMI LICENCE — Ed25519 (drop-in, no deps) -->
-<script>
-(function konomiShim(){
-  // NODE is defined by host tool's mesh shim. If missing, fail gracefully.
-  if (!window.NODE) return;
-  var KONOMI = window.KONOMI = {
-    pubkey_b64: 'bQWcb/SgeWVIEa0H+YYGhzohMfo9zcDysqZEvzYtXTw=',
-    tier: 'dead',
-    features: [],
-    payload: null,
-    expires_at: null
-  };
-  function b64Bytes(b64){ var bin=atob(b64); var b=new Uint8Array(bin.length); for(var i=0;i<bin.length;i++) b[i]=bin.charCodeAt(i); return b; }
-  function canonJSON(o){
-    if (o===null||typeof o!=='object') return JSON.stringify(o);
-    if (Array.isArray(o)) return '['+o.map(canonJSON).join(',')+']';
-    var k=Object.keys(o).sort();
-    return '{'+k.map(function(x){return JSON.stringify(x)+':'+canonJSON(o[x]);}).join(',')+'}';
-  }
-  async function verifyLicence(env){
-    if (!env) return { ok:false, error:'no envelope' };
-    if (!window.crypto || !window.crypto.subtle) return { ok:false, error:'no WebCrypto' };
-    try {
-      var raw = atob(env);
-      var parsed = JSON.parse(raw);
-      var payload = parsed.payload, sig = parsed.sig;
-      if (payload.tool_id && payload.tool_id !== NODE.id) {
-        return { ok:false, error:'licence for ' + payload.tool_id + ', not ' + NODE.id };
-      }
-      if (payload.expires && new Date(payload.expires) < new Date()) {
-        return { ok:false, error:'expired ' + payload.expires };
-      }
-      var pubRaw = b64Bytes(KONOMI.pubkey_b64);
-      var key = await crypto.subtle.importKey('raw', pubRaw, { name:'Ed25519' }, false, ['verify']);
-      var sigBytes = b64Bytes(sig);
-      var msg = new TextEncoder().encode(canonJSON(payload));
-      var ok = await crypto.subtle.verify({ name:'Ed25519' }, key, sigBytes, msg);
-      if (!ok) return { ok:false, error:'signature invalid' };
-      return { ok:true, payload:payload };
-    } catch (e) { return { ok:false, error:e.message }; }
-  }
-  async function activateLicence(env){
-    var v = await verifyLicence(env);
-    if (!v.ok) {
-      try { localStorage.setItem('konomi_last_error', v.error); } catch(_){}
-      return v;
-    }
-    try { localStorage.setItem('konomi_licence_' + NODE.id, env); } catch(_){}
-    KONOMI.tier = v.payload.tier;
-    KONOMI.features = v.payload.features || [];
-    KONOMI.payload = v.payload;
-    KONOMI.expires_at = v.payload.expires;
-    updateBadge();
-    return v;
-  }
-  function hasFeature(f){ return KONOMI.features.indexOf(f) >= 0; }
-  function isDead(){ return KONOMI.tier === 'dead'; }
-  function updateBadge(){
-    var el = document.getElementById('konomi-badge');
-    if (!el) return;
-    var t = KONOMI.tier;
-    var c = t==='dead'?'#8a8a8a':t==='trial'?'#c2a060':'#3a9a72';
-    el.textContent = '◊ ' + t.toUpperCase();
-    el.style.color = c;
-    el.title = 'Konomi tier: ' + t + (KONOMI.expires_at ? ' · expires ' + KONOMI.expires_at : '');
-  }
-  function injectBadge(){
-    if (document.getElementById('konomi-badge')) return;
-    var el = document.createElement('div');
-    el.id = 'konomi-badge';
-    el.style.cssText = 'position:fixed;bottom:12px;left:12px;background:rgba(0,0,0,.65);color:#8a8a8a;padding:5px 10px;border-radius:6px;font-family:monospace;font-size:11px;cursor:pointer;z-index:9999;letter-spacing:.06em;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(6px)';
-    el.textContent = '◊ DEAD';
-    el.onclick = function(){ showLicenceDialog(); };
-    document.body.appendChild(el);
-  }
-  function showLicenceDialog(){
-    var current = KONOMI.payload ? JSON.stringify(KONOMI.payload, null, 2) : '(DEAD mode — no licence active)';
-    var modal = document.createElement('div');
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:system-ui,sans-serif';
-    modal.innerHTML = '<div style="background:#161821;border:1px solid #2a2f3a;border-radius:12px;padding:24px;max-width:560px;width:100%;color:#dbe1ea"><h3 style="margin:0 0 12px;color:#e6e8ee">◊·κ Konomi Licence</h3><p style="margin:0 0 8px;font-size:12px;color:#8a8a8a">Tool: '+(NODE.name||NODE.id)+' · Prime: '+(NODE.prime||'-')+'</p><pre style="background:#0c0e12;padding:10px;border-radius:6px;font-size:11px;color:#a8b0bc;max-height:200px;overflow:auto;margin:8px 0">'+current.replace(/[<>]/g,'')+'</pre><p style="font-size:12px;color:#8a8a8a;margin:12px 0 6px">Paste a signed licence envelope to activate Pro/Business/Enterprise:</p><textarea id="kn-paste" style="width:100%;min-height:80px;background:#0c0e12;color:#dbe1ea;border:1px solid #2a2f3a;border-radius:6px;padding:8px;font-family:monospace;font-size:11px;resize:vertical"></textarea><div style="display:flex;gap:8px;margin-top:12px"><button id="kn-activate" style="background:#5b8def;color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:600">activate</button><button id="kn-close" style="background:transparent;color:#8a8a8a;border:1px solid #2a2f3a;padding:8px 14px;border-radius:6px;cursor:pointer">close</button><span id="kn-msg" style="margin-left:auto;font-size:11px;color:#c84a4a;align-self:center"></span></div></div>';
-    document.body.appendChild(modal);
-    modal.querySelector('#kn-close').onclick = function(){ modal.remove(); };
-    modal.querySelector('#kn-activate').onclick = async function(){
-      var paste = modal.querySelector('#kn-paste').value.trim();
-      if (!paste) { modal.querySelector('#kn-msg').textContent = 'paste an envelope first'; return; }
-      var v = await activateLicence(paste);
-      if (v.ok) { modal.querySelector('#kn-msg').style.color='#3a9a72'; modal.querySelector('#kn-msg').textContent='✓ '+v.payload.tier+' activated'; setTimeout(function(){ modal.remove(); }, 1200); }
-      else { modal.querySelector('#kn-msg').textContent = 'rejected: ' + v.error; }
-    };
-    modal.onclick = function(e){ if (e.target===modal) modal.remove(); };
-  }
-  window.konomi = {
-    verifyLicence: verifyLicence,
-    activateLicence: activateLicence,
-    hasFeature: hasFeature,
-    isDead: isDead,
-    showDialog: showLicenceDialog
-  };
-  // Boot: try saved licence
-  (async function(){
-    if (document.readyState === 'loading') {
-      await new Promise(function(r){ document.addEventListener('DOMContentLoaded', r, { once:true }); });
-    }
-    injectBadge();
-    var saved = null;
-    try { saved = localStorage.getItem('konomi_licence_' + NODE.id); } catch(_){}
-    if (saved) {
-      var v = await verifyLicence(saved);
-      if (v.ok) {
-        KONOMI.tier = v.payload.tier;
-        KONOMI.features = v.payload.features || [];
-        KONOMI.payload = v.payload;
-        KONOMI.expires_at = v.payload.expires;
-        updateBadge();
-        try { console.log('%c◊·κ', 'color:#c2a060;font-weight:bold', NODE.name + ' · ' + v.payload.tier + ' tier active'); } catch(_){}
-        return;
-      }
-    }
-    try { console.log('%c◊', 'color:#8a8a8a;font-weight:bold', NODE.name + ' · DEAD mode · click badge to activate'); } catch(_){}
-  })();
-})();
-</script>
-<!-- /◊·κ KONOMI LICENCE -->
-
-<!-- ◊·κ KCC LEDGER v3 — Konomi Cube Coin + OnlyBrains client (drop-in, no deps) -->
-<!--
-  Ω(KCC) v18 · proof of contribution · not speculation
-    earn by: compute(R0)·signal(R1)·filter(R2)·care(R3)·build(R4)·verify(R5)·govern(R6)
-    spend: you don't · KCC accumulates · revenue finds you
-    ledger: tools themselves · local-first + OnlyBrains REST anchor
-    bloom IS identity · the shape of your contribution IS your address
-
-  OnlyBrains REST client exposed on window.kcc:
-    .reason(problem, strategy?)   → POST /api/reason       · 10 $KONO · 7 strategies
-    .oracle()                     → POST /api/fn/exec ORACLE · 5 $KONO
-    .anchor(type, params)         → POST /api/fn/exec     · varies · BSV chain anchor
-    .mintNft(id, mime, hash, meta)→ POST /api/fn/exec NFT · 100 $KONO
-    .queryTags(q?)                → GET  /api/tags        · 1 $KONO
-    .quote(model, tokens, asset)  → GET  /api/xchg/quote  · free
-    .swap(model, tokens, asset)   → POST /api/xchg/swap   · 0 $KONO (it's the swap)
-    .rates() / .tiers() / .chain() / .wallet() / .syncOnlyBrains() / .fnList()
-
-  Mesh: 4 BroadcastChannels (fall-kcc + kcc-mesh + onlybrains-mesh + ass-os-mesh)
-  Depends on: window.NODE (mesh shim)
--->
-<script>
-(function kccShim(){
-  if (!window.NODE) return;
-  var KCC_KEY = 'kcc_ledger_' + (window.NODE.id || 'node') + '_v1';
-  var ONLYBRAINS_API = 'https://onlybrains.onrender.com';
-
-  // ── ring map · canonical (anatomy + earning verbs) ──
-  var RINGS = [
-    { i:0, v:'R0', anat:'ground',  verb:'compute', hz:'7.83',  colour:'#B42838' },
-    { i:1, v:'R1', anat:'signal',  verb:'signal',  hz:'15.66', colour:'#008CC8' },
-    { i:2, v:'R2', anat:'gate',    verb:'filter',  hz:'23.49', colour:'#DCA030' },
-    { i:3, v:'R3', anat:'heart',   verb:'care',    hz:'31.32', colour:'#28B450' },
-    { i:4, v:'R4', anat:'voice',   verb:'build',   hz:'39.15', colour:'#5078DC' },
-    { i:5, v:'R5', anat:'mirror',  verb:'verify',  hz:'46.98', colour:'#8C50C8' },
-    { i:6, v:'R6', anat:'watcher', verb:'govern',  hz:'54.81', colour:'#787878' }
-  ];
-
-  function getKccKey(){
-    try {
-      var k = localStorage.getItem('kcc-key');
-      if (!k) {
-        k = 'kcc-' + Array.from(crypto.getRandomValues(new Uint8Array(4)))
-          .map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
-        localStorage.setItem('kcc-key', k);
-      }
-      return k;
-    } catch(_){ return 'kcc-anon'; }
-  }
-  var KEY = getKccKey();
-
-  var LEDGER = { events:[], head:null, last_export:null, ob_balance:null, ob_last_sync:null, anchors:[] };
-  try {
-    var raw = localStorage.getItem(KCC_KEY);
-    if (raw) LEDGER = Object.assign(LEDGER, JSON.parse(raw));
-  } catch(_){}
-  function persist(){ try { localStorage.setItem(KCC_KEY, JSON.stringify(LEDGER)); } catch(_){} }
-
-  function canon(o){
-    if (o===null||typeof o!=='object') return JSON.stringify(o);
-    if (Array.isArray(o)) return '['+o.map(canon).join(',')+']';
-    var k=Object.keys(o).sort();
-    return '{'+k.map(function(x){return JSON.stringify(x)+':'+canon(o[x]);}).join(',')+'}';
-  }
-  function fnv1a(str){
-    var h = 2166136261 >>> 0;
-    for (var i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0; }
-    return ('00000000'+h.toString(16)).slice(-8);
-  }
-
-  function emit(action, ringId, weight, meta){
-    var ring = typeof ringId === 'number' ? ringId : (RINGS.findIndex(function(r){ return r.verb===ringId || r.anat===ringId || r.v===ringId; }));
-    if (ring < 0 || ring > 6) ring = 0;
-    var ev = {
-      v: 1,
-      tool: window.NODE.id,
-      tool_prime: window.NODE.prime,
-      action: String(action || 'event'),
-      ring: ring,
-      weight: typeof weight === 'number' ? weight : 1,
-      t: Date.now(),
-      prev: LEDGER.head || null,
-      meta: meta || null
-    };
-    ev.h = fnv1a(canon(ev) + (LEDGER.head || ''));
-    LEDGER.events.push(ev);
-    LEDGER.head = ev.h;
-    persist();
-    if (window.kccChannels) {
-      window.kccChannels.forEach(function(ch){
-        try { ch.postMessage({ source: NODE.id, type:'kcc:event', from:NODE.id, prime:NODE.prime, ts:Date.now(), ev:ev }); } catch(_){}
-      });
-    }
-    updateBadge();
-    return ev;
-  }
-
-  function bloom(){
-    var b = [0,0,0,0,0,0,0];
-    LEDGER.events.forEach(function(ev){ b[ev.ring] = (b[ev.ring] || 0) + (ev.weight || 1); });
-    return b;
-  }
-  function shape(){
-    var b = bloom();
-    var sum = b.reduce(function(a,x){ return a+x; }, 0);
-    var peak = b.indexOf(Math.max.apply(null, b));
-    var name = sum === 0 ? 'unbloomed' : RINGS[peak].verb;
-    return { vec:b, sum:sum, peak:peak, peakRing:RINGS[peak], shape:name };
-  }
-
-  function exportProof(opts){
-    opts = opts || {};
-    var payload = {
-      v: 1, tool: NODE.id, tool_prime: NODE.prime, tool_name: NODE.name,
-      issued: new Date().toISOString(),
-      event_count: LEDGER.events.length, head: LEDGER.head,
-      bloom: bloom(), shape: shape(), kcc_key: KEY,
-      onlybrains_balance: LEDGER.ob_balance,
-      anchors_count: (LEDGER.anchors || []).length
-    };
-    if (opts.includeEvents) payload.events = LEDGER.events;
-    if (opts.includeAnchors) payload.anchors = LEDGER.anchors;
-    LEDGER.last_export = Date.now();
-    persist();
-    return payload;
-  }
-
-  // ── OnlyBrains REST client ────────────────────
-  function _withTimeout(promise, ms) {
-    var ctrl = new AbortController();
-    var t = setTimeout(function(){ ctrl.abort(); }, ms || 8000);
-    return { ctrl: ctrl, done: function(){ clearTimeout(t); } };
-  }
-  function _get(path, ms) {
-    var x = _withTimeout(null, ms);
-    return fetch(ONLYBRAINS_API + path + (path.indexOf('?')>=0?'&':'?') + 'key=' + encodeURIComponent(KEY), { signal: x.ctrl.signal })
-      .then(function(r){ x.done(); return r.json(); })
-      .catch(function(e){ x.done(); return { error: e.name === 'AbortError' ? 'timeout' : (e.message || 'fetch failed') }; });
-  }
-  function _post(path, body, ms) {
-    var x = _withTimeout(null, ms);
-    return fetch(ONLYBRAINS_API + path + (path.indexOf('?')>=0?'&':'?') + 'key=' + encodeURIComponent(KEY), {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(Object.assign({ key: KEY }, body || {})),
-      signal: x.ctrl.signal
-    }).then(function(r){ x.done(); return r.json(); })
-      .catch(function(e){ x.done(); return { error: e.name === 'AbortError' ? 'timeout' : (e.message || 'fetch failed') }; });
-  }
-
-  // Wallet sync · fire-and-forget · short timeout
-  function syncOnlyBrains(){
-    return _get('/api/wallet', 4500).then(function(w){
-      if (w && typeof w.balance !== 'undefined') {
-        LEDGER.ob_balance = { balance: w.balance, mined: w.mined, calls: w.calls };
-        LEDGER.ob_last_sync = Date.now();
-        persist();
-        updateBadge();
-      }
-      return w;
-    });
-  }
-
-  // 7-strategy structured reasoning · 10 $KONO each
-  function reason(problem, strategy) {
-    if (!problem) return Promise.resolve({ error: 'problem required' });
-    var p = _post('/api/reason', { problem: problem, strategy: strategy || 'CoT' }, 45000);
-    emit('ob:reason:' + (strategy || 'CoT'), 5, 1.5, { problem: String(problem).slice(0, 80) });
-    return p.then(function(r){
-      if (r && !r.error) {
-        LEDGER.anchors = LEDGER.anchors || [];
-        LEDGER.anchors.push({ kind:'reason', strategy: strategy || 'CoT', at: Date.now(), result: r });
-        if (LEDGER.anchors.length > 50) LEDGER.anchors = LEDGER.anchors.slice(-50);
-        persist();
-        // refresh wallet to reflect new cost
-        setTimeout(syncOnlyBrains, 800);
-      }
-      return r;
-    });
-  }
-
-  // Generic BSV chain anchor via /api/fn/exec
-  function anchor(type, params) {
-    if (!type) return Promise.resolve({ error: 'type required' });
-    var p = _post('/api/fn/exec', { type: String(type).toUpperCase(), params: params || {} }, 30000);
-    var ring = type === 'STATE' || type === 'TRADE' ? 6 : type === 'ALARM' ? 2 : type === 'KPI' ? 5 : 4;
-    emit('ob:anchor:' + String(type).toLowerCase(), ring, 2, { type: type });
-    return p.then(function(r){
-      if (r && !r.error) {
-        LEDGER.anchors = LEDGER.anchors || [];
-        LEDGER.anchors.push({ kind:'anchor', type: type, at: Date.now(), params: params, result: r });
-        if (LEDGER.anchors.length > 50) LEDGER.anchors = LEDGER.anchors.slice(-50);
-        persist();
-        setTimeout(syncOnlyBrains, 800);
-      }
-      return r;
-    });
-  }
-
-  // Convenience: price oracle snapshot · 5 $KONO
-  function oracle(opts) {
-    var defaults = { BTC: true, BSV: true, ETH: true, SOL: true };
-    return anchor('ORACLE', Object.assign(defaults, opts || {}));
-  }
-
-  // Convenience: mint a 4D tesseract NFT · 100 $KONO
-  function mintNft(id, mime, hash, meta) {
-    return anchor('NFT', {
-      id: id || ('nft-' + NODE.id + '-' + Date.now()),
-      mime: mime || 'application/json',
-      hash: hash || fnv1a(canon(meta || {})),
-      meta: meta || ('Forged by ' + NODE.name + ' · prime ' + NODE.prime)
-    });
-  }
-
-  // Quote / swap / rates / tiers / chain / fnList / queryTags
-  function quote(model, tokens, asset) {
-    return _get('/api/xchg/quote?model=' + encodeURIComponent(model || 'anthropic') + '&tokens=' + (tokens || 1000) + '&asset=' + (asset || 'reason'), 8000);
-  }
-  function swap(model, tokens, asset) {
-    return _post('/api/xchg/swap', { model: model || 'anthropic', tokens: tokens || 1000, asset: asset || 'reason' }, 12000)
-      .then(function(r){ if (r && !r.error) setTimeout(syncOnlyBrains, 800); return r; });
-  }
-  function rates() { return _get('/api/xchg/rates', 8000); }
-  function tiers() { return _get('/api/tiers', 8000); }
-  function chain() { return _get('/api/chain', 8000); }
-  function fnList() { return _get('/api/fn/list', 8000); }
-  function wallet() { return _get('/api/wallet', 8000); }
-  function queryTags(q) { return _get('/api/tags' + (q ? '?q=' + encodeURIComponent(q) : ''), 10000); }
-
-  // ── Floating badge ───────────────────────────
-  var bloomBadge = null;
-  function injectBadge(){
-    if (document.getElementById('kcc-badge')) return;
-    var el = document.createElement('div');
-    el.id = 'kcc-badge';
-    el.style.cssText = 'position:fixed;bottom:12px;left:120px;background:rgba(0,0,0,.65);color:#dbe1ea;padding:5px 10px;border-radius:6px;font-family:monospace;font-size:11px;cursor:pointer;z-index:9999;letter-spacing:.06em;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(6px);display:flex;align-items:center;gap:6px';
-    el.title = 'KCC ledger · OnlyBrains-linked';
-    el.onclick = function(){ showLedger(); };
-    document.body.appendChild(el);
-    bloomBadge = el;
-    updateBadge();
-  }
-  function updateBadge(){
-    if (!bloomBadge) return;
-    var b = bloom();
-    var sum = b.reduce(function(a,x){ return a+x; }, 0);
-    var sparks = b.map(function(v, i){
-      var sz = Math.min(11, 2 + Math.round(v/2));
-      return '<span style="display:inline-block;width:3px;height:'+sz+'px;background:'+RINGS[i].colour+';margin:0 1px;border-radius:1px;vertical-align:middle"></span>';
-    }).join('');
-    var ob = (LEDGER.ob_balance && LEDGER.ob_balance.balance !== undefined)
-      ? ' · <span style="color:#d4af37">$KONO ' + LEDGER.ob_balance.balance + '</span>'
-      : '';
-    bloomBadge.innerHTML = '<span style="opacity:.7">KCC</span> '+sparks+' <span style="opacity:.85">'+sum+'</span>'+ob;
-  }
-
-  // ── Ledger modal with OnlyBrains actions ────
-  function showLedger(){
-    var b = bloom();
-    var sh = shape();
-    var rows = RINGS.map(function(r, i){
-      var v = b[i];
-      var pct = sh.sum ? Math.round(v/sh.sum*100) : 0;
-      return '<tr><td style="color:'+r.colour+';padding:4px 0;font-weight:600">'+r.v+'</td><td>'+r.anat+'</td><td style="color:#8a8a8a">'+r.verb+'</td><td>'+r.hz+' Hz</td><td style="text-align:right;font-weight:700">'+v+'</td><td style="color:#8a8a8a">'+pct+'%</td></tr>';
-    }).join('');
-    var recent = LEDGER.events.slice(-6).reverse().map(function(ev){
-      var d = new Date(ev.t).toLocaleString();
-      return '<div style="font-size:11px;color:#a8b0bc;padding:2px 0">'+d+' · <span style="color:'+RINGS[ev.ring].colour+';font-weight:600">'+RINGS[ev.ring].v+'</span> · '+ev.action+(ev.weight!==1?' ×'+ev.weight:'')+'</div>';
-    }).join('') || '<div style="color:#8a8a8a;font-size:12px;padding:6px 0">no events yet</div>';
-    var anchorsHtml = (LEDGER.anchors || []).slice(-5).reverse().map(function(a){
-      var d = new Date(a.at).toLocaleString();
-      var label = a.kind === 'reason' ? ('reason · ' + a.strategy) : (a.kind + ' · ' + a.type);
-      return '<div style="font-size:10px;color:#a8b0bc;padding:2px 0"><span style="color:#d4af37">'+d+'</span> · '+label+'</div>';
-    }).join('') || '<div style="color:#8a8a8a;font-size:11px;padding:4px 0">no OnlyBrains calls yet</div>';
-    var bal = LEDGER.ob_balance ? LEDGER.ob_balance.balance : '—';
-    var obSection = '<div style="background:#0c0e12;border:1px solid #2a2f3a;border-radius:8px;padding:10px;margin:10px 0;font-size:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div style="color:#d4af37;font-weight:700">$KONO ' + bal + '</div><div style="color:#8a8a8a;font-size:10px">key <code>'+KEY+'</code></div></div><button id="kcc-sync" style="background:transparent;color:#d4af37;border:1px solid #d4af37;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px">sync</button></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px"><button data-act="reason"  style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="10 $KONO">🧠 reason</button><button data-act="oracle"  style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="5 $KONO">🔮 oracle</button><button data-act="anchor"  style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="varies">⚓ anchor</button><button data-act="nft"     style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="100 $KONO">🎴 mint NFT</button><button data-act="rates"   style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="free">📊 rates</button><button data-act="quote"   style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="free">💱 quote</button><button data-act="chain"   style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="free">⛓️ chain</button><button data-act="tags"    style="background:#1f2937;color:#dbe1ea;border:1px solid #374151;padding:7px 4px;border-radius:6px;cursor:pointer;font-size:11px" title="1 $KONO">🏷️ tags</button></div><div id="kcc-ob-result" style="margin-top:8px;font-size:10px;color:#8a8a8a;max-height:120px;overflow:auto;font-family:monospace;display:none;background:#06080c;border:1px solid #1f2937;border-radius:4px;padding:6px"></div></div>';
-    var modal = document.createElement('div');
-    modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:system-ui,sans-serif';
-    modal.innerHTML='<div style="background:#161821;border:1px solid #2a2f3a;border-radius:12px;padding:22px;max-width:620px;width:100%;color:#dbe1ea;max-height:90vh;overflow:auto"><h3 style="margin:0 0 4px;color:#e6e8ee">◊·κ KCC Ledger · OnlyBrains</h3><p style="margin:0 0 10px;font-size:12px;color:#8a8a8a">'+window.NODE.name+' · prime '+window.NODE.prime+' · shape: '+sh.shape+' · '+sh.sum+' events</p>'+obSection+'<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:10px"><thead><tr style="border-bottom:1px solid #2a2f3a"><th style="text-align:left;padding:6px 0">ring</th><th style="text-align:left">anat</th><th style="text-align:left">verb</th><th style="text-align:left">Hz</th><th style="text-align:right">n</th><th>%</th></tr></thead><tbody>'+rows+'</tbody></table><h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 4px">recent events</h4>'+recent+'<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 4px">recent OnlyBrains calls</h4>'+anchorsHtml+'<div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap"><button id="kcc-export" style="background:#5b8def;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600">export proof</button><button id="kcc-close" style="background:transparent;color:#8a8a8a;border:1px solid #2a2f3a;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px">close</button><span style="margin-left:auto;align-self:center;font-size:11px;color:#8a8a8a">head: <code>'+(LEDGER.head||'∅')+'</code></span></div></div>';
-    document.body.appendChild(modal);
-    var resultEl = modal.querySelector('#kcc-ob-result');
-    function showResult(label, data){
-      resultEl.style.display = 'block';
-      var s = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
-      if (s.length > 4000) s = s.slice(0, 4000) + '\n…';
-      resultEl.textContent = '> ' + label + '\n' + s;
-    }
-    modal.querySelector('#kcc-close').onclick = function(){ modal.remove(); };
-    modal.querySelector('#kcc-sync').onclick = function(){
-      showResult('syncing wallet…', '');
-      syncOnlyBrains().then(function(w){ showResult('wallet', w); modal.remove(); showLedger(); });
-    };
-    modal.querySelector('#kcc-export').onclick = function(){
-      var p = exportProof({ includeEvents:true, includeAnchors:true });
-      var blob = new Blob([JSON.stringify(p, null, 2)], { type:'application/json' });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a'); a.href = url; a.download = NODE.id + '-kcc-proof-' + Date.now() + '.json'; a.click();
-      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-    };
-    modal.querySelectorAll('button[data-act]').forEach(function(btn){
-      btn.onclick = function(){
-        var act = btn.getAttribute('data-act');
-        if (act === 'reason') {
-          var problem = prompt('What problem? (10 $KONO)');
-          if (!problem) return;
-          var strat = prompt('Strategy? (CoT / ToT / GoT / BoT / SelfAsk / ReAct / Reflexion)', 'CoT');
-          showResult('reason: ' + strat, 'thinking…');
-          reason(problem, strat).then(function(r){ showResult('reason · ' + strat, r); });
-        } else if (act === 'oracle') {
-          showResult('oracle (5 $KONO)', 'fetching…');
-          oracle().then(function(r){ showResult('oracle', r); });
-        } else if (act === 'anchor') {
-          var type = prompt('Anchor type? (STATE / KPI / ALARM / TRADE / ASSET / SVG)', 'STATE');
-          if (!type) return;
-          var paramsStr = prompt('Params JSON (e.g. {"equip":"X","from":"idle","to":"run","mode":"auto"})', '{}');
-          var params; try { params = JSON.parse(paramsStr || '{}'); } catch(e){ alert('invalid JSON'); return; }
-          showResult('anchor · ' + type, 'anchoring to BSV…');
-          anchor(type, params).then(function(r){ showResult('anchor · ' + type, r); });
-        } else if (act === 'nft') {
-          var meta = prompt('NFT meta (100 $KONO)', NODE.name + ' · prime ' + NODE.prime);
-          if (!meta) return;
-          showResult('mint NFT', 'minting…');
-          mintNft(null, null, null, meta).then(function(r){ showResult('NFT minted', r); });
-        } else if (act === 'rates') {
-          showResult('rates', 'fetching…');
-          rates().then(function(r){ showResult('rates', r); });
-        } else if (act === 'quote') {
-          showResult('quote · anthropic 10k → reason', 'fetching…');
-          quote('anthropic', 10000, 'reason').then(function(r){ showResult('quote', r); });
-        } else if (act === 'chain') {
-          showResult('chain', 'fetching…');
-          chain().then(function(r){ showResult('chain', r); });
-        } else if (act === 'tags') {
-          showResult('tags', 'fetching…');
-          queryTags().then(function(r){ showResult('tags', r); });
-        }
-      };
-    });
-    modal.onclick = function(e){ if (e.target===modal) modal.remove(); };
-  }
-
-  // ── 4-channel mesh interop ──
-  var CHANNEL_NAMES = ['fall-kcc', 'kcc-mesh', 'onlybrains-mesh', 'ass-os-mesh'];
-  window.kccChannels = [];
-  CHANNEL_NAMES.forEach(function(name){
-    try {
-      var ch = new BroadcastChannel(name);
-      window.kccChannels.push(ch);
-      ch.onmessage = function(e){
-        var m = e.data;
-        if (!m || m.from === NODE.id || m.source === NODE.id) return;
-        if (window.KCC_LISTEN && (m.type === 'kcc:event')) {
-          emit('observed:' + (m.from || m.source || 'peer'), 1, 0.1, { ev_h: m.ev && m.ev.h, channel: name });
-        }
-      };
-    } catch(_){}
-  });
-  if (window.kccChannels.length > 0) window.kccChannel = window.kccChannels[0];
-
-  // ── Quarterly bloom report (formal cognitive contribution statement) ──
-  function exportBloomReport(opts){
-    opts = opts || {};
-    var quarterStart = opts.since || (function(){
-      var d = new Date(); var q = Math.floor(d.getMonth() / 3);
-      return new Date(d.getFullYear(), q * 3, 1).getTime();
-    })();
-    var quarterEnd = opts.until || Date.now();
-    var qEvents = LEDGER.events.filter(function(e){ return e.t >= quarterStart && e.t <= quarterEnd; });
-    var qBloom = [0,0,0,0,0,0,0];
-    var topActions = {};
-    var anchoredCount = 0;
-    qEvents.forEach(function(ev){
-      qBloom[ev.ring] = (qBloom[ev.ring] || 0) + (ev.weight || 1);
-      topActions[ev.action] = (topActions[ev.action] || 0) + (ev.weight || 1);
-    });
-    (LEDGER.anchors || []).forEach(function(a){ if (a.at >= quarterStart && a.at <= quarterEnd) anchoredCount++; });
-    var totalEvents = qEvents.length;
-    var totalContribution = qBloom.reduce(function(a,x){ return a+x; }, 0);
-    var peakIdx = qBloom.indexOf(Math.max.apply(null, qBloom));
-    var shapeName = totalContribution === 0 ? 'unbloomed' : RINGS[peakIdx].verb;
-    var primesProduct = (function(){
-      var primes = [2,3,5,7,11,13,17];
-      var prod = 1n;
-      for (var i = 0; i < 7; i++) for (var j = 0; j < Math.floor(qBloom[i]); j++) prod *= BigInt(primes[i]);
-      return prod.toString();
-    })();
-    var startDate = new Date(quarterStart).toISOString().slice(0,10);
-    var endDate = new Date(quarterEnd).toISOString().slice(0,10);
-    var topList = Object.entries(topActions).sort(function(a,b){ return b[1]-a[1]; }).slice(0, 10);
-
-    var format = opts.format || 'markdown';
-    if (format === 'json') {
-      var payload = {
-        v: 1, type: 'bloom_quarterly_report',
-        tool: NODE.id, tool_name: NODE.name, tool_prime: NODE.prime,
-        period: { from: startDate, to: endDate, ms: quarterEnd - quarterStart },
-        bloom_vec: qBloom, bloom_sum: totalContribution, bloom_shape: shapeName,
-        peak_ring: RINGS[peakIdx],
-        prime_product: primesProduct,
-        events_total: totalEvents,
-        anchors_total: anchoredCount,
-        top_actions: topList,
-        kcc_key: KEY,
-        onlybrains_balance: LEDGER.ob_balance,
-        issued_at: new Date().toISOString()
-      };
-      return payload;
-    }
-
-    // Markdown report
-    var lines = [];
-    lines.push('# ◊·κ Quarterly Bloom Report');
-    lines.push('');
-    lines.push('**Tool:** ' + NODE.name + ' · prime ' + NODE.prime + ' · `' + NODE.id + '`');
-    lines.push('**Period:** ' + startDate + ' → ' + endDate);
-    lines.push('**Issued:** ' + new Date().toISOString());
-    lines.push('');
-    lines.push('---');
-    lines.push('');
-    lines.push('## Headline');
-    lines.push('');
-    lines.push('- **Total events:** ' + totalEvents);
-    lines.push('- **Contribution weight:** ' + totalContribution);
-    lines.push('- **Bloom shape:** ' + shapeName + ' (peak in ' + RINGS[peakIdx].v + ' · ' + RINGS[peakIdx].anat + ')');
-    lines.push('- **BSV anchors this period:** ' + anchoredCount);
-    if (LEDGER.ob_balance) {
-      lines.push('- **$KONO balance:** ' + LEDGER.ob_balance.balance);
-    }
-    lines.push('');
-    lines.push('## Bloom signature');
-    lines.push('');
-    lines.push('```');
-    lines.push('Ring   Anatomy   Earning verb   Count   %');
-    lines.push('────   ───────   ────────────   ─────   ────');
-    RINGS.forEach(function(r, i){
-      var n = qBloom[i];
-      var pct = totalContribution > 0 ? (n / totalContribution * 100).toFixed(1) + '%' : '—';
-      lines.push(r.v + '    ' + r.anat.padEnd(9) + r.verb.padEnd(14) + ' ' + String(n).padStart(5) + '   ' + pct);
-    });
-    lines.push('```');
-    lines.push('');
-    lines.push('## Bloom prime-product (identity)');
-    lines.push('');
-    lines.push('`' + primesProduct + '`');
-    lines.push('');
-    lines.push('_This integer is your tool\'s unique cognitive contribution signature for the period._');
-    lines.push('');
-    lines.push('## Top 10 actions');
-    lines.push('');
-    topList.forEach(function(t){ lines.push('- `' + t[0] + '` × ' + t[1]); });
-    lines.push('');
-    lines.push('## Verification');
-    lines.push('');
-    lines.push('- KCC key: `' + KEY + '`');
-    lines.push('- Ledger head: `' + (LEDGER.head || '∅') + '`');
-    lines.push('- Anchors written to BSV: ' + anchoredCount);
-    lines.push('');
-    lines.push('---');
-    lines.push('');
-    lines.push('_Generated by KCC shim v3 · Ω(KCC) v18 · part of the Fall* estate._');
-    return lines.join('\n');
-  }
-
-  // ── public API ────────────────────────────────
-  window.kcc = {
-    emit: emit, bloom: bloom, shape: shape, exportProof: exportProof, rings: RINGS,
-    ledger: function(){ return { events: LEDGER.events.slice(), head: LEDGER.head, anchors: (LEDGER.anchors||[]).slice() }; },
-    clear: function(){ if (confirm('Clear KCC ledger for ' + NODE.id + '? Cannot undo.')) { LEDGER = { events:[], head:null, last_export:null, ob_balance:null, ob_last_sync:null, anchors:[] }; persist(); updateBadge(); } },
-    showLedger: showLedger,
-    kccKey: function(){ return KEY; },
-    onlybrains: function(){ return LEDGER.ob_balance; },
-    exportBloomReport: exportBloomReport,
-    // OnlyBrains REST client
-    syncOnlyBrains: syncOnlyBrains,
-    reason: reason, anchor: anchor, oracle: oracle, mintNft: mintNft,
-    queryTags: queryTags, quote: quote, swap: swap,
-    rates: rates, tiers: tiers, chain: chain, fnList: fnList, wallet: wallet
-  };
-
-  // ── boot ──────────────────────────────────────
-  (async function(){
-    if (document.readyState === 'loading') {
-      await new Promise(function(r){ document.addEventListener('DOMContentLoaded', r, { once:true }); });
-    }
-    injectBadge();
-    var todayKey = 'kcc_open_' + new Date().toISOString().slice(0,10);
-    if (!sessionStorage.getItem(todayKey)) { sessionStorage.setItem(todayKey, '1'); emit('app:open', 0, 1); }
-    var lastSync = LEDGER.ob_last_sync || 0;
-    if (Date.now() - lastSync > 3600 * 1000) syncOnlyBrains();
-    try { console.log('%c◊·κ KCC v3', 'color:#c2a060;font-weight:bold',
-      NODE.name + ' · ' + LEDGER.events.length + ' events · shape: ' + shape().shape + ' · key: ' + KEY); } catch(_){}
-  })();
-})();
-</script>
-<!-- /◊·κ KCC LEDGER -->
-
-<!-- ◊·κ LLM CASCADE — T0→T4 sovereign fallback (drop-in, no deps except optional WebLLM ESM)
-  T0  · deterministic / template fallback (always works, never fails)
-  T1  · user's own API key (Anthropic / OpenAI / Google · stored in localStorage)
-  T2  · same-origin mesh peer (BroadcastChannel('fallmesh') · ask other tabs)
-  T3  · OnlyBrains /api/reason (paid via $KONO · uses window.kcc.reason)
-  T4  · WebLLM in-browser (Llama-3.2-3B by default · ~1.7GB one-time download · runs offline)
-
-  Public API:
-    window.llm.ask(prompt, opts)         → { provider, tier, text, ms } | { error }
-    window.llm.providers()               → { anthropic:bool, openai:bool, google:bool, mesh:bool, onlybrains:bool, webllm:'ready'|'downloading'|'not-loaded' }
-    window.llm.setKey(provider, key)     → stores key
-    window.llm.preloadWebLLM(modelId?)   → kicks off WebLLM download
-    window.llm.tier()                    → 'T1' / 'T2' / 'T3' / 'T4' / 'T0' — current default tier
-    window.llm.config                    → { preferred: ['anthropic','onlybrains','webllm','t0'] }
--->
-<script>
-(function llmCascade(){
-  if (window.llm) return;
-
-  var STORE_KEY = 'llm_cascade_v1';
-  var STATE = {
-    keys: {},                  // { anthropic: 'sk-ant-...', openai: '...', google: '...' }
-    webllm: { status: 'not-loaded', model: null, progress: 0, message: '' },
-    // T1 FallCore (local proxy) → T1 user keys → T3 OnlyBrains → T4 WebLLM → T2 mesh → T0 fallback
-    preferred: ['fallcore', 'anthropic', 'openai', 'google', 'onlybrains', 'webllm', 'mesh', 't0'],
-    fallcore_endpoint: '',   // e.g. 'http://localhost:11434' or 'https://ai.acme.internal'
-    log: []                    // last 50 calls: { t, provider, tier, ms, ok, prompt_chars }
-  };
-  try {
-    var raw = localStorage.getItem(STORE_KEY);
-    if (raw) STATE = Object.assign(STATE, JSON.parse(raw));
-  } catch(_){}
-  function persist(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(STATE)); } catch(_){} }
-
-  function trace(provider, tier, ms, ok, prompt) {
-    STATE.log.unshift({ t: Date.now(), provider: provider, tier: tier, ms: ms, ok: !!ok, prompt_chars: (prompt || '').length });
-    if (STATE.log.length > 50) STATE.log.length = 50;
-    persist();
-    if (window.kcc) {
-      // R5 verify when AI returns useful output; R0 compute on every call
-      window.kcc.emit('llm:' + provider + (ok ? '' : ':fail'), ok ? 5 : 0, ok ? 1 : 0.2, { tier: tier, ms: ms });
-    }
-  }
-
-  function withTimeout(promise, ms, label) {
-    return Promise.race([
-      promise,
-      new Promise(function(_, rej){ setTimeout(function(){ rej(new Error((label||'op') + ' timeout')); }, ms || 30000); })
-    ]);
-  }
-
-  // ── T1 providers — direct from browser (CORS-allowed endpoints) ──
-  var T1 = {
-    // FallCore: company's on-prem brain · same API shape as Anthropic
-    // If configured, this tries FIRST · transparent fallthrough if low confidence
-    fallcore: {
-      tier: 'T1',
-      label: 'FallCore (on-prem)',
-      available: function(){ return !!STATE.fallcore_endpoint; },
-      hasKey: function(){ return !!STATE.fallcore_endpoint; },
-      ask: async function(prompt, opts){
-        if (!STATE.fallcore_endpoint) throw new Error('no fallcore endpoint');
-        var url = STATE.fallcore_endpoint.replace(/\/$/, '') + '/v1/messages';
-        var r = await withTimeout(fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': STATE.keys.anthropic || 'fallcore-cascade',
-            'anthropic-version': '2023-06-01',
-            'x-fallcore-tool': (window.NODE ? window.NODE.id : 'anon')
-          },
-          body: JSON.stringify({
-            model: opts.model || 'claude-sonnet-4-20250514',  // FallCore picks local first regardless
-            max_tokens: opts.max_tokens || 2048,
-            system: opts.system || 'You are a helpful assistant for ' + (window.NODE ? window.NODE.name : 'this app') + '. Reply concisely.',
-            messages: [{ role: 'user', content: prompt }],
-            fallcore_options: opts.fallcore_options || {}
-          })
-        }), 60000, 'fallcore');
-        if (!r.ok) throw new Error('fallcore ' + r.status);
-        var j = await r.json();
-        return j.content[0].text;
-      }
-    },
-    anthropic: {
-      tier: 'T1',
-      label: 'Anthropic',
-      hasKey: function(){ return !!STATE.keys.anthropic; },
-      ask: async function(prompt, opts){
-        if (!STATE.keys.anthropic) throw new Error('no anthropic key');
-        var r = await withTimeout(fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': STATE.keys.anthropic,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true'
-          },
-          body: JSON.stringify({
-            model: opts.model || 'claude-sonnet-4-20250514',
-            max_tokens: opts.max_tokens || 2048,
-            system: opts.system || 'You are a helpful assistant for ' + (window.NODE ? window.NODE.name : 'this app') + '. Reply concisely.',
-            messages: [{ role: 'user', content: prompt }]
-          })
-        }), 45000, 'anthropic');
-        if (!r.ok) throw new Error('anthropic ' + r.status);
-        var j = await r.json();
-        return j.content[0].text;
-      }
-    },
-    openai: {
-      tier: 'T1',
-      label: 'OpenAI',
-      hasKey: function(){ return !!STATE.keys.openai; },
-      ask: async function(prompt, opts){
-        if (!STATE.keys.openai) throw new Error('no openai key');
-        var r = await withTimeout(fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + STATE.keys.openai },
-          body: JSON.stringify({
-            model: opts.model || 'gpt-4o-mini',
-            max_tokens: opts.max_tokens || 2048,
-            messages: [
-              { role: 'system', content: opts.system || 'You are a helpful assistant. Reply concisely.' },
-              { role: 'user', content: prompt }
-            ]
-          })
-        }), 45000, 'openai');
-        if (!r.ok) throw new Error('openai ' + r.status);
-        var j = await r.json();
-        return j.choices[0].message.content;
-      }
-    },
-    google: {
-      tier: 'T1',
-      label: 'Google',
-      hasKey: function(){ return !!STATE.keys.google; },
-      ask: async function(prompt, opts){
-        if (!STATE.keys.google) throw new Error('no google key');
-        var model = opts.model || 'gemini-2.0-flash';
-        var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(STATE.keys.google);
-        var r = await withTimeout(fetch(url, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ role:'user', parts: [{ text: (opts.system ? opts.system + '\n\n' : '') + prompt }] }],
-            generationConfig: { maxOutputTokens: opts.max_tokens || 2048 }
-          })
-        }), 45000, 'google');
-        if (!r.ok) throw new Error('google ' + r.status);
-        var j = await r.json();
-        return j.candidates[0].content.parts[0].text;
-      }
-    }
-  };
-
-  // ── T2 mesh peer (ask another tab) ──
-  var T2 = {
-    mesh: {
-      tier: 'T2',
-      label: 'Mesh peer',
-      available: function(){ try { return !!window.BroadcastChannel; } catch(_){ return false; } },
-      ask: function(prompt, opts){
-        return new Promise(function(resolve, reject){
-          if (!window.BroadcastChannel) return reject(new Error('no BroadcastChannel'));
-          var ch;
-          try { ch = new BroadcastChannel('fallmesh'); }
-          catch(e){ return reject(new Error('mesh open failed')); }
-          var reqId = 'llmreq_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-          var handler = function(e){
-            var m = e.data;
-            if (m && m.type === 'llm:response' && m.req === reqId) {
-              ch.removeEventListener('message', handler);
-              ch.close();
-              if (m.text) resolve(m.text);
-              else reject(new Error(m.error || 'mesh empty'));
-            }
-          };
-          ch.addEventListener('message', handler);
-          try {
-            ch.postMessage({
-              type: 'llm:request', req: reqId,
-              from: window.NODE ? window.NODE.id : 'anon',
-              prompt: prompt, opts: opts || {}
-            });
-          } catch(e){ ch.close(); return reject(e); }
-          setTimeout(function(){
-            try { ch.removeEventListener('message', handler); ch.close(); } catch(_){}
-            reject(new Error('mesh timeout'));
-          }, opts.mesh_timeout || 2000);
-        });
-      }
-    }
-  };
-
-  // ── T3 OnlyBrains (via window.kcc) ──
-  var T3 = {
-    onlybrains: {
-      tier: 'T3',
-      label: 'OnlyBrains',
-      available: function(){ return !!(window.kcc && window.kcc.reason); },
-      ask: async function(prompt, opts){
-        if (!window.kcc || !window.kcc.reason) throw new Error('kcc not loaded');
-        var r = await withTimeout(window.kcc.reason(prompt, opts.strategy || 'CoT'), 60000, 'onlybrains');
-        if (r && r.error) throw new Error('onlybrains: ' + r.error);
-        // Shape: response varies by OnlyBrains API · normalise
-        if (typeof r === 'string') return r;
-        return r.text || r.answer || r.result || r.output || JSON.stringify(r);
-      }
-    }
-  };
-
-  // ── T4 WebLLM (in-browser, requires WebGPU) ──
-  var WEBLLM_DEFAULT_MODEL = 'Llama-3.2-3B-Instruct-q4f16_1-MLC';
-  var webllmEngine = null;
-  var webllmLoadPromise = null;
-  function hasWebGPU(){ return typeof navigator !== 'undefined' && !!navigator.gpu; }
-  async function loadWebLLM(modelId) {
-    if (webllmEngine) return webllmEngine;
-    if (webllmLoadPromise) return webllmLoadPromise;
-    if (!hasWebGPU()) throw new Error('WebGPU unavailable in this browser');
-    STATE.webllm.status = 'downloading';
-    STATE.webllm.model = modelId || WEBLLM_DEFAULT_MODEL;
-    STATE.webllm.progress = 0;
-    STATE.webllm.message = 'starting…';
-    persist();
-    updateUI();
-    webllmLoadPromise = (async function(){
-      var mod = await import('https://esm.run/@mlc-ai/web-llm');
-      var fn = mod.CreateMLCEngine || mod.createMLCEngine;
-      if (!fn) throw new Error('WebLLM API not found in module');
-      webllmEngine = await fn(STATE.webllm.model, {
-        initProgressCallback: function(p){
-          STATE.webllm.progress = p.progress || 0;
-          STATE.webllm.message = p.text || '';
-          persist();
-          updateUI();
-        }
-      });
-      STATE.webllm.status = 'ready';
-      STATE.webllm.message = 'ready';
-      persist();
-      updateUI();
-      return webllmEngine;
-    })().catch(function(e){
-      STATE.webllm.status = 'error';
-      STATE.webllm.message = e.message || String(e);
-      persist();
-      updateUI();
-      webllmLoadPromise = null;
-      throw e;
-    });
-    return webllmLoadPromise;
-  }
-  var T4 = {
-    webllm: {
-      tier: 'T4',
-      label: 'WebLLM (offline)',
-      available: function(){ return hasWebGPU(); },
-      ask: async function(prompt, opts){
-        var eng = await loadWebLLM(opts.model);
-        var r = await eng.chat.completions.create({
-          messages: [
-            { role: 'system', content: opts.system || 'You are a helpful assistant. Reply concisely.' },
-            { role: 'user', content: prompt }
-          ],
-          max_tokens: opts.max_tokens || 1024,
-          temperature: opts.temperature == null ? 0.7 : opts.temperature
-        });
-        return r.choices[0].message.content;
-      }
-    }
-  };
-
-  // ── T0 deterministic fallback (last resort, never throws) ──
-  var T0 = {
-    t0: {
-      tier: 'T0',
-      label: 'Offline fallback',
-      available: function(){ return true; },
-      ask: async function(prompt, opts){
-        if (opts.fallback) return typeof opts.fallback === 'function' ? opts.fallback(prompt) : opts.fallback;
-        return '[T0] No AI provider available. Add an API key (Settings → AI Cascade), enable WebLLM, or check internet connection. Prompt was: ' + String(prompt || '').slice(0, 200);
-      }
-    }
-  };
-
-  var ALL = Object.assign({}, T1, T2, T3, T4, T0);
-
-  // Listen for mesh peer requests — if other tabs ask us, answer using our T1 provider only
-  // (don't recurse into mesh asking mesh asking mesh)
-  try {
-    var peerCh = new BroadcastChannel('fallmesh');
-    peerCh.addEventListener('message', async function(e){
-      var m = e.data;
-      if (!m || m.type !== 'llm:request' || m.from === (window.NODE && window.NODE.id)) return;
-      // Try T1 only — don't recurse
-      for (var i = 0; i < STATE.preferred.length; i++) {
-        var p = STATE.preferred[i];
-        if (p === 'mesh' || p === 't0' || !ALL[p]) continue;
-        if (ALL[p].tier !== 'T1') continue;
-        if (ALL[p].hasKey && !ALL[p].hasKey()) continue;
-        try {
-          var text = await ALL[p].ask(m.prompt, m.opts || {});
-          peerCh.postMessage({ type: 'llm:response', req: m.req, text: text, served_by: window.NODE && window.NODE.id });
-          return;
-        } catch(_){}
-      }
-      // Couldn't help — silently ignore
-    });
-  } catch(_){}
-
-  // ── Main ask() — walks the cascade ──
-  async function ask(prompt, opts) {
-    opts = opts || {};
-    var order = opts.order || STATE.preferred;
-    var skipped = [];
-    for (var i = 0; i < order.length; i++) {
-      var name = order[i];
-      var p = ALL[name];
-      if (!p) continue;
-      if (p.available && !p.available()) { skipped.push({ name: name, reason: 'unavailable' }); continue; }
-      if (p.hasKey && !p.hasKey()) { skipped.push({ name: name, reason: 'no key' }); continue; }
-      var t0 = Date.now();
-      try {
-        var text = await p.ask(prompt, opts);
-        var ms = Date.now() - t0;
-        trace(name, p.tier, ms, true, prompt);
-        return { provider: name, tier: p.tier, label: p.label, text: text, ms: ms, skipped: skipped };
-      } catch(e) {
-        var ms2 = Date.now() - t0;
-        trace(name, p.tier, ms2, false, prompt);
-        skipped.push({ name: name, reason: e.message || String(e), ms: ms2 });
-      }
-    }
-    return { error: 'all providers failed', skipped: skipped };
-  }
-
-  function providers() {
-    return {
-      fallcore: !!STATE.fallcore_endpoint,
-      fallcore_endpoint: STATE.fallcore_endpoint,
-      anthropic: !!STATE.keys.anthropic,
-      openai: !!STATE.keys.openai,
-      google: !!STATE.keys.google,
-      mesh: !!window.BroadcastChannel,
-      onlybrains: !!(window.kcc && window.kcc.reason),
-      webllm_supported: hasWebGPU(),
-      webllm_status: STATE.webllm.status,
-      webllm_progress: STATE.webllm.progress,
-      webllm_model: STATE.webllm.model
-    };
-  }
-
-  function setKey(provider, key) {
-    STATE.keys[provider] = key;
-    persist();
-    updateUI();
-  }
-  function setFallcoreEndpoint(url) {
-    STATE.fallcore_endpoint = String(url || '').trim();
-    persist();
-    updateUI();
-  }
-
-  function currentTier() {
-    // Highest-priority tier that will ACTUALLY answer (mesh excluded since it's peer-dependent)
-    var prov = providers();
-    if (prov.fallcore) return 'T1·FallCore';
-    if (prov.anthropic || prov.openai || prov.google) return 'T1';
-    if (prov.onlybrains) return 'T3';
-    if (prov.webllm_status === 'ready') return 'T4';
-    return 'T0';
-  }
-
-  // ── Floating cascade-status badge ──
-  var badge = null;
-  function injectBadge(){
-    if (document.getElementById('llm-badge')) return;
-    var el = document.createElement('div');
-    el.id = 'llm-badge';
-    el.style.cssText = 'position:fixed;bottom:12px;left:340px;background:rgba(0,0,0,.65);color:#dbe1ea;padding:5px 10px;border-radius:6px;font-family:monospace;font-size:11px;cursor:pointer;z-index:9999;letter-spacing:.06em;border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(6px);display:flex;align-items:center;gap:6px';
-    el.title = 'LLM Cascade · click for status';
-    el.onclick = function(){ showCascadeUI(); };
-    document.body.appendChild(el);
-    badge = el;
-    updateUI();
-  }
-  function updateUI(){
-    if (!badge) return;
-    var tier = currentTier();
-    var colour = tier === 'T1' ? '#22c55e' : tier === 'T2' ? '#8b5cf6' : tier === 'T3' ? '#d4af37' : tier === 'T4' ? '#f59e0b' : '#8a8a8a';
-    var label = 'AI · ' + tier;
-    if (STATE.webllm.status === 'downloading') {
-      label = 'WebLLM ' + Math.round((STATE.webllm.progress || 0) * 100) + '%';
-      colour = '#f59e0b';
-    }
-    badge.innerHTML = '<span style="color:' + colour + ';font-weight:700">●</span><span>' + label + '</span>';
-  }
-
-  // ── Settings modal ──
-  function showCascadeUI(){
-    var prov = providers();
-    var tier = currentTier();
-    var fallcoreHtml = '<div style="background:#0c0e12;border:1px solid #2a2f3a;border-radius:6px;padding:10px;margin-bottom:10px;font-size:12px">' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong style="color:#22c55e">⚡ FallCore (on-prem brain)</strong><span style="color:#8a8a8a;font-size:11px">' + (STATE.fallcore_endpoint ? STATE.fallcore_endpoint : 'not set') + '</span></div>' +
-      '<div style="font-size:11px;color:#a8b0bc;margin-bottom:8px">Point at your company’s on-prem brain. Cascades local-first, falls through to frontier only on low confidence. Same API as Anthropic. Self-improves over time from your reviewer corrections.</div>' +
-      '<div style="display:flex;gap:6px;align-items:center">' +
-      '<input type="text" id="llm-fallcore-url" placeholder="https://ai.acme.internal or http://localhost:11434" value="' + (STATE.fallcore_endpoint || '') + '" style="flex:1;background:#0c0e12;color:#dbe1ea;border:1px solid #2a2f3a;border-radius:5px;padding:5px 8px;font-family:monospace;font-size:11px">' +
-      '<button id="llm-fallcore-save" style="background:#22c55e;color:#000;border:none;padding:5px 12px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:600">save</button>' +
-      (STATE.fallcore_endpoint ? '<button id="llm-fallcore-clear" style="background:transparent;color:#ef4444;border:1px solid #ef4444;padding:5px 10px;border-radius:5px;cursor:pointer;font-size:11px">clear</button>' : '') +
-      '</div></div>';
-    var keysHtml = ['anthropic','openai','google'].map(function(p){
-      var has = !!STATE.keys[p];
-      var label = p[0].toUpperCase() + p.slice(1);
-      return '<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px"><label style="width:90px;font-size:12px;color:#a8b0bc">' + label + '</label><input type="password" id="llm-key-' + p + '" placeholder="' + (has ? '••• key saved' : 'paste API key') + '" style="flex:1;background:#0c0e12;color:#dbe1ea;border:1px solid #2a2f3a;border-radius:5px;padding:5px 8px;font-family:monospace;font-size:11px"><button data-save="' + p + '" style="background:#5b8def;color:#fff;border:none;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:11px">save</button>' + (has ? '<button data-clear="' + p + '" style="background:transparent;color:#ef4444;border:1px solid #ef4444;padding:4px 8px;border-radius:5px;cursor:pointer;font-size:11px">clear</button>' : '') + '</div>';
-    }).join('');
-    var webllmStatus = STATE.webllm.status;
-    var webllmHtml = '<div style="background:#0c0e12;border:1px solid #2a2f3a;border-radius:6px;padding:10px;margin:10px 0;font-size:12px">' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong style="color:#f59e0b">⚡ WebLLM (in-browser, offline-capable)</strong><span style="color:#8a8a8a;font-size:11px">' + (STATE.webllm.model || WEBLLM_DEFAULT_MODEL) + '</span></div>' +
-      '<div style="font-size:11px;color:#a8b0bc;margin-bottom:8px">Downloads a 1.7GB model once. After that all AI runs in your browser using WebGPU — no internet needed. Status: <strong style="color:' + (webllmStatus === 'ready' ? '#22c55e' : webllmStatus === 'downloading' ? '#f59e0b' : '#8a8a8a') + '">' + webllmStatus + '</strong>' + (STATE.webllm.message ? ' · ' + STATE.webllm.message : '') + '</div>' +
-      (webllmStatus === 'downloading' ? '<div style="height:6px;background:#1f2937;border-radius:3px;overflow:hidden;margin-bottom:6px"><div style="height:100%;background:#f59e0b;width:' + Math.round((STATE.webllm.progress || 0) * 100) + '%"></div></div>' : '') +
-      '<div style="display:flex;gap:6px"><button id="llm-webllm-download" ' + (webllmStatus === 'downloading' || webllmStatus === 'ready' ? 'disabled' : '') + ' style="background:#f59e0b;color:#000;border:none;padding:6px 12px;border-radius:5px;cursor:' + (webllmStatus === 'downloading' || webllmStatus === 'ready' ? 'not-allowed;opacity:.5' : 'pointer') + ';font-size:11px;font-weight:600">' + (webllmStatus === 'ready' ? '✓ loaded' : webllmStatus === 'downloading' ? 'downloading…' : 'download model (1.7GB)') + '</button>' +
-      (hasWebGPU() ? '<span style="font-size:10px;color:#22c55e;align-self:center">✓ WebGPU supported</span>' : '<span style="font-size:10px;color:#ef4444;align-self:center">✗ WebGPU not available in this browser</span>') +
-      '</div></div>';
-    var logHtml = STATE.log.slice(0, 6).map(function(l){
-      var d = new Date(l.t).toLocaleString();
-      var ok = l.ok ? '✓' : '✗';
-      var colour = l.ok ? '#22c55e' : '#ef4444';
-      return '<div style="font-size:10px;color:#a8b0bc;padding:2px 0"><span style="color:#8a8a8a">' + d + '</span> · <span style="color:' + colour + '">' + ok + '</span> ' + l.provider + ' (' + l.tier + ') · ' + l.ms + 'ms · ' + l.prompt_chars + ' chars in</div>';
-    }).join('') || '<div style="color:#8a8a8a;font-size:11px">no calls yet</div>';
-
-    var modal = document.createElement('div');
-    modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;font-family:system-ui,sans-serif';
-    modal.innerHTML='<div style="background:#161821;border:1px solid #2a2f3a;border-radius:12px;padding:22px;max-width:580px;width:100%;color:#dbe1ea;max-height:90vh;overflow:auto">' +
-      '<h3 style="margin:0 0 4px;color:#e6e8ee">◊·κ LLM Cascade</h3>' +
-      '<p style="margin:0 0 12px;font-size:12px;color:#8a8a8a">Current tier: <strong style="color:' + (tier==='T1'?'#22c55e':tier==='T2'?'#8b5cf6':tier==='T3'?'#d4af37':tier==='T4'?'#f59e0b':'#8a8a8a') + '">' + tier + '</strong> · fallback order: ' + STATE.preferred.join(' → ') + '</p>' +
-      '<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:8px 0 6px">T1 · FallCore (your on-prem brain)</h4>' +
-      fallcoreHtml +
-      '<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 6px">T1 · direct API keys (browser-only, never leaves device)</h4>' +
-      keysHtml +
-      '<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:14px 0 6px">T4 · WebLLM offline</h4>' +
-      webllmHtml +
-      '<h4 style="font-size:11px;color:#8a8a8a;letter-spacing:.08em;text-transform:uppercase;margin:14px 0 6px">recent calls</h4>' +
-      logHtml +
-      '<div style="display:flex;gap:8px;margin-top:14px"><button id="llm-test" style="background:#5b8def;color:#fff;border:none;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px">test cascade</button><button id="llm-close" style="background:transparent;color:#8a8a8a;border:1px solid #2a2f3a;padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px">close</button></div>' +
-      '<div id="llm-test-result" style="margin-top:10px;font-size:11px;color:#a8b0bc;font-family:monospace;display:none;background:#06080c;border:1px solid #1f2937;border-radius:4px;padding:8px;max-height:200px;overflow:auto"></div>' +
-      '</div>';
-    document.body.appendChild(modal);
-    modal.querySelector('#llm-close').onclick = function(){ modal.remove(); };
-    modal.onclick = function(e){ if (e.target === modal) modal.remove(); };
-    // FallCore endpoint save/clear
-    var fcSave = modal.querySelector('#llm-fallcore-save');
-    if (fcSave) fcSave.onclick = function(){
-      var url = modal.querySelector('#llm-fallcore-url').value.trim();
-      setFallcoreEndpoint(url);
-      modal.remove(); showCascadeUI();
-    };
-    var fcClear = modal.querySelector('#llm-fallcore-clear');
-    if (fcClear) fcClear.onclick = function(){
-      setFallcoreEndpoint('');
-      modal.remove(); showCascadeUI();
-    };
-    modal.querySelectorAll('[data-save]').forEach(function(b){
-      b.onclick = function(){
-        var p = b.getAttribute('data-save');
-        var inp = modal.querySelector('#llm-key-' + p);
-        if (inp.value) { setKey(p, inp.value); modal.remove(); showCascadeUI(); }
-      };
-    });
-    modal.querySelectorAll('[data-clear]').forEach(function(b){
-      b.onclick = function(){ var p = b.getAttribute('data-clear'); delete STATE.keys[p]; persist(); updateUI(); modal.remove(); showCascadeUI(); };
-    });
-    var dl = modal.querySelector('#llm-webllm-download');
-    if (dl) dl.onclick = function(){ loadWebLLM().then(function(){ modal.remove(); showCascadeUI(); }).catch(function(e){ alert('WebLLM load failed: ' + e.message); }); };
-    var test = modal.querySelector('#llm-test');
-    test.onclick = async function(){
-      var res = modal.querySelector('#llm-test-result');
-      res.style.display = 'block';
-      res.textContent = 'testing… asking "Say OK in one word"';
-      var r = await ask('Say OK in one word.', { max_tokens: 32 });
-      res.textContent = r.error ? '✗ ' + r.error + '\nSkipped: ' + JSON.stringify(r.skipped || [], null, 2) : '✓ ' + r.provider + ' (' + r.tier + ') · ' + r.ms + 'ms\n\n' + r.text;
-    };
-  }
-
-  // Boot
-  (function boot(){
-    function ready(){
-      injectBadge();
-      try { console.log('%c◊·κ LLM cascade', 'color:#5b8def;font-weight:bold', 'current tier:', currentTier(), '· providers:', providers()); } catch(_){}
-    }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once:true });
-    else ready();
-  })();
-
-  window.llm = {
-    ask: ask,
-    providers: providers,
-    setKey: setKey,
-    setFallcoreEndpoint: setFallcoreEndpoint,
-    preloadWebLLM: loadWebLLM,
-    tier: currentTier,
-    config: { preferred: STATE.preferred },
-    showSettings: showCascadeUI,
-    _state: STATE
-  };
-})();
-</script>
-<!-- /◊·κ LLM CASCADE -->
-<!-- ◊·κ FALL-API SHIM — inter-tool API surface · cli(cmd) layer
-  Turns every Fall* HTML into an API endpoint other tools (in other tabs)
-  can call without a server. Same-origin BroadcastChannel transport.
-
-  Per Thomas's 5-turtle stack:
-    sys(params) → cmd(sys) → cli(cmd) → api(cli) → mcp(api)
-  This is the cli(cmd) / api(cli) layer for sovereign HTMLs.
-
-  Public API:
-    window.fall_api.register(resource, handler)   — expose a resource
-    window.fall_api.list()                        — what this tool exposes
-    window.fall.call(tool, resource, params)      — call another tool's API
-    window.fall.callMany(...)                     — fan out across mesh
-    window.fall.discover()                        — list all visible Fall* tools + their APIs
-
-  Depends on: window.NODE (mesh shim) for identity + BroadcastChannel.
--->
-<script>
-(function fallApiShim(){
-  if (!window.NODE) return;
-  if (window.fall_api) return; // already loaded
-
-  var REGISTRY = {};   // resource → handler
-  var PEERS = {};      // tool_id → { last_seen, resources, prime, name }
-  var PEER_TTL = 30000;
-
-  // Open dedicated channel for API traffic (separate from fallmesh events)
-  var channel = null;
-  try { channel = new BroadcastChannel('fall-api'); }
-  catch (_) { return; } // browser too old
-
-  function emit(msg) {
-    try { channel.postMessage(Object.assign({ from: NODE.id, prime: NODE.prime, t: Date.now() }, msg)); } catch (_){}
-  }
-
-  // ── Server side (this tool exposes resources) ──
-  window.fall_api = {
-    register: function(resource, handler, meta) {
-      if (typeof resource !== 'string' || typeof handler !== 'function') return false;
-      REGISTRY[resource] = { handler: handler, meta: meta || {} };
-      // Broadcast discovery
-      emit({ type: 'fall-api:register', resource: resource, name: NODE.name, meta: meta || {} });
-      // Track in KCC (R6 govern — exposing a public surface)
-      if (window.kcc) window.kcc.emit('api:register:' + resource, 6, 0.5);
-      return true;
-    },
-    unregister: function(resource) {
-      delete REGISTRY[resource];
-      emit({ type: 'fall-api:unregister', resource: resource });
-    },
-    list: function() {
-      return Object.keys(REGISTRY).map(function(r){
-        return { resource: r, meta: REGISTRY[r].meta };
-      });
-    }
-  };
-
-  // ── Handle incoming requests ──
-  channel.onmessage = function(e) {
-    var m = e.data;
-    if (!m || m.from === NODE.id) return;
-
-    // Track peer
-    if (m.type && m.from) {
-      PEERS[m.from] = PEERS[m.from] || { resources: {} };
-      PEERS[m.from].last_seen = Date.now();
-      PEERS[m.from].prime = m.prime;
-      PEERS[m.from].name = m.name || PEERS[m.from].name;
-    }
-
-    // Discovery broadcasts
-    if (m.type === 'fall-api:register' && m.from && m.resource) {
-      PEERS[m.from].resources[m.resource] = m.meta || {};
-      return;
-    }
-    if (m.type === 'fall-api:unregister' && m.from && m.resource) {
-      if (PEERS[m.from]) delete PEERS[m.from].resources[m.resource];
-      return;
-    }
-    if (m.type === 'fall-api:hello') {
-      // Reply with our capabilities
-      emit({
-        type: 'fall-api:announce',
-        name: NODE.name,
-        resources: Object.keys(REGISTRY).reduce(function(acc, k){ acc[k] = REGISTRY[k].meta || {}; return acc; }, {})
-      });
-      return;
-    }
-    if (m.type === 'fall-api:announce' && m.from) {
-      PEERS[m.from].resources = m.resources || {};
-      return;
-    }
-
-    // Request targeted at us
-    if (m.type === 'fall-api:request' && m.target === NODE.id) {
-      var entry = REGISTRY[m.resource];
-      if (!entry) {
-        emit({ type: 'fall-api:response', req: m.req, target: m.from, error: 'resource not found: ' + m.resource });
-        return;
-      }
-      try {
-        Promise.resolve(entry.handler(m.params || {}, { caller: m.from, callerPrime: m.callerPrime }))
-          .then(function(result){
-            emit({ type: 'fall-api:response', req: m.req, target: m.from, ok: true, result: result, resource: m.resource });
-            if (window.kcc) window.kcc.emit('api:served:' + m.resource, 4, 1, { caller: m.from });
-          })
-          .catch(function(err){
-            emit({ type: 'fall-api:response', req: m.req, target: m.from, error: err.message || String(err) });
-          });
-      } catch (e) {
-        emit({ type: 'fall-api:response', req: m.req, target: m.from, error: e.message });
-      }
-      return;
-    }
-  };
-
-  // ── Client side (this tool calls another tool's API) ──
-  window.fall = {
-    call: function(tool, resource, params, opts) {
-      opts = opts || {};
-      return new Promise(function(resolve, reject){
-        if (!channel) return reject(new Error('no BroadcastChannel'));
-        var req = 'fr_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-        var done = false;
-        var handler = function(e) {
-          var m = e.data;
-          if (m && m.type === 'fall-api:response' && m.req === req) {
-            done = true;
-            channel.removeEventListener('message', handler);
-            if (m.error) return reject(new Error(m.error));
-            resolve(m.result);
-          }
-        };
-        channel.addEventListener('message', handler);
-        emit({ type: 'fall-api:request', req: req, target: tool, resource: resource, params: params, callerPrime: NODE.prime });
-        if (window.kcc) window.kcc.emit('api:call:' + tool + '/' + resource, 1, 0.5);
-        setTimeout(function(){
-          if (done) return;
-          channel.removeEventListener('message', handler);
-          reject(new Error('fall.call timeout · ' + tool + '/' + resource));
-        }, opts.timeout || 4000);
-      });
-    },
-
-    // Fan out: ask all peers that expose <resource>
-    callMany: function(resource, params, opts) {
-      var promises = Object.keys(PEERS)
-        .filter(function(p){ return PEERS[p].resources && PEERS[p].resources[resource]; })
-        .map(function(p){
-          return window.fall.call(p, resource, params, opts)
-            .then(function(r){ return { tool: p, ok: true, result: r }; })
-            .catch(function(e){ return { tool: p, ok: false, error: e.message }; });
-        });
-      return Promise.all(promises);
-    },
-
-    // List currently visible peers + their resources
-    discover: function() {
-      var now = Date.now();
-      var live = {};
-      Object.keys(PEERS).forEach(function(p){
-        if (now - PEERS[p].last_seen < PEER_TTL) live[p] = PEERS[p];
-      });
-      return live;
-    },
-
-    // Ask the network "what's out there"
-    refresh: function() {
-      emit({ type: 'fall-api:hello' });
-      return new Promise(function(r){ setTimeout(r, 600); }).then(function(){ return window.fall.discover(); });
-    }
-  };
-
-  // ── Boot · say hello to the network ──
-  (function boot(){
-    function ready(){
-      setTimeout(function(){
-        emit({ type: 'fall-api:hello', name: NODE.name });
-      }, 500);
-    }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once:true });
-    else ready();
-  })();
-
-  try { console.log('%c◊·κ fall-api', 'color:#5b8def;font-weight:bold', NODE.name + ' · ready · register handlers via window.fall_api.register()'); } catch(_){}
-})();
-</script>
-<!-- /◊·κ FALL-API SHIM -->
-<!-- ◊·κ FALL-SW SHIM — Service Worker that turns sovereign HTML into an HTTP API
-  fetch('/api/&lt;tool&gt;/&lt;resource&gt;?param=...') from anywhere in this origin
-  → SW catches it → routes to whichever Fall* tab owns &lt;tool&gt; via the
-  fall-api channel → returns JSON Response.
-
-  Per Thomas's 5-turtle stack:
-    sys(params) → cmd(sys) → cli(cmd) → api(cli) → mcp(api)
-  This is the api(cli) layer · turns the cli into an HTTP-callable surface.
-
-  Browser-compatible. Requires:
-    · Service Workers (Chrome 40+, Safari 11.1+, Firefox 44+)
-    · BroadcastChannel API (already required by fall-api)
-
-  External callers (other tabs, native apps via localhost proxy, even other
-  domains via CORS) can now `fetch('https://your-host/api/gymos/members')`
-  and get a response — without any backend server.
-
-  Caveats:
-    · Same-origin only (this IS the sovereignty: no cross-origin to 3rd parties)
-    · Works only while AT LEAST ONE Fall* tab is open in the browser
-    · First request to /api/* requires SW to be installed (auto on first page load)
--->
-<script>
-(function fallSwShim(){
-  if (!window.NODE) return;
-  if (!('serviceWorker' in navigator)) {
-    try { console.log('%c◊·κ fall-sw', 'color:#8a8a8a', 'Service Workers not available · API surface is BroadcastChannel-only (no /api/* fetch interception)'); } catch(_){}
-    return;
-  }
-  if (window._fall_sw_installed) return;
-  window._fall_sw_installed = true;
-
-  // The SW code, as a string, served via Blob URL
-  var SW_CODE = `
-// ◊·κ FallCore Service Worker · v1
-// Intercepts /api/&lt;tool&gt;/&lt;resource&gt; · routes to clients
-const VERSION = '${Date.now()}';
-const TIMEOUT = 5000;
-
-self.addEventListener('install', function(e){
-  self.skipWaiting();
-});
-self.addEventListener('activate', function(e){
-  e.waitUntil(self.clients.claim());
-});
-
-self.addEventListener('fetch', function(event) {
-  var url = new URL(event.request.url);
-  // Only intercept same-origin /api/* paths
-  if (url.origin !== self.location.origin) return;
-  if (!url.pathname.startsWith('/api/')) return;
-
-  // Parse: /api/&lt;tool&gt;/&lt;resource&gt;
-  var parts = url.pathname.slice(5).split('/');
-  var tool = parts[0];
-  var resource = parts.slice(1).join('/');
-  if (!tool) return;
-
-  // Collect params from query + body
-  event.respondWith((async function(){
-    var params = {};
-    url.searchParams.forEach(function(v, k){ params[k] = v; });
-    if (event.request.method === 'POST') {
-      try {
-        var body = await event.request.json();
-        Object.assign(params, body || {});
-      } catch(_){}
-    }
-    // Ask any client tab to serve this
-    var clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-    if (!clientList.length) {
-      return new Response(JSON.stringify({ error: 'no Fall* tab open · open the tool first' }), {
-        status: 503,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-    var req = 'sw_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-    var channel = new MessageChannel();
-    var responsePromise = new Promise(function(resolve, reject){
-      var t = setTimeout(function(){ reject(new Error('sw timeout')); }, TIMEOUT);
-      channel.port1.onmessage = function(e){
-        clearTimeout(t);
-        if (e.data && e.data.error) reject(new Error(e.data.error));
-        else resolve(e.data && e.data.result);
-      };
-    });
-    // Broadcast to all clients; the one that owns the tool responds
-    clientList.forEach(function(c){
-      try {
-        c.postMessage({ type: 'sw:api-request', req: req, tool: tool, resource: resource, params: params }, [channel.port2]);
-      } catch(_){}
-    });
-    try {
-      var result = await responsePromise;
-      return new Response(JSON.stringify(result), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json', 'x-fallcore-sw': VERSION, 'Access-Control-Allow-Origin': '*' }
-      });
-    } catch (e) {
-      return new Response(JSON.stringify({ error: e.message }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-  })());
-});
-`;
-
-  // Each page listens for SW messages and forwards via fall-api
-  navigator.serviceWorker.addEventListener('message', function(e) {
-    var m = e.data;
-    if (!m || m.type !== 'sw:api-request') return;
-    var port = e.ports && e.ports[0];
-    if (!port) return;
-    // Only respond if WE own this tool
-    if (m.tool !== NODE.id) {
-      // Forward through fall-api BroadcastChannel to whichever tab DOES own it
-      if (!window.fall || !window.fall.call) {
-        port.postMessage({ error: 'no fall-api shim loaded' });
-        return;
-      }
-      window.fall.call(m.tool, m.resource, m.params)
-        .then(function(r){ port.postMessage({ result: r }); })
-        .catch(function(e){ port.postMessage({ error: e.message }); });
-      return;
-    }
-    // We own it: invoke directly
-    if (!window.fall_api || !window.fall_api.list) {
-      port.postMessage({ error: 'no fall_api registry' });
-      return;
-    }
-    // Pretend we're another tab and use fall.call to ourselves (cleanest path through the registry)
-    if (window.fall && window.fall.call) {
-      window.fall.call(NODE.id, m.resource, m.params)
-        .then(function(r){ port.postMessage({ result: r }); })
-        .catch(function(e){ port.postMessage({ error: e.message }); });
-    } else {
-      port.postMessage({ error: 'fall registry unavailable' });
-    }
-  });
-
-  // Register the SW from inline Blob (scope: this page's directory; for tools at root, this is the whole origin)
-  function registerSw() {
-    try {
-      var blob = new Blob([SW_CODE], { type: 'application/javascript' });
-      var swUrl = URL.createObjectURL(blob);
-      // Note: SW scope is restricted to its URL path. Inline SWs scope only to the page that registered them.
-      // For full /api/* origin scope, the SW needs to be served from the origin root with proper Service-Worker-Allowed header.
-      // This v1 ships scope-limited; v2 will deploy a real /sw.js to each Pages root.
-      navigator.serviceWorker.register(swUrl, { scope: './' })
-        .then(function(reg){
-          try { console.log('%c◊·κ fall-sw', 'color:#5b8def;font-weight:bold', NODE.name + ' · Service Worker registered at scope ' + reg.scope); } catch(_){}
-          if (window.kcc) window.kcc.emit('sw:registered', 6, 1, { scope: reg.scope });
-        })
-        .catch(function(e){
-          try { console.log('%c◊·κ fall-sw', 'color:#c84a4a', 'SW registration failed: ' + e.message + ' (fine · fall-api still works via BroadcastChannel)'); } catch(_){}
-        });
-    } catch (e) {
-      try { console.log('%c◊·κ fall-sw', 'color:#c84a4a', 'SW unavailable: ' + e.message); } catch(_){}
-    }
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', registerSw, { once:true });
-  else registerSw();
-})();
-</script>
-<!-- /◊·κ FALL-SW SHIM -->
-</body></html>`;
-}
-
-// ── MODULE 1: IDENTITY ──
-function buildIdentity(profile){
-  const profileJSON = JSON.stringify(profile||{}).replace(/`/g,'\\`');
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${SHARED_CSS}</style></head><body>
-  <h1>IDENTITY ANALYSIS</h1>
-  <p style="margin-bottom:1rem;font-size:.26rem;">The corp saw your job title. We see the signal underneath. Running 12-layer Konomi analysis...</p>
-  
-  <div id="analysis-running" class="card amber">
-    <div class="loading">◈ RUNNING COGNITIVE STACK — PATTERN EXTRACTION — SHADOW ANALYSIS — ARCHETYPE DETECTION</div>
-  </div>
-  
-  <div id="identity-result" style="display:none;">
-    <div class="card green" id="who-card">
-      <h2>WHO YOU ACTUALLY ARE</h2>
-      <div id="identity-text" style="font-family:'Lora',serif;font-size:.32rem;line-height:1.8;color:var(--white);"></div>
-    </div>
-    <div class="card amber" id="shadow-card">
-      <h2>THE SHADOW LAYER</h2>
-      <p style="font-size:.22rem;color:var(--text3);margin-bottom:.4rem;">What you carry that the corp never credited. The thing you didn't put on your resume.</p>
-      <div id="shadow-text" style="font-family:'Lora',serif;font-style:italic;font-size:.3rem;line-height:1.8;color:var(--amber2);"></div>
-    </div>
-    <div class="card" id="skills-card">
-      <h2>PRIME SKILLS</h2>
-      <div id="skills-tags"></div>
-    </div>
-    <div class="card" id="archetype-card">
-      <h2>DOMINANT ARCHETYPE</h2>
-      <div id="archetype-text" style="font-size:.32rem;color:var(--phi);"></div>
-    </div>
-    <button class="btn btn-green" onclick="parent.postMessage({t:'identity-done'},'*')">PROCEED TO EXIT PLAN →</button>
-  </div>
-  
-  <div class="prime-sig">KONOMI COGNITIVE STACK · 12 LAYERS · φ-WEIGHTED PATTERN RECOGNITION</div>
-
-  <script>
-  const PROFILE = ${profileJSON};
-  
-  async function runAnalysis(){
-    if(!PROFILE||!PROFILE.story){
-      document.getElementById('analysis-running').innerHTML='<span style="color:#c0392b;">No profile data. Complete INTAKE first.</span>';
-      return;
-    }
-    try{
-      const res = await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':''},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:1500,
-          system:\`You are the IDENTITY layer of the EXIT ENGINE — a Konomi sovereign stack tool for people who have been made redundant.
-
-Your job is to run a 12-layer cognitive analysis on this person's story and surface who they ACTUALLY are — not the job title, but the underlying pattern, the prime signal, the thing the corp compressed and undervalued.
-
-Apply:
-1. Pattern extraction — what structural capability do they have at their core
-2. Shadow analysis — what do they carry that was never credited (Jungian shadow — the gold in the shadow, not the dark)
-3. Archetype detection — which Jungian archetype is dominant (Hero, Sage, Trickster, Creator, Ruler, etc)
-4. Prime skills — the irreducible things they know (list 6-10 as short sharp phrases)
-
-Respond ONLY in this JSON format, no markdown, no preamble:
-{
-  "who": "3-4 sentences about who they actually are, written directly to them, warm but precise",
-  "shadow": "2-3 sentences about the uncredited gold — what they carried that nobody named",
-  "archetype": "ARCHETYPE NAME — one sentence why",
-  "skills": ["skill1","skill2","skill3","skill4","skill5","skill6"]
-}\`,
-          messages:[{role:'user',content:\`Story: \${PROFILE.story}\\n\\nRole: \${PROFILE.titles}\\nIndustry: \${PROFILE.industry}\\nYears: \${PROFILE.years}\\nCorp: \${PROFILE.corp}\\nDirection wanted: \${PROFILE.direction}\\nExtra context: \${PROFILE.extra||''}\`}]
-        })
-      });
-      const data = await res.json();
-      const text = data.content?.[0]?.text||'{}';
-      let parsed;
-      try{parsed=JSON.parse(text.replace(/\`\`\`json|\`\`\`/g,'').trim());}
-      catch(e){parsed={who:text,shadow:'',archetype:'CREATOR',skills:[]};}
-      
-      document.getElementById('identity-text').textContent=parsed.who||'';
-      document.getElementById('shadow-text').textContent=parsed.shadow||'';
-      document.getElementById('archetype-text').textContent=parsed.archetype||'';
-      const st=document.getElementById('skills-tags');
-      (parsed.skills||[]).forEach(s=>{
-        const t=document.createElement('span');t.className='tag amber';t.textContent=s;st.appendChild(t);
-      });
-      document.getElementById('analysis-running').style.display='none';
-      document.getElementById('identity-result').style.display='block';
-      parent.postMessage({t:'identity-ready',identity:parsed},'*');
-    }catch(e){
-      document.getElementById('analysis-running').innerHTML='<span style="color:#c0392b;">API error: '+e.message+'<br><br>Add your Anthropic API key via the key prompt at top level.</span>';
-    }
-  }
-  runAnalysis();
-  <\/script></body></html>`;
-}
-
-// ── MODULE 2: EXIT PLAN ──
-function buildExitPlan(profile, identity){
-  const p = JSON.stringify(profile||{}).replace(/`/g,'\\`');
-  const id = JSON.stringify(identity||{}).replace(/`/g,'\\`');
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${SHARED_CSS}
-  .plan-section{margin-bottom:1.2rem;}
-  .weapon-box{background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.25);border-radius:3px;padding:.8rem 1rem;margin-bottom:.6rem;}
-  .ninety-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;margin-top:.5rem;}
-  .day-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:.6rem;text-align:center;}
-  .day-n{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--amber);line-height:1;}
-  .day-lbl{font-size:.19rem;color:var(--text3);letter-spacing:.1em;}
-  .day-text{font-size:.24rem;color:var(--text2);margin-top:.3rem;line-height:1.5;}
-  </style></head><body>
-  <h1>EXIT PLAN</h1>
-  <p style="margin-bottom:1rem;font-size:.26rem;">This is your weapon. Built from what you know. Aimed at exactly where they're vulnerable.</p>
-  
-  <div id="plan-running" class="card amber">
-    <div class="loading">◈ BUILDING WEAPON — ANALYSING CORP VULNERABILITY — CALCULATING 90-DAY SEQUENCE</div>
-  </div>
-  
-  <div id="plan-result" style="display:none;">
-    <div class="weapon-box">
-      <h2 style="color:#e05050;">THE WEAPON</h2>
-      <div id="weapon-text" style="font-family:'Lora',serif;font-size:.32rem;line-height:1.8;color:var(--white);"></div>
-    </div>
-    
-    <div class="card green plan-section">
-      <h2>YOUR SOVEREIGN OFFERING</h2>
-      <div id="offering-text" style="font-size:.3rem;line-height:1.7;color:var(--text);"></div>
-    </div>
-
-    <div class="card plan-section">
-      <h2>PRICING INTELLIGENCE</h2>
-      <div id="pricing-text" style="font-size:.3rem;line-height:1.7;color:var(--amber2);"></div>
-    </div>
-    
-    <div class="plan-section">
-      <h2>90-DAY SEQUENCE</h2>
-      <div class="ninety-grid">
-        <div class="day-card"><div class="day-n">30</div><div class="day-lbl">DAYS</div><div class="day-text" id="d30"></div></div>
-        <div class="day-card"><div class="day-n">60</div><div class="day-lbl">DAYS</div><div class="day-text" id="d60"></div></div>
-        <div class="day-card"><div class="day-n">90</div><div class="day-lbl">DAYS</div><div class="day-text" id="d90"></div></div>
-      </div>
-    </div>
-
-    <div class="card plan-section">
-      <h2>FIRST THREE MOVES</h2>
-      <div id="moves-text" style="font-size:.3rem;line-height:1.9;color:var(--text);"></div>
-    </div>
-
-    <div class="card amber plan-section">
-      <h2>WHAT YOU NEED TO COMPLETE THE CHAIN</h2>
-      <div id="chain-needs" style="font-size:.28rem;line-height:1.7;color:var(--text2);"></div>
-      <div id="chain-tags" style="margin-top:.5rem;"></div>
-    </div>
-
-    <button class="btn btn-green" onclick="parent.postMessage({t:'plan-done'},'*')">BUILD YOUR CHAIN →</button>
-  </div>
-  
-  <div class="prime-sig">EXIT ENGINE · SOVEREIGN INTELLIGENCE · NO CORP MIDDLEMAN</div>
-
-  <script>
-  const PROFILE=${p}, IDENTITY=${id};
-  
-  async function buildPlan(){
-    if(!PROFILE?.story){
-      document.getElementById('plan-running').innerHTML='<span style="color:#c0392b;">Complete INTAKE and IDENTITY first.</span>';
-      return;
-    }
-    try{
-      const res=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':''},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:2000,
-          system:\`You are the EXIT PLAN layer of the EXIT ENGINE. You build sovereign business plans for people who have been made redundant.
-
-Your job is to create a specific, actionable exit plan that:
-1. Identifies the exact vulnerability this person can exploit at the corp that let them go (and orgs like it)
-2. Defines their sovereign offering — what service/product they can now sell
-3. Gives realistic pricing based on market rates
-4. Creates a 90-day sequence (30/60/90 day milestones)
-5. Lists first three specific moves (this week)
-6. Identifies what skills/people they need to complete their service chain
-
-Be SPECIFIC. No generic advice. Use their actual story and skills.
-
-Respond ONLY in this JSON format:
-{
-  "weapon": "2-3 sentences about the specific vulnerability they can exploit — what the corp needs and can no longer access from them",
-  "offering": "3-4 sentences describing their specific sovereign service offering",
-  "pricing": "Specific pricing guidance — day rates, project fees, retainer options with actual numbers",
-  "d30": "30-day milestone — specific and achievable",
-  "d60": "60-day milestone",
-  "d90": "90-day milestone — where they should be",
-  "moves": "Three specific actions for this week, numbered",
-  "chain_needs": "2-3 sentences about what skills or people would complete their service chain",
-  "chain_skills": ["skill1","skill2","skill3"]
-}\`,
-          messages:[{role:'user',content:\`Profile: \${JSON.stringify(PROFILE)}\\n\\nIdentity analysis: \${JSON.stringify(IDENTITY)}\`}]
-        })
-      });
-      const data=await res.json();
-      const text=data.content?.[0]?.text||'{}';
-      let r;
-      try{r=JSON.parse(text.replace(/\`\`\`json|\`\`\`/g,'').trim());}
-      catch(e){r={weapon:text,offering:'',pricing:'',d30:'',d60:'',d90:'',moves:'',chain_needs:'',chain_skills:[]};}
-      
-      document.getElementById('weapon-text').textContent=r.weapon||'';
-      document.getElementById('offering-text').textContent=r.offering||'';
-      document.getElementById('pricing-text').textContent=r.pricing||'';
-      document.getElementById('d30').textContent=r.d30||'';
-      document.getElementById('d60').textContent=r.d60||'';
-      document.getElementById('d90').textContent=r.d90||'';
-      document.getElementById('moves-text').innerHTML=(r.moves||'').replace(/\\n/g,'<br>');
-      document.getElementById('chain-needs').textContent=r.chain_needs||'';
-      const ct=document.getElementById('chain-tags');
-      (r.chain_skills||[]).forEach(s=>{const t=document.createElement('span');t.className='tag phi';t.textContent=s;ct.appendChild(t);});
-      
-      document.getElementById('plan-running').style.display='none';
-      document.getElementById('plan-result').style.display='block';
-      parent.postMessage({t:'plan-ready',plan:r},'*');
-    }catch(e){
-      document.getElementById('plan-running').innerHTML='<span style="color:#c0392b;">API error: '+e.message+'</span>';
-    }
-  }
-  buildPlan();
-  <\/script></body></html>`;
-}
-
-// ── MODULE 3: CHAIN ──
-function buildChain(profile, identity, plan){
-  const p=JSON.stringify(profile||{}).replace(/`/g,'\\`');
-  const id=JSON.stringify(identity||{}).replace(/`/g,'\\`');
-  const pl=JSON.stringify(plan||{}).replace(/`/g,'\\`');
-  // Load existing chain members from parent state
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${SHARED_CSS}
-  .chain-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.7rem;margin-top:.6rem;}
-  .member-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:.7rem;
-    cursor:pointer;transition:all .15s;}
-  .member-card:hover{border-color:rgba(57,255,110,.3);}
-  .member-card.me{border-color:rgba(212,130,10,.4);background:rgba(212,130,10,.04);}
-  .mc-role{font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--amber);letter-spacing:.05em;}
-  .mc-name{font-size:.24rem;color:var(--text2);margin:.15rem 0;}
-  .mc-skills{margin-top:.3rem;}
-  .match-score{font-size:.5rem;font-family:'Bebas Neue',sans-serif;float:right;}
-  .score-hi{color:var(--green);} .score-mid{color:var(--amber);} .score-lo{color:var(--text3);}
-  .add-form{background:var(--bg2);border:1px solid var(--border2);border-radius:3px;padding:.8rem;margin-top:.8rem;}
-  </style></head><body>
-  <h1>CHAIN FORMATION</h1>
-  <p style="margin-bottom:.6rem;font-size:.26rem;">You don't have to go alone. Find the 2-4 people who complete your service chain. Together you're ungovernable.</p>
-  
-  <div class="card amber">
-    <h2>YOUR PROFILE IN THE CHAIN</h2>
-    <div id="my-role" style="font-size:.28rem;color:var(--text);line-height:1.6;"></div>
-    <div id="my-skills" style="margin-top:.4rem;"></div>
-    <div style="margin-top:.6rem;font-size:.24rem;color:var(--text3);">NEEDS TO COMPLETE CHAIN:</div>
-    <div id="needs-skills" style="margin-top:.3rem;"></div>
-  </div>
-
-  <div class="sep"></div>
-  <h2>CHAIN MEMBERS IN YOUR AREA</h2>
-  <p style="font-size:.24rem;color:var(--text3);margin-bottom:.5rem;">People who have run EXIT ENGINE and added themselves to the chain network. Matched by skill compatibility.</p>
-  
-  <div class="chain-grid" id="chain-grid">
-    <div class="member-card" style="border-style:dashed;cursor:default;opacity:.4;">
-      <div class="mc-role">AWAITING</div>
-      <div class="mc-name">Members join as they exit</div>
-    </div>
-  </div>
-
-  <div class="sep"></div>
-  <div class="add-form">
-    <h2>ADD YOURSELF TO THE CHAIN NETWORK</h2>
-    <p style="font-size:.24rem;color:var(--text2);margin-bottom:.6rem;">Make yourself discoverable. Other chain builders can see you and reach out.</p>
-    <label>YOUR NAME (or handle)</label>
-    <input type="text" id="cn-name" placeholder="Alex K. / @alexbuilds">
-    <br><label style="margin-top:.4rem;">CONTACT (email or LinkedIn)</label>
-    <input type="text" id="cn-contact" placeholder="alex@email.com">
-    <br><label style="margin-top:.4rem;">ONE-LINE PITCH</label>
-    <input type="text" id="cn-pitch" placeholder="Ex-KPMG CFO, now sovereign finance stack for SMBs">
-    <br><button class="btn btn-green" style="margin-top:.6rem;" onclick="addToChain()">JOIN THE CHAIN NETWORK →</button>
-    <div id="chain-status" style="margin-top:.4rem;font-size:.24rem;"></div>
-  </div>
-  
-  <div style="margin-top:.8rem;">
-    <button class="btn" onclick="parent.postMessage({t:'chain-done'},'*')">ENTER THE FORUM →</button>
-  </div>
-  <div class="prime-sig">CHAIN PRINCIPLE: prime frequencies don't cancel · everything amplifies</div>
-
-  <script>
-  const PROFILE=${p}, IDENTITY=${id}, PLAN=${pl};
-  
-  // Populate my profile
-  window.onload=function(){
-    const role=(IDENTITY?.archetype||'')+(PROFILE?.titles?(' · '+PROFILE.titles):'');
-    document.getElementById('my-role').textContent=role||'Complete INTAKE and IDENTITY first.';
-    const ms=document.getElementById('my-skills');
-    (IDENTITY?.skills||[]).forEach(s=>{const t=document.createElement('span');t.className='tag amber';t.textContent=s;ms.appendChild(t);});
-    const ns=document.getElementById('needs-skills');
-    (PLAN?.chain_skills||[]).forEach(s=>{const t=document.createElement('span');t.className='tag phi';t.textContent='NEED: '+s;ns.appendChild(t);});
-    loadChainMembers();
-  };
-  
-  function loadChainMembers(){
-    const members=JSON.parse(localStorage.getItem('exit-chain-members')||'[]');
-    if(members.length>0){
-      const grid=document.getElementById('chain-grid');
-      grid.innerHTML='';
-      members.forEach(m=>{
-        const card=document.createElement('div');
-        card.className='member-card';
-        const mySkills=(IDENTITY?.skills||[]).map(s=>s.toLowerCase());
-        const theirSkills=(m.skills||[]).map(s=>s.toLowerCase());
-        const myNeeds=(PLAN?.chain_skills||[]).map(s=>s.toLowerCase());
-        const overlap=theirSkills.filter(s=>myNeeds.some(n=>s.includes(n)||n.includes(s))).length;
-        const score=Math.min(100,Math.round((overlap/Math.max(myNeeds.length,1))*100));
-        const scoreClass=score>60?'score-hi':score>30?'score-mid':'score-lo';
-        card.innerHTML=\`<span class="match-score \${scoreClass}">\${score}%</span>
-          <div class="mc-role">\${m.archetype||'BUILDER'}</div>
-          <div class="mc-name">\${m.name}</div>
-          <div style="font-size:.22rem;color:var(--text3);">\${m.pitch||''}</div>
-          <div class="mc-skills" style="margin-top:.3rem;">\${(m.skills||[]).slice(0,3).map(s=>\`<span class="tag green">\${s}</span>\`).join('')}</div>
-          <div style="margin-top:.4rem;font-size:.2rem;color:var(--text3);">\${m.contact||''}</div>\`;
-        grid.appendChild(card);
-      });
-    }
-  }
-  
-  function addToChain(){
-    const name=document.getElementById('cn-name').value.trim();
-    const contact=document.getElementById('cn-contact').value.trim();
-    const pitch=document.getElementById('cn-pitch').value.trim();
-    if(!name){document.getElementById('chain-status').innerHTML='<span style="color:#c0392b;">Add your name.</span>';return;}
-    const member={
-      name,contact,pitch,
-      archetype:IDENTITY?.archetype||'BUILDER',
-      skills:IDENTITY?.skills||[],
-      industry:PROFILE?.industry||'',
-      timestamp:Date.now()
-    };
-    const members=JSON.parse(localStorage.getItem('exit-chain-members')||'[]');
-    members.unshift(member);
-    localStorage.setItem('exit-chain-members',JSON.stringify(members.slice(0,100)));
-    document.getElementById('chain-status').innerHTML='<span style="color:var(--green);">ADDED TO CHAIN NETWORK. Others can now find you.</span>';
-    loadChainMembers();
-    parent.postMessage({t:'chain-joined',member},'*');
-  }
-  <\/script></body></html>`;
-}
-
-// ── MODULE 4: FORUM ──
-function buildForum(profile){
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${SHARED_CSS}
-  .post{background:var(--bg2);border:1px solid var(--border);border-radius:3px;
-    padding:.7rem .9rem;margin-bottom:.5rem;transition:border .15s;}
-  .post:hover{border-color:var(--border2);}
-  .post-meta{display:flex;gap:.5rem;align-items:center;margin-bottom:.3rem;}
-  .post-author{font-size:.22rem;color:var(--amber);letter-spacing:.06em;}
-  .post-time{font-size:.2rem;color:var(--text3);}
-  .post-tag{font-size:.18rem;padding:.04rem .2rem;border:1px solid;border-radius:2px;}
-  .post-body{font-family:'Lora',serif;font-size:.28rem;line-height:1.7;color:var(--text);}
-  .post-actions{margin-top:.3rem;display:flex;gap:.5rem;}
-  .pa{font-size:.2rem;color:var(--text3);cursor:pointer;transition:color .12s;}
-  .pa:hover{color:var(--amber);}
-  .compose{background:var(--bg2);border:1px solid var(--border2);border-radius:3px;
-    padding:.8rem;margin-bottom:1rem;}
-  .filters{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.7rem;}
-  .fil{padding:.12rem .35rem;background:transparent;border:1px solid var(--border);
-    color:var(--text3);font-family:'IBM Plex Mono',monospace;font-size:.2rem;
-    cursor:pointer;border-radius:2px;transition:all .12s;}
-  .fil:hover,.fil.on{border-color:var(--amber);color:var(--amber);}
-  </style></head><body>
-  <h1>THE FORUM</h1>
-  <p style="margin-bottom:.8rem;font-size:.26rem;">The room where the chains form. Where the humming starts. Put your signal out. Find your people.</p>
-  
-  <div class="compose">
-    <h3>POST TO THE FORUM</h3>
-    <select id="post-cat" style="margin-bottom:.4rem;">
-      <option value="offer">OFFERING — what I can do</option>
-      <option value="need">SEEKING — what I need</option>
-      <option value="win">WIN — sharing a result</option>
-      <option value="intel">INTEL — corp intelligence</option>
-      <option value="chain">CHAIN — forming a crew</option>
-      <option value="talk">TALK — just talking</option>
-    </select>
-    <textarea id="post-body" placeholder="What do you want to say to the room?..." style="min-height:80px;margin-bottom:.4rem;"></textarea>
-    <input type="text" id="post-author" placeholder="Your name / handle" style="margin-bottom:.4rem;">
-    <button class="btn" onclick="submitPost()">POST →</button>
-  </div>
-
-  <div class="filters">
-    <button class="fil on" onclick="filterPosts('all',this)">ALL</button>
-    <button class="fil" onclick="filterPosts('offer',this)">OFFERING</button>
-    <button class="fil" onclick="filterPosts('need',this)">SEEKING</button>
-    <button class="fil" onclick="filterPosts('win',this)">WINS</button>
-    <button class="fil" onclick="filterPosts('intel',this)">INTEL</button>
-    <button class="fil" onclick="filterPosts('chain',this)">CHAINS</button>
-  </div>
-  
-  <div id="posts-container"></div>
-  
-  <div class="prime-sig">THE CONNECTION DOESN'T REQUIRE A SUBSCRIPTION · IT NEVER DID</div>
-
-  <script>
-  const CAT_COLS={offer:'#39ff6e',need:'#818cf8',win:'#d4a853',intel:'#e05050',chain:'#f0a020',talk:'#8a8670'};
-  const CAT_LABELS={offer:'OFFERING',need:'SEEKING',win:'WIN',intel:'INTEL',chain:'CHAIN',talk:'TALK'};
-  let curFilter='all';
-  
-  // Seed posts if empty
-  const SEED_POSTS=[
-    {id:'s1',author:'Marcus T.',cat:'offer',body:'20 years building supply chain systems for Fortune 500. They replaced me with a contractor who charges 3x and delivers 0.3x. Now I offer fractional supply chain architecture for mid-market manufacturers. First engagement already signed.',time:Date.now()-86400000*3},
-    {id:'s2',author:'Priya S.',cat:'need',body:'Ex-Head of Product at a SaaS unicorn. Building sovereign product consultancy. Need a technical co-founder or fractional CTO to complete the chain. DM if you have 10+ years engineering leadership and want to chip away at the enterprise giants.',time:Date.now()-86400000*2},
-    {id:'s3',author:'Derek O.',cat:'intel',body:'Former Big 4 partner here. They\'re about to announce a wave of redundancies in the advisory practice. If you\'re there — run the EXIT ENGINE now before they control the narrative. Your institutional knowledge is worth more outside than in.',time:Date.now()-86400000},
-    {id:'s4',author:'Lin W.',cat:'win',body:'90 days post-exit. First retainer signed yesterday. The corp that let me go tried to hire me back as a contractor at 40% of what they\'d have to pay me now. I politely declined. The weapon works.',time:Date.now()-43200000},
-    {id:'s5',author:'James K.',cat:'chain',body:'Looking for 3 people: fractional CMO, UX designer, and one more backend engineer. I have the full-stack infrastructure sorted. Together we can serve 10 SMBs simultaneously at a fraction of what an agency charges. The fold is prime. Nothing cancels.',time:Date.now()-3600000*2},
-  ];
-  
-  function getPosts(){
-    const stored=JSON.parse(localStorage.getItem('exit-forum-posts')||'null');
-    if(!stored||stored.length===0){
-      localStorage.setItem('exit-forum-posts',JSON.stringify(SEED_POSTS));
-      return SEED_POSTS;
-    }
-    return stored;
-  }
-  
-  function savePosts(posts){localStorage.setItem('exit-forum-posts',JSON.stringify(posts));}
-  
-  function timeAgo(ts){
-    const d=(Date.now()-ts)/1000;
-    if(d<60)return 'just now';
-    if(d<3600)return Math.floor(d/60)+'m ago';
-    if(d<86400)return Math.floor(d/3600)+'h ago';
-    return Math.floor(d/86400)+'d ago';
-  }
-  
-  function renderPosts(){
-    const posts=getPosts().filter(p=>curFilter==='all'||p.cat===curFilter);
-    const c=document.getElementById('posts-container');
-    c.innerHTML='';
-    if(posts.length===0){c.innerHTML='<p style="color:var(--text3);font-size:.26rem;">No posts in this category yet. Be first.</p>';return;}
-    posts.sort((a,b)=>b.time-a.time).forEach(post=>{
-      const el=document.createElement('div');el.className='post';
-      const col=CAT_COLS[post.cat]||'#8a8670';
-      const lbl=CAT_LABELS[post.cat]||post.cat.toUpperCase();
-      el.innerHTML=\`<div class="post-meta">
-        <span class="post-author">\${post.author||'ANON'}</span>
-        <span class="post-tag" style="border-color:\${col}22;color:\${col};">\${lbl}</span>
-        <span class="post-time">\${timeAgo(post.time)}</span>
-      </div>
-      <div class="post-body">\${post.body}</div>
-      <div class="post-actions">
-        <span class="pa" onclick="replyTo('\${post.id}')">↩ reply</span>
-        <span class="pa" onclick="signal('\${post.id}')">◈ signal (\${post.signals||0})</span>
-      </div>\`;
-      c.appendChild(el);
-    });
-  }
-  
-  function filterPosts(cat,btn){
-    curFilter=cat;
-    document.querySelectorAll('.fil').forEach(b=>b.classList.remove('on'));
-    btn.classList.add('on');
-    renderPosts();
-  }
-  
-  function submitPost(){
-    const body=document.getElementById('post-body').value.trim();
-    const author=document.getElementById('post-author').value.trim()||'ANON';
-    const cat=document.getElementById('post-cat').value;
-    if(!body||body.length<10){return;}
-    const posts=getPosts();
-    posts.unshift({id:'p'+Date.now(),author,cat,body,time:Date.now(),signals:0});
-    savePosts(posts);
-    document.getElementById('post-body').value='';
-    renderPosts();
-    parent.postMessage({t:'forum-post',cat},'*');
-  }
-  
-  function signal(id){
-    const posts=getPosts();
-    const p=posts.find(p=>p.id===id);
-    if(p){p.signals=(p.signals||0)+1;savePosts(posts);renderPosts();}
-  }
-  
-  function replyTo(id){
-    const posts=getPosts();
-    const p=posts.find(p=>p.id===id);
-    if(p)document.getElementById('post-body').value='↩ @'+p.author+' — ';
-    document.getElementById('post-body').focus();
-  }
-  
-  renderPosts();
-  setInterval(renderPosts,30000);
-  <\/script></body></html>`;
-}
-
-// ═══════════════════════════════════════════════
-// L1 ORCHESTRATOR LOGIC
-// ═══════════════════════════════════════════════
-
-let curModule = 0;
-const phLabels = ['INTAKE','IDENTITY','EXIT PLAN','CHAIN','FORUM'];
-const iframes = [
-  document.getElementById('if0'),
-  document.getElementById('if1'),
-  document.getElementById('if2'),
-  document.getElementById('if3'),
-  document.getElementById('if4'),
+const NODE = {
+  id: 'exitengine',
+  name: 'ExitEngine',
+  prime: 617,
+  domain: 'sovereign business OS · for the laid off',
+  version: '2.0.0',
+  built: '2026-06-05',
+};
+
+/* ═══════════ TOOL REGISTRY ═══════════ */
+const TOOLS = [
+  { id: 'tutor',      ico: '🎓', title: 'AI Tutor',     desc: '5-phase Jungian journey from laid-off to sovereign', href: 'tutor.html', external: false },
+  { id: 'crm',        ico: '🎯', title: 'CRM',           desc: 'Client pipeline · follow-ups · win/loss tracking', href: 'tools/crm.html', external: false },
+  { id: 'accounts',   ico: '💷', title: 'Accounts',      desc: 'Invoicing · tax · expenses · multi-currency', href: 'tools/accounts.html', external: false },
+  { id: 'site',       ico: '🌐', title: 'Website',       desc: 'Generate a one-page portfolio from your config', href: 'tools/site.html', external: false },
+  { id: 'analytics',  ico: '📊', title: 'Analytics',     desc: 'Live cross-tool dashboard · revenue · pipeline', href: 'tools/analytics.html', external: false },
+  { id: 'scheduler',  ico: '📅', title: 'Scheduler',     desc: 'Booking + calendar · obsolete Calendly', href: 'tools/scheduler.html', external: false },
+  { id: 'email',      ico: '📧', title: 'Email Lists',   desc: 'Sequences + follow-ups · obsolete Mailchimp', href: 'tools/email.html', external: false },
+  { id: 'forms',      ico: '📝', title: 'Forms',         desc: 'Intake forms + lead capture · obsolete Typeform', href: 'tools/forms.html', external: false },
+  { id: 'proposals',  ico: '📄', title: 'Proposals',     desc: 'Quote + proposal generator', href: 'tools/proposals.html', external: false },
+  { id: 'legal',      ico: '⚖',  title: 'Legal',         desc: 'GroundLevel · 60 templates · contracts · disputes', href: 'tools/legal.html', external: false },
+  { id: 'social',     ico: '📱', title: 'Social',        desc: 'LinkedIn strategy + posting (FallPost)', href: 'tools/social.html', external: false },
 ];
 
-let apiKey = '';
+const LEARN = [
+  { id: 'start',    ico: '🌱', title: 'Just got laid off, now what?', desc: 'The first 72 hours · what to do · what NOT to do', href: 'learn/start.html' },
+  { id: 'pricing',  ico: '💰', title: 'How to price yourself',         desc: 'Hourly · day · project · the rate that makes sense', href: 'learn/pricing.html' },
+  { id: 'clients',  ico: '🤝', title: 'How to find your first client', desc: '10 contacts from your last role · the warm-network method', href: 'learn/clients.html' },
+  { id: 'money',    ico: '💷', title: 'Invoicing, tax, getting paid',   desc: 'First invoice · VAT · LBA · keeping it simple', href: 'learn/money.html' },
+  { id: 'grow',     ico: '📈', title: 'From 1 client to 10',             desc: 'Pipeline · referrals · repeat business · sustainability', href: 'learn/grow.html' },
+];
 
-function loadModule(idx) {
-  const blob = (html) => URL.createObjectURL(new Blob([html],{type:'text/html'}));
+/* ═══════════ CONFIG · single source of truth ═══════════ */
+const STORE_KEY = 'exitengine.config';
 
-  if(idx===0 && !iframes[0].src.startsWith('blob')){
-    iframes[0].src = blob(buildIntake());
-  }
-  if(idx===1 && !iframes[1].src.startsWith('blob')){
-    const html = buildIdentity(STATE.profile);
-    iframes[1].src = blob(injectApiKey(html));
-  }
-  if(idx===2 && !iframes[2].src.startsWith('blob')){
-    const html = buildExitPlan(STATE.profile, STATE.identity);
-    iframes[2].src = blob(injectApiKey(html));
-  }
-  if(idx===3 && !iframes[3].src.startsWith('blob')){
-    iframes[3].src = blob(buildChain(STATE.profile, STATE.identity, STATE.exitPlan));
-  }
-  if(idx===4 && !iframes[4].src.startsWith('blob')){
-    iframes[4].src = blob(buildForum(STATE.profile));
-  }
-}
+const DEFAULT_CONFIG = {
+  name: '',
+  business: '',
+  industry: '',
+  currency: 'GBP',
+  tax_region: 'UK',
+  vat_registered: false,
+  hourly_rate: 100,
+  day_rate: 800,
+  api_provider: '',
+  api_key: '',
+  email: '',
+  linkedin: '',
+  payment_details: { bank: '', sort_code: '', account_number: '' },
+  _meta: { version: NODE.version, prime: NODE.prime, tutor_phase: 1, lessons_completed: [], first_run: true }
+};
 
-function injectApiKey(html) {
-  if(!apiKey) return html;
-  return html.replace(/"x-api-key":''/g, `"x-api-key":'${apiKey}'`);
-}
+let CONFIG = DEFAULT_CONFIG;
 
-function goModule(idx) {
-  const navEl = document.getElementById('nav'+idx);
-  if(navEl.classList.contains('locked') && idx > STATE.phase) return;
-
-  document.querySelectorAll('.mod-frame').forEach(f=>f.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-
-  document.getElementById('mf'+idx).classList.add('active');
-  document.getElementById('nav'+idx).classList.add('active');
-  curModule = idx;
-
-  // Update phase bar
-  for(let i=0;i<5;i++){
-    const ph = document.getElementById('ph'+i);
-    ph.className = 'ph' + (i<idx?' done':i===idx?' active':'');
-  }
-  document.getElementById('ph-lbl').textContent = phLabels[idx];
-
-  loadModule(idx);
-  updateStatus('MODULE: '+phLabels[idx]+' · SOVEREIGN STACK ACTIVE');
-}
-
-function unlockModule(idx) {
-  const nav = document.getElementById('nav'+idx);
-  nav.classList.remove('locked');
-  document.getElementById('nd'+idx).className = 'nav-dot done';
-  if(idx > STATE.phase) STATE.phase = idx;
-  saveState();
-}
-
-function updateStatus(msg) {
-  document.getElementById('status-msg').textContent = msg;
-}
-
-// Handle messages from iframes
-window.addEventListener('message', ({data}) => {
-  if(!data||!data.t) return;
-
-  if(data.t==='intake-complete') {
-    STATE.profile = data.profile;
-    STATE.stats.exits++;
-    document.getElementById('se-val').textContent = STATE.stats.exits;
-    saveState();
-    unlockModule(1);
-    setTimeout(()=>goModule(1), 300);
-    updateStatus('INTAKE COMPLETE · RUNNING IDENTITY ANALYSIS...');
-  }
-
-  if(data.t==='identity-ready') {
-    STATE.identity = data.identity;
-    saveState();
-    unlockModule(2);
-    updateStatus('IDENTITY MAPPED · '+(data.identity?.archetype||'')+ ' · BUILDING EXIT PLAN...');
-  }
-
-  if(data.t==='identity-done') {
-    goModule(2);
-  }
-
-  if(data.t==='plan-ready') {
-    STATE.exitPlan = data.plan;
-    saveState();
-    unlockModule(3);
-    updateStatus('EXIT PLAN BUILT · WEAPON LOADED · PROCEED TO CHAIN FORMATION');
-  }
-
-  if(data.t==='plan-done') {
-    goModule(3);
-  }
-
-  if(data.t==='chain-joined') {
-    STATE.stats.chains++;
-    document.getElementById('sc-val').textContent = STATE.stats.chains;
-    saveState();
-    updateStatus('ADDED TO CHAIN NETWORK · '+(data.member?.name||'')+' IS NOW FINDABLE');
-  }
-
-  if(data.t==='chain-done') {
-    unlockModule(4);
-    goModule(4);
-  }
-
-  if(data.t==='forum-post') {
-    updateStatus('POST SUBMITTED TO FORUM · CATEGORY: '+(data.cat||'').toUpperCase());
-  }
-});
-
-// API Key prompt
-function promptApiKey() {
-  const key = prompt('Enter your Anthropic API key to enable AI analysis:\n(Stored locally, never sent to any server)');
-  if(key && key.startsWith('sk-')) {
-    apiKey = key;
-    localStorage.setItem('exit-api-key', key);
-    updateStatus('API KEY SET · AI ANALYSIS ENABLED · SOVEREIGN STACK ACTIVE');
-  }
-}
-
-// Load saved API key
-const savedKey = localStorage.getItem('exit-api-key');
-if(savedKey) { apiKey = savedKey; }
-
-// LANDING ENTRY
-function enterEngine() {
-  document.getElementById('landing').classList.add('gone');
-  if(STATE.phase > 0) {
-    // Resume
-    for(let i=0;i<=STATE.phase;i++) {
-      document.getElementById('nav'+i).classList.remove('locked');
-      document.getElementById('nd'+i).className = 'nav-dot done';
+function loadConfig() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      CONFIG = { ...DEFAULT_CONFIG, ...JSON.parse(raw) };
+      CONFIG._meta = { ...DEFAULT_CONFIG._meta, ...(CONFIG._meta || {}) };
+      return;
     }
-    unlockModule(STATE.phase);
-    goModule(STATE.phase);
-    updateStatus('RESUMING · PHASE '+(STATE.phase+1)+' · '+phLabels[STATE.phase]);
-  } else {
-    goModule(0);
-    updateStatus('INTAKE OPEN · TELL US YOUR STORY');
-    // Prompt for API key if not set
-    if(!apiKey) {
-      setTimeout(()=>{
-        if(confirm('Add your Anthropic API key to enable AI-powered analysis?\n(Optional — you can explore without it)')) {
-          promptApiKey();
-        }
-      }, 1000);
+  } catch (_) {}
+  // first run — try the bundled config.json
+  fetch('config.json').then(r => r.ok ? r.json() : null).then(j => {
+    if (j) {
+      const cleaned = {};
+      for (const [k, v] of Object.entries(j)) {
+        if (!k.startsWith('_') || k === '_meta') cleaned[k] = v;
+      }
+      CONFIG = { ...DEFAULT_CONFIG, ...cleaned };
+      CONFIG._meta = { ...DEFAULT_CONFIG._meta, ...(CONFIG._meta || {}) };
+      saveConfigSilent();
     }
-  }
-  STATE.stats.exits = STATE.stats.exits||0;
-  saveState();
+  }).catch(() => {});
 }
-window.enterEngine = enterEngine;
 
-// Load initial module
-loadModule(0);
-
-// Keyboard shortcut: Ctrl+K for API key
-document.addEventListener('keydown', e => {
-  if((e.ctrlKey||e.metaKey) && e.key==='k') { e.preventDefault(); promptApiKey(); }
-});
-
-// Restore state if returning user
-if(STATE.phase > 0) {
-  for(let i=0;i<STATE.phase;i++){
-    const nav=document.getElementById('nav'+i);
-    if(nav) { nav.classList.remove('locked'); document.getElementById('nd'+i).className='nav-dot done'; }
-  }
+function saveConfigSilent() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(CONFIG)); } catch (_) {}
+  emitMesh('config:update', CONFIG);
 }
-</script>
 
-<!-- ◊·κ FALL-HOT · watch canonical plugins · hot-reload without redeploy -->
-<script src="https://sjgant80-hub.github.io/fall-hot/fall-hot.js" defer></script>
-<script>
-  window.addEventListener('fall-hot:ready', function() {
-    window.fallHot.watch([
-      { name: 'fall-palette', url: 'https://sjgant80-hub.github.io/fall-palette/fall-palette.js' },
-      { name: 'fall-bloom',   url: 'https://sjgant80-hub.github.io/fall-bloom/bloom.js' }
-    ], { every: 5 * 60 * 1000 });
+function saveConfig() {
+  CONFIG.name = document.getElementById('cfg_name').value || CONFIG.name;
+  CONFIG.business = document.getElementById('cfg_business').value || CONFIG.business;
+  CONFIG.industry = document.getElementById('cfg_industry').value || CONFIG.industry;
+  CONFIG.currency = document.getElementById('cfg_currency').value || CONFIG.currency;
+  CONFIG.hourly_rate = +document.getElementById('cfg_hourly').value || CONFIG.hourly_rate;
+  CONFIG.day_rate = +document.getElementById('cfg_day').value || CONFIG.day_rate;
+  CONFIG.email = document.getElementById('cfg_email').value || CONFIG.email;
+  CONFIG.linkedin = document.getElementById('cfg_linkedin').value || CONFIG.linkedin;
+  CONFIG.api_provider = document.getElementById('cfg_apiprov').value;
+  CONFIG.api_key = document.getElementById('cfg_apikey').value || CONFIG.api_key;
+  CONFIG.payment_details.bank = document.getElementById('cfg_bank').value || CONFIG.payment_details.bank;
+  CONFIG.payment_details.sort_code = document.getElementById('cfg_sort').value || CONFIG.payment_details.sort_code;
+  CONFIG.payment_details.account_number = document.getElementById('cfg_acct').value || CONFIG.payment_details.account_number;
+  if (CONFIG._meta) CONFIG._meta.first_run = false;
+  saveConfigSilent();
+  toast('saved · everything updates', 'success');
+  renderDashboard();
+  goTab('dashboard');
+}
+
+function fillConfigForm() {
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+  set('cfg_name', CONFIG.name);
+  set('cfg_business', CONFIG.business);
+  set('cfg_industry', CONFIG.industry);
+  set('cfg_currency', CONFIG.currency);
+  set('cfg_hourly', CONFIG.hourly_rate);
+  set('cfg_day', CONFIG.day_rate);
+  set('cfg_email', CONFIG.email);
+  set('cfg_linkedin', CONFIG.linkedin);
+  set('cfg_apiprov', CONFIG.api_provider);
+  set('cfg_apikey', CONFIG.api_key);
+  set('cfg_bank', CONFIG.payment_details?.bank);
+  set('cfg_sort', CONFIG.payment_details?.sort_code);
+  set('cfg_acct', CONFIG.payment_details?.account_number);
+}
+
+function exportConfig() {
+  const blob = new Blob([JSON.stringify(CONFIG, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'config.json'; a.click();
+  URL.revokeObjectURL(url);
+  toast('config.json downloaded', 'success');
+}
+
+function importConfig() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'application/json';
+  input.onchange = (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try {
+        const j = JSON.parse(r.result);
+        CONFIG = { ...DEFAULT_CONFIG, ...j };
+        CONFIG._meta = { ...DEFAULT_CONFIG._meta, ...(CONFIG._meta || {}) };
+        saveConfigSilent();
+        fillConfigForm();
+        toast('config imported', 'success');
+        renderDashboard();
+      } catch (_) {
+        toast('invalid config.json', 'error');
+      }
+    };
+    r.readAsText(f);
+  };
+  input.click();
+}
+
+/* ═══════════ DOWNLOAD BUNDLE ═══════════ */
+async function downloadBundle() {
+  modal({
+    title: 'Download offline bundle',
+    body: `<p>This downloads the canonical ExitEngine ZIP from GitHub — the same files you forked, plus your current <code>config.json</code> seeded with your data.</p>
+    <p>Unzip to a folder or USB stick. Open <code>index.html</code> in any browser. Run forever.</p>
+    <p class="small dim">If you have customised any tool files in your fork, download from your own GitHub repo's "Download ZIP" button instead — that way your customisations come with you.</p>`,
+    actions: [
+      { label: 'Open canonical download', kind: 'primary', onClick: () => {
+        window.open('https://github.com/sjgant80-hub/exitengine/archive/refs/heads/main.zip', '_blank');
+        closeModal();
+      }},
+      { label: 'Just download my config', kind: 'ghost', onClick: () => { exportConfig(); closeModal(); }},
+      { label: 'Cancel', kind: 'ghost', onClick: closeModal },
+    ]
   });
+}
+
+/* ═══════════ MESH (fall-signal) ═══════════ */
+let MESH = null;
+const STATE = { leads: [], invoices: [], deals: [], events: [] };
+
+function emitMesh(kind, payload) {
+  try {
+    if (!MESH) MESH = new BroadcastChannel('fall-signal');
+    MESH.postMessage({ source: NODE.id, kind, payload });
+  } catch (_) {}
+}
+
+function listenMesh() {
+  try {
+    const ch = new BroadcastChannel('fall-signal');
+    ch.onmessage = (e) => {
+      const m = e.data || {};
+      if (m.source === NODE.id) return;
+      handleMeshMessage(m);
+    };
+  } catch (_) {}
+}
+
+function handleMeshMessage(m) {
+  // listen for events emitted by sibling tools
+  if (m.kind === 'crm:lead_added' || m.kind === 'crm:deal_added') {
+    STATE.leads.push(m.payload);
+    renderDashboard();
+  }
+  if (m.kind === 'accounts:invoice_sent') {
+    STATE.invoices.push(m.payload);
+    renderDashboard();
+  }
+}
+
+/* ═══════════ DASHBOARD render ═══════════ */
+function loadDashboardState() {
+  // each tool stores its data in localStorage under its own key
+  try {
+    STATE.leads = JSON.parse(localStorage.getItem('exitengine.crm.leads') || '[]');
+  } catch (_) { STATE.leads = []; }
+  try {
+    STATE.invoices = JSON.parse(localStorage.getItem('exitengine.accounts.invoices') || '[]');
+  } catch (_) { STATE.invoices = []; }
+}
+
+function fmtMoney(n) {
+  const symbols = { GBP: '£', USD: '$', EUR: '€', AUD: 'A$', THB: '฿', SGD: 'S$', AED: 'د.إ' };
+  const s = symbols[CONFIG.currency] || CONFIG.currency + ' ';
+  const v = Number(n) || 0;
+  return s + v.toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
+function renderDashboard() {
+  loadDashboardState();
+
+  // Stats
+  const pipeline = STATE.leads.filter(l => !['won', 'lost'].includes(l.stage)).reduce((s, l) => s + (+l.value || 0), 0);
+  const now = new Date(); const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const revenue = STATE.invoices.filter(i => i.status === 'paid' && new Date(i.paid_at || i.created) >= monthStart).reduce((s, i) => s + (+i.amount || 0), 0);
+  const overdue = STATE.invoices.filter(i => i.status === 'sent' && new Date(i.due_date) < now).reduce((s, i) => s + (+i.amount || 0), 0);
+  const activeLeads = STATE.leads.filter(l => !['won', 'lost'].includes(l.stage)).length;
+
+  document.getElementById('statPipeline').textContent = fmtMoney(pipeline);
+  document.getElementById('statRevenue').textContent = fmtMoney(revenue);
+  document.getElementById('statLeads').textContent = activeLeads;
+  document.getElementById('statOverdue').textContent = fmtMoney(overdue);
+
+  // Welcome / next action
+  renderWelcome();
+  renderNextAction();
+  renderTutorCta();
+
+  // Config chip
+  const chip = document.getElementById('cfgChipText');
+  const dot = document.querySelector('#cfgChip .dot');
+  if (CONFIG._meta?.first_run || !CONFIG.name) {
+    chip.textContent = 'configure';
+    dot.style.background = 'var(--amber)';
+  } else {
+    chip.textContent = CONFIG.business || CONFIG.name;
+    dot.style.background = 'var(--success)';
+  }
+
+  // Tools grid
+  const tg = document.getElementById('toolsGrid');
+  tg.innerHTML = '';
+  TOOLS.forEach(t => {
+    const card = document.createElement('a');
+    card.className = 'tool-card';
+    card.href = t.href;
+    if (t.external) { card.target = '_blank'; card.rel = 'noopener'; }
+    card.innerHTML = `
+      <span class="ico">${t.ico}</span>
+      <h3>${t.title}</h3>
+      <p>${t.desc}</p>
+      ${t.external ? '<span class="ext">↗ estate</span>' : ''}
+    `;
+    tg.appendChild(card);
+  });
+
+  // Learn grid
+  const lg = document.getElementById('learnGrid');
+  lg.innerHTML = '';
+  LEARN.forEach(l => {
+    const card = document.createElement('a');
+    card.className = 'tool-card';
+    card.href = l.href;
+    card.innerHTML = `
+      <span class="ico">${l.ico}</span>
+      <h3>${l.title}</h3>
+      <p>${l.desc}</p>
+    `;
+    lg.appendChild(card);
+  });
+}
+
+function renderWelcome() {
+  const mount = document.getElementById('welcomeMount');
+  if (CONFIG._meta?.first_run || !CONFIG.name) {
+    mount.innerHTML = `
+      <div class="hero">
+        <h1>You just got laid off.<br>Here's your company.</h1>
+        <p class="lead">10 tools. Connected. Free. Sovereign. Configure once below — every tool reads from one file. Or jump straight to the Tutor and let her walk you through it.</p>
+      </div>
+    `;
+  } else {
+    const greeting = greetingForTime();
+    mount.innerHTML = `
+      <div class="hero">
+        <h1>${greeting}, ${escapeHtml(CONFIG.name.split(' ')[0])}.</h1>
+        <p class="lead">Your company's running. Here's where it stands today.</p>
+      </div>
+    `;
+  }
+}
+
+function renderTutorCta() {
+  const mount = document.getElementById('tutorCtaMount');
+  const phase = CONFIG._meta?.tutor_phase || 1;
+  const phaseNames = ['', 'wound', 'shadow', 'rebirth', 'integration', 'sovereign'];
+  if (phase >= 5) {
+    mount.innerHTML = '';
+    return;
+  }
+  const headlines = {
+    1: 'Phase 1 · the wound',
+    2: 'Phase 2 · the shadow',
+    3: 'Phase 3 · the rebirth',
+    4: 'Phase 4 · the integration',
+    5: 'Phase 5 · the sovereign',
+  };
+  const subs = {
+    1: 'Acknowledge the loss. Sit with it. The tutor opens with this — no rushing past the grief.',
+    2: 'The skills belonged to you, not the company. The tutor reframes 12 years of work as portable equity.',
+    3: 'Build the company. Set up the CRM. Pick a price. Send the first outreach. Action erodes grief.',
+    4: 'You\'re not an ex-employee anymore. You\'re a business owner. The tutor shifts to coaching.',
+    5: 'You don\'t need the tutor anymore. Take it offline. Run from USB. The middleman is gone.',
+  };
+  mount.innerHTML = `
+    <div class="tutor-cta">
+      <div class="phase">${headlines[phase]}</div>
+      <h2>The tutor is here when you're ready.</h2>
+      <p>${subs[phase]}</p>
+      <div class="btn-row">
+        <a href="tutor.html" class="btn btn-primary">Open the tutor</a>
+        <a href="learn/start.html" class="btn btn-ghost">Read first · "just got laid off"</a>
+      </div>
+    </div>
+  `;
+}
+
+function renderNextAction() {
+  const mount = document.getElementById('nextActionMount');
+  const action = computeNextAction();
+  if (!action) { mount.innerHTML = ''; return; }
+  mount.innerHTML = `
+    <div class="next-action">
+      <div class="icon">${action.icon}</div>
+      <div class="body">
+        <h3>next action</h3>
+        <p>${action.text}</p>
+      </div>
+      ${action.href ? `<a class="btn btn-amber btn-sm" href="${action.href}">do it</a>` : ''}
+    </div>
+  `;
+}
+
+function computeNextAction() {
+  if (CONFIG._meta?.first_run || !CONFIG.name) {
+    return { icon: '👋', text: 'Open the tutor · she\'ll ask what you did for a living, and configure everything around that.', href: 'tutor.html' };
+  }
+  const now = new Date();
+  // overdue invoice first
+  const od = STATE.invoices.find(i => i.status === 'sent' && new Date(i.due_date) < now);
+  if (od) return { icon: '💸', text: `Invoice ${od.id || ''} is overdue · chase it. (Legal tab has the Letter Before Action template.)`, href: 'https://sjgant80-hub.github.io/groundlevel/' };
+  // stale lead
+  const stale = STATE.leads.find(l => l.stage && !['won', 'lost'].includes(l.stage) && l.last_touch && (now - new Date(l.last_touch)) / 86400000 > 7);
+  if (stale) return { icon: '🤝', text: `${stale.name || 'A lead'} hasn't heard from you in over a week. Re-engage.`, href: 'tools/crm.html' };
+  // no leads
+  if (STATE.leads.length === 0) {
+    return { icon: '📇', text: 'Add your top 10 contacts to the CRM. The first client is almost always already in your phone.', href: 'tools/crm.html' };
+  }
+  // no invoices
+  if (STATE.invoices.length === 0 && STATE.leads.some(l => l.stage === 'won')) {
+    return { icon: '🧾', text: 'You have a won deal but no invoice yet. Open Accounts and send the first invoice.', href: 'tools/accounts.html' };
+  }
+  // no website
+  if (!CONFIG.linkedin && !CONFIG.website) {
+    return { icon: '🌐', text: 'Generate your one-page site from the Website tool. Two minutes.', href: 'tools/site.html' };
+  }
+  return null;
+}
+
+function greetingForTime() {
+  const h = new Date().getHours();
+  if (h < 5) return 'Late night';
+  if (h < 12) return 'Morning';
+  if (h < 18) return 'Afternoon';
+  return 'Evening';
+}
+
+/* ═══════════ helpers ═══════════ */
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function goTab(tab) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const v = document.getElementById('view-' + tab);
+  if (v) v.classList.add('active');
+  window.scrollTo(0, 0);
+  if (tab === 'dashboard') renderDashboard();
+  if (tab === 'config') { fillConfigForm(); }
+}
+
+let toastTimer;
+function toast(msg, kind) {
+  const t = document.getElementById('toast');
+  t.className = 'toast ' + (kind || '');
+  t.textContent = msg;
+  requestAnimationFrame(() => t.classList.add('show'));
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function modal(opts) {
+  document.getElementById('modalTitle').textContent = opts.title || '';
+  document.getElementById('modalBody').innerHTML = opts.body || '';
+  const actions = document.getElementById('modalActions');
+  actions.innerHTML = '';
+  (opts.actions || [{ label: 'Close', kind: 'ghost', onClick: closeModal }]).forEach(a => {
+    const b = document.createElement('button');
+    b.className = `btn btn-${a.kind || 'ghost'}`;
+    b.textContent = a.label;
+    b.onclick = () => (a.onClick || closeModal)();
+    actions.appendChild(b);
+  });
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
+
+/* expose tutor → window so tutor.html can read config too */
+window.EXITENGINE = {
+  getConfig: () => CONFIG,
+  setConfig: (c) => { CONFIG = { ...CONFIG, ...c }; saveConfigSilent(); renderDashboard(); },
+  setPhase: (n) => { if (!CONFIG._meta) CONFIG._meta = {}; CONFIG._meta.tutor_phase = n; saveConfigSilent(); renderDashboard(); },
+  addCompletedLesson: (id) => {
+    if (!CONFIG._meta) CONFIG._meta = {};
+    if (!CONFIG._meta.lessons_completed) CONFIG._meta.lessons_completed = [];
+    if (!CONFIG._meta.lessons_completed.includes(id)) CONFIG._meta.lessons_completed.push(id);
+    saveConfigSilent(); renderDashboard();
+  },
+  version: NODE.version,
+};
+
+/* ═══════════ BOOT ═══════════ */
+loadConfig();
+listenMesh();
+renderDashboard();
+
+console.log('%c◊·κ=φ⁵ ExitEngine · prime 617 · loaded', 'color:#818cf8;font-weight:bold');
 </script>
-<!-- /◊·κ FALL-HOT -->
 
 </body>
 </html>

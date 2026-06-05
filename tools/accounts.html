@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Accounts · ExitEngine</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#0a0a0f;--void-2:#131319;--void-3:#1c1c25;--void-4:#2a2a35;
+  --cream:#e8e8ea;--cream-2:#c8c8ca;--cream-dim:#8a8a92;--cream-faint:#5a5a62;
+  --phi:#818cf8;--phi-2:#6366f1;--phi-3:#4f46e5;--phi-glow:rgba(129,140,248,0.12);
+  --amber:#f59e0b;--amber-dim:#b45309;--success:#10b981;--warn:#f59e0b;--danger:#ef4444;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --serif:'Times New Roman',Georgia,serif;
+  --tap:48px;--gutter:16px;--radius:10px;--max-w:980px;
+}
+html,body{background:var(--void);color:var(--cream);font-family:var(--font);font-size:16px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+body{background-image:radial-gradient(circle at 0% 0%,var(--phi-glow),transparent 50%)}
+
+.top{position:sticky;top:0;z-index:50;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--void-3)}
+.top-row{display:flex;align-items:center;gap:12px;padding:12px var(--gutter);max-width:var(--max-w);margin:0 auto;min-height:var(--tap)}
+.back{background:none;border:0;color:var(--cream-dim);font-size:14px;padding:8px;cursor:pointer;text-decoration:none}
+.back:hover{color:var(--cream)}
+.brand{font-weight:600;font-size:15px;color:var(--cream)}
+.brand .hi{color:var(--phi)}
+.spacer{flex:1}
+
+main{max-width:var(--max-w);margin:0 auto;padding:var(--gutter)}
+
+.hero{padding:18px 0 14px}
+.hero h1{font-size:24px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
+.hero p{color:var(--cream-dim);font-size:14px}
+
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin:14px 0}
+.stat{background:var(--void-2);border:1px solid var(--void-3);border-radius:var(--radius);padding:12px}
+.stat .num{font-size:20px;font-weight:700;font-family:var(--mono);line-height:1.1}
+.stat .num.info{color:var(--phi)}
+.stat .num.success{color:var(--success)}
+.stat .num.warn{color:var(--warn)}
+.stat .num.danger{color:var(--danger)}
+.stat .lbl{font-size:10px;color:var(--cream-dim);margin-top:4px;text-transform:uppercase;letter-spacing:0.06em}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:var(--tap);padding:8px 16px;font-size:14px;font-weight:600;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;text-decoration:none}
+.btn-primary{background:var(--phi-2);color:#fff;border-color:var(--phi-2)}
+.btn-primary:hover{background:var(--phi-3)}
+.btn-ghost{background:var(--void-2);color:var(--cream);border-color:var(--void-3)}
+.btn-ghost:hover{border-color:var(--phi);color:var(--phi)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--cream-dim);margin:20px 0 10px;font-weight:600}
+
+.inv-card{background:var(--void-2);border:1px solid var(--void-3);border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px}
+.inv-card:hover{border-color:var(--phi)}
+.inv-card .body{flex:1}
+.inv-card .id{font-family:var(--mono);font-size:12px;color:var(--cream-dim)}
+.inv-card .name{font-weight:600;color:var(--cream);font-size:15px}
+.inv-card .amt{font-size:18px;font-weight:700;color:var(--phi);font-family:var(--mono)}
+.inv-card .status{font-size:11px;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600}
+.inv-card .status.draft{background:var(--void-3);color:var(--cream-dim)}
+.inv-card .status.sent{background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid var(--amber-dim)}
+.inv-card .status.paid{background:rgba(16,185,129,0.1);color:var(--success);border:1px solid var(--success)}
+.inv-card .status.overdue{background:rgba(239,68,68,0.1);color:var(--danger);border:1px solid var(--danger)}
+
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:500;color:var(--cream-2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em}
+.field input,.field textarea,.field select{width:100%;min-height:42px;padding:10px 12px;background:var(--void-2);border:1px solid var(--void-3);border-radius:8px;color:var(--cream);font-size:15px;font-family:inherit}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--phi);outline:none}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.lines{background:var(--void-3);border-radius:8px;padding:10px;margin:10px 0}
+.line{display:grid;grid-template-columns:1fr 80px 100px 30px;gap:8px;margin-bottom:6px;align-items:center}
+.line input{padding:6px 8px;min-height:34px;font-size:13px}
+.line button{background:none;border:0;color:var(--cream-dim);cursor:pointer;font-size:18px}
+
+.invoice-paper{background:#f7f6f1;color:#000;padding:36px 32px;border-radius:8px;font-family:var(--serif);font-size:14px;line-height:1.7;max-height:60vh;overflow-y:auto;margin:14px 0}
+.invoice-paper h2{font-size:24px;font-family:var(--serif);margin-bottom:4px}
+.invoice-paper .header{display:flex;justify-content:space-between;margin-bottom:24px}
+.invoice-paper table{width:100%;margin:18px 0;border-collapse:collapse}
+.invoice-paper th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid #333;padding:6px 4px}
+.invoice-paper td{padding:6px 4px;border-bottom:1px solid #ddd}
+.invoice-paper td.total{font-weight:bold;font-size:16px;border-top:2px solid #333;border-bottom:none;padding-top:12px}
+.invoice-paper td.r{text-align:right}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;z-index:100;padding:var(--gutter)}
+.modal.open{display:flex}
+.modal-inner{background:var(--void-2);border:1px solid var(--void-3);border-radius:var(--radius);padding:22px;max-width:680px;width:100%;max-height:88vh;overflow-y:auto}
+.modal h3{font-size:18px;margin-bottom:6px;color:var(--cream)}
+.modal p{color:var(--cream-dim);font-size:13px;margin-bottom:12px}
+
+.empty{text-align:center;padding:40px 16px;color:var(--cream-dim)}
+.empty .emoji{font-size:42px;margin-bottom:10px;opacity:0.4}
+.empty h3{color:var(--cream-2);font-size:16px;margin-bottom:4px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--void-3);border:1px solid var(--void-4);color:var(--cream);padding:8px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity 0.2s,transform 0.2s;z-index:200}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:var(--success);color:var(--success)}
+
+@media print{.top,.btn-row,.modal-inner > h3,.modal-inner > p,.btn,.back,.btn-primary,.btn-ghost{display:none!important}.invoice-paper{background:#fff;padding:0;max-height:none;overflow:visible}.modal,.modal-inner{position:static;background:#fff!important;padding:0;border:none;max-height:none;display:block!important}}
+@media (max-width:540px){.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-row">
+    <a href="../index.html" class="back">← company</a>
+    <div class="brand">Exit<span class="hi">Accounts</span></div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" style="min-height:36px;padding:6px 14px;font-size:13px" onclick="newInvoice()">+ invoice</button>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Invoices</h1>
+    <p>Send. Track. Get paid. (Late paying client? Use the Legal tool → Letter Before Action template.)</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="num info" id="statDraft">0</div><div class="lbl">draft</div></div>
+    <div class="stat"><div class="num warn" id="statSent">0</div><div class="lbl">sent</div></div>
+    <div class="stat"><div class="num success" id="statPaid">0</div><div class="lbl">paid this month</div></div>
+    <div class="stat"><div class="num danger" id="statOverdue">0</div><div class="lbl">overdue</div></div>
+  </div>
+
+  <div class="section-title">All invoices</div>
+  <div id="list"></div>
+
+  <div class="empty" id="empty" style="display:none">
+    <div class="emoji">🧾</div>
+    <h3>No invoices yet</h3>
+    <p>Won a deal in the CRM? Auto-creates one. Or click <strong>+ invoice</strong>.</p>
+  </div>
+</main>
+
+<div class="modal" id="modal">
+  <div class="modal-inner">
+    <h3 id="modalTitle">Title</h3>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/audit-shim.js" data-tool="exitengine-accounts" data-tier="minimal" defer></script>
+
+<script>
+'use strict';
+
+const STORE_KEY = 'exitengine.accounts.invoices';
+const CFG_KEY = 'exitengine.config';
+let INVOICES = [];
+let CONFIG = {};
+
+function loadAll() {
+  try { INVOICES = JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch (_) { INVOICES = []; }
+  try { CONFIG = JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); } catch (_) { CONFIG = {}; }
+}
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(INVOICES)); } catch (_) {}
+  emit('accounts:state_changed', { count: INVOICES.length });
+}
+function emit(kind, payload) {
+  try { new BroadcastChannel('fall-signal').postMessage({ source: 'exitengine-accounts', kind, payload }); } catch (_) {}
+}
+
+function fmtMoney(n) {
+  const sym = { GBP: '£', USD: '$', EUR: '€', AUD: 'A$', THB: '฿', SGD: 'S$', AED: 'د.إ' }[CONFIG.currency] || '£';
+  return sym + (+n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtDate(d) { return new Date(d).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }); }
+
+function nextInvoiceNumber() {
+  const year = new Date().getFullYear();
+  const yearInvoices = INVOICES.filter(i => (i.id || '').startsWith('INV-' + year));
+  return 'INV-' + year + '-' + String(yearInvoices.length + 1).padStart(3, '0');
+}
+
+function newInvoice(prefill) {
+  const inv = {
+    id: nextInvoiceNumber(),
+    to: '',
+    org: '',
+    to_address: '',
+    lines: [{ desc: '', qty: 1, rate: 0 }],
+    vat: CONFIG.vat_registered ? 20 : 0,
+    notes: '',
+    due_days: 14,
+    issue_date: new Date().toISOString().slice(0, 10),
+    status: 'draft',
+    created: new Date().toISOString(),
+  };
+  if (prefill) {
+    if (prefill.to) inv.to = prefill.to;
+    if (prefill.org) inv.org = prefill.org;
+    if (prefill.amount) inv.lines = [{ desc: 'Services', qty: 1, rate: +prefill.amount }];
+  }
+  INVOICES.push(inv);
+  save();
+  editInvoice(inv.id);
+}
+
+function editInvoice(id) {
+  const inv = INVOICES.find(i => i.id === id);
+  if (!inv) return;
+  const html = `
+    <div class="field-row">
+      <div class="field"><label>To · contact name</label><input id="ed_to" value="${escapeHtml(inv.to)}" placeholder="Sarah Chen"></div>
+      <div class="field"><label>Organisation</label><input id="ed_org" value="${escapeHtml(inv.org)}" placeholder="Acme Co"></div>
+    </div>
+    <div class="field"><label>Their address</label><textarea id="ed_addr" rows="2" placeholder="optional · for invoice header">${escapeHtml(inv.to_address)}</textarea></div>
+    <div class="field-row">
+      <div class="field"><label>Issue date</label><input id="ed_issue" type="date" value="${inv.issue_date}"></div>
+      <div class="field"><label>Due in (days)</label><input id="ed_due" type="number" value="${inv.due_days}"></div>
+    </div>
+    <div class="section-title">Lines</div>
+    <div class="lines" id="lines"></div>
+    <button class="btn btn-ghost btn-sm" onclick="addLine()" style="min-height:36px;padding:6px 12px;font-size:13px">+ line</button>
+    <div class="field-row" style="margin-top:14px">
+      <div class="field"><label>VAT %</label><input id="ed_vat" type="number" value="${inv.vat}"></div>
+      <div class="field"><label>Status</label>
+        <select id="ed_status">
+          <option value="draft"${inv.status === 'draft' ? ' selected' : ''}>Draft</option>
+          <option value="sent"${inv.status === 'sent' ? ' selected' : ''}>Sent</option>
+          <option value="paid"${inv.status === 'paid' ? ' selected' : ''}>Paid</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Notes (optional)</label><textarea id="ed_notes" rows="2">${escapeHtml(inv.notes)}</textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveInvoice('${id}')">save</button>
+      <button class="btn btn-ghost" onclick="previewInvoice('${id}')">preview · print</button>
+      <button class="btn btn-ghost" onclick="deleteInvoice('${id}')">delete</button>
+      <button class="btn btn-ghost" onclick="closeModal()">cancel</button>
+    </div>
+  `;
+  document.getElementById('modalTitle').textContent = inv.id;
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modal').classList.add('open');
+  renderLines(inv.lines);
+  window._editId = id;
+}
+
+function renderLines(lines) {
+  const wrap = document.getElementById('lines');
+  wrap.innerHTML = '';
+  lines.forEach((l, i) => {
+    const row = document.createElement('div');
+    row.className = 'line';
+    row.innerHTML = `
+      <input data-line="${i}" data-field="desc" placeholder="Description" value="${escapeHtml(l.desc)}">
+      <input data-line="${i}" data-field="qty" type="number" step="0.25" placeholder="qty" value="${l.qty || 1}">
+      <input data-line="${i}" data-field="rate" type="number" step="0.01" placeholder="rate" value="${l.rate || 0}">
+      <button onclick="rmLine(${i})">×</button>
+    `;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const inv = INVOICES.find(i => i.id === window._editId);
+      const idx = +inp.dataset.line;
+      const field = inp.dataset.field;
+      inv.lines[idx][field] = field === 'desc' ? inp.value : +inp.value;
+    });
+  });
+}
+
+function addLine() {
+  const inv = INVOICES.find(i => i.id === window._editId);
+  inv.lines.push({ desc: '', qty: 1, rate: 0 });
+  renderLines(inv.lines);
+}
+function rmLine(i) {
+  const inv = INVOICES.find(i2 => i2.id === window._editId);
+  inv.lines.splice(i, 1);
+  renderLines(inv.lines);
+}
+
+function saveInvoice(id) {
+  const inv = INVOICES.find(i => i.id === id);
+  inv.to = document.getElementById('ed_to').value.trim();
+  inv.org = document.getElementById('ed_org').value.trim();
+  inv.to_address = document.getElementById('ed_addr').value.trim();
+  inv.issue_date = document.getElementById('ed_issue').value;
+  inv.due_days = +document.getElementById('ed_due').value || 14;
+  inv.vat = +document.getElementById('ed_vat').value || 0;
+  const newStatus = document.getElementById('ed_status').value;
+  inv.notes = document.getElementById('ed_notes').value.trim();
+  if (newStatus !== inv.status) {
+    inv.status = newStatus;
+    if (newStatus === 'sent') inv.sent_at = new Date().toISOString();
+    if (newStatus === 'paid') {
+      inv.paid_at = new Date().toISOString();
+      emit('accounts:invoice_paid', { id: inv.id, amount: totalOf(inv) });
+    }
+  }
+  // calc due date
+  const issue = new Date(inv.issue_date);
+  inv.due_date = new Date(issue.getTime() + inv.due_days * 86400000).toISOString().slice(0, 10);
+  inv.amount = totalOf(inv);
+  save();
+  closeModal();
+  render();
+  toast('saved', 'success');
+}
+
+function deleteInvoice(id) {
+  if (!confirm('Delete invoice ' + id + '?')) return;
+  INVOICES = INVOICES.filter(i => i.id !== id);
+  save();
+  closeModal();
+  render();
+}
+
+function totalOf(inv) {
+  const sub = (inv.lines || []).reduce((s, l) => s + (+l.qty || 0) * (+l.rate || 0), 0);
+  return sub * (1 + (inv.vat || 0) / 100);
+}
+
+function previewInvoice(id) {
+  const inv = INVOICES.find(i => i.id === id);
+  const sub = (inv.lines || []).reduce((s, l) => s + (+l.qty || 0) * (+l.rate || 0), 0);
+  const vat = sub * (inv.vat || 0) / 100;
+  const total = sub + vat;
+  const payment = CONFIG.payment_details || {};
+  const html = `
+    <div class="invoice-paper" id="paper">
+      <div class="header">
+        <div>
+          <h2>${escapeHtml(CONFIG.business || CONFIG.name || 'Your Business')}</h2>
+          <div style="font-size:13px">${escapeHtml(CONFIG.email || '')}</div>
+        </div>
+        <div style="text-align:right">
+          <h2>INVOICE</h2>
+          <div style="font-size:13px">${inv.id}</div>
+          <div style="font-size:12px;color:#555">Issued: ${fmtDate(inv.issue_date)}</div>
+          <div style="font-size:12px;color:#555">Due: ${fmtDate(inv.due_date)}</div>
+        </div>
+      </div>
+      <div style="margin-bottom:20px">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:#555;margin-bottom:4px">Billed to</div>
+        <div style="font-weight:bold">${escapeHtml(inv.to)}</div>
+        ${inv.org ? `<div>${escapeHtml(inv.org)}</div>` : ''}
+        ${inv.to_address ? `<div style="white-space:pre-line;font-size:13px">${escapeHtml(inv.to_address)}</div>` : ''}
+      </div>
+      <table>
+        <thead><tr><th>Description</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">Amount</th></tr></thead>
+        <tbody>
+          ${(inv.lines || []).map(l => `<tr><td>${escapeHtml(l.desc)}</td><td class="r">${l.qty}</td><td class="r">${fmtMoney(l.rate)}</td><td class="r">${fmtMoney((+l.qty||0)*(+l.rate||0))}</td></tr>`).join('')}
+          <tr><td colspan="3" class="r">Subtotal</td><td class="r">${fmtMoney(sub)}</td></tr>
+          ${inv.vat ? `<tr><td colspan="3" class="r">VAT @ ${inv.vat}%</td><td class="r">${fmtMoney(vat)}</td></tr>` : ''}
+          <tr><td colspan="3" class="r total">Total due</td><td class="r total">${fmtMoney(total)}</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:24px;font-size:13px">
+        <div style="font-weight:bold;margin-bottom:6px">Payment details</div>
+        ${payment.bank ? `Bank: ${escapeHtml(payment.bank)}<br>` : ''}
+        ${payment.sort_code ? `Sort: ${escapeHtml(payment.sort_code)}<br>` : ''}
+        ${payment.account_number ? `Account: ${escapeHtml(payment.account_number)}<br>` : ''}
+        ${(!payment.bank && !payment.account_number) ? '<em>Set payment details in config to show them here</em>' : ''}
+      </div>
+      ${inv.notes ? `<div style="margin-top:18px;font-size:13px;color:#555">${escapeHtml(inv.notes)}</div>` : ''}
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="window.print()">print · save as PDF</button>
+      <button class="btn btn-ghost" onclick="editInvoice('${id}')">back to edit</button>
+    </div>
+  `;
+  document.getElementById('modalTitle').textContent = inv.id;
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modal').classList.add('open');
+}
+
+function render() {
+  document.getElementById('empty').style.display = INVOICES.length === 0 ? 'block' : 'none';
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  INVOICES.slice().reverse().forEach(inv => {
+    const total = totalOf(inv);
+    const isOverdue = inv.status === 'sent' && inv.due_date && new Date(inv.due_date) < new Date();
+    const status = isOverdue ? 'overdue' : inv.status;
+    const card = document.createElement('div');
+    card.className = 'inv-card';
+    card.onclick = () => editInvoice(inv.id);
+    card.innerHTML = `
+      <div class="body">
+        <div class="id">${inv.id} · ${fmtDate(inv.issue_date)}</div>
+        <div class="name">${escapeHtml(inv.to || '(no recipient)')}</div>
+      </div>
+      <div class="amt">${fmtMoney(total)}</div>
+      <span class="status ${status}">${status}</span>
+    `;
+    list.appendChild(card);
+  });
+
+  // stats
+  const monthStart = new Date(); monthStart.setDate(1);
+  const draft = INVOICES.filter(i => i.status === 'draft').length;
+  const sent = INVOICES.filter(i => i.status === 'sent').reduce((s, i) => s + totalOf(i), 0);
+  const paid = INVOICES.filter(i => i.status === 'paid' && new Date(i.paid_at || i.created) >= monthStart).reduce((s, i) => s + totalOf(i), 0);
+  const overdue = INVOICES.filter(i => i.status === 'sent' && new Date(i.due_date) < new Date()).reduce((s, i) => s + totalOf(i), 0);
+  document.getElementById('statDraft').textContent = draft;
+  document.getElementById('statSent').textContent = fmtMoney(sent);
+  document.getElementById('statPaid').textContent = fmtMoney(paid);
+  document.getElementById('statOverdue').textContent = fmtMoney(overdue);
+}
+
+function escapeHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+function closeModal() { document.getElementById('modal').classList.remove('open'); window._editId = null; }
+document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+
+let toastTimer;
+function toast(msg, kind) {
+  const t = document.getElementById('toast');
+  t.className = 'toast ' + (kind || '');
+  t.textContent = msg;
+  requestAnimationFrame(() => t.classList.add('show'));
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+loadAll();
+render();
+
+// auto-create from CRM win
+const params = new URLSearchParams(location.search);
+const prefillRaw = params.get('new');
+if (prefillRaw) {
+  try {
+    const prefill = JSON.parse(decodeURIComponent(prefillRaw));
+    newInvoice(prefill);
+    history.replaceState(null, '', location.pathname);
+  } catch (_) {}
+}
+</script>
+</body>
+</html>

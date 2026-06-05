@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f">
+<title>Tutor · ExitEngine</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230a0a0f'/%3E%3Ctext x='32' y='42' font-size='36' text-anchor='middle' fill='%23818cf8'%3Eφ%3C/text%3E%3C/svg%3E">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --void:#0a0a0f; --void-2:#131319; --void-3:#1c1c25; --void-4:#2a2a35;
+  --cream:#e8e8ea; --cream-2:#c8c8ca; --cream-dim:#8a8a92; --cream-faint:#5a5a62;
+  --phi:#818cf8; --phi-2:#6366f1; --phi-3:#4f46e5; --phi-faint:#312e81; --phi-glow:rgba(129,140,248,0.12);
+  --amber:#f59e0b; --amber-dim:#b45309; --amber-glow:rgba(245,158,11,0.1);
+  --success:#10b981; --warn:#f59e0b; --danger:#ef4444;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-serif: 'Times New Roman', Georgia, serif;
+  --tap:56px; --gutter:16px; --radius:12px; --radius-sm:8px; --max-w:760px;
+}
+html, body {
+  background: var(--void); color: var(--cream);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  min-height: 100vh; min-height: 100dvh; -webkit-font-smoothing: antialiased;
+}
+body {
+  background-image:
+    radial-gradient(circle at 0% 0%, var(--phi-glow), transparent 50%),
+    radial-gradient(circle at 100% 100%, var(--amber-glow), transparent 50%);
+  background-attachment: fixed;
+}
+
+/* TOP */
+.top {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(10,10,15,0.92);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--void-3);
+}
+.top-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px var(--gutter); max-width: var(--max-w); margin: 0 auto;
+  min-height: var(--tap);
+}
+.back {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 0; color: var(--cream-dim);
+  font-size: 14px; padding: 8px 8px; cursor: pointer; text-decoration: none;
+}
+.back:hover { color: var(--cream); }
+.top-spacer { flex: 1; }
+.phase-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; font-size: 12px;
+  background: var(--phi-glow); color: var(--phi);
+  border-radius: 999px; border: 1px solid var(--phi-faint);
+  letter-spacing: 0.06em; font-weight: 600;
+}
+
+/* MAIN */
+main {
+  max-width: var(--max-w); margin: 0 auto;
+  padding: var(--gutter); padding-bottom: 200px;
+}
+
+/* MESSAGES */
+.msg {
+  margin-bottom: 16px; animation: fade 0.25s ease;
+}
+@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.msg.tutor {
+  padding: 16px 18px;
+  background: var(--void-2); border: 1px solid var(--void-3);
+  border-left: 3px solid var(--phi);
+  border-radius: var(--radius);
+  font-size: 16px; line-height: 1.6;
+}
+.msg.tutor strong { color: var(--cream); }
+.msg.tutor a { color: var(--phi); }
+.msg.tutor h2 {
+  font-size: 18px; margin-bottom: 8px; color: var(--cream);
+  font-weight: 600; letter-spacing: -0.01em;
+}
+.msg.tutor .phase-tag {
+  display: inline-block; font-size: 11px;
+  color: var(--phi); padding: 3px 9px;
+  background: var(--phi-glow); border-radius: 999px;
+  margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;
+}
+
+.msg.you {
+  padding: 14px 16px; margin-left: 32px;
+  background: var(--phi-glow); border: 1px solid var(--phi-faint);
+  border-radius: var(--radius);
+  color: var(--cream);
+}
+.msg.you::before {
+  content: 'you'; display: block;
+  font-size: 11px; color: var(--phi); margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
+}
+
+.msg.action {
+  padding: 14px 16px;
+  background: var(--amber-glow); border: 1px solid var(--amber-dim);
+  border-radius: var(--radius); color: var(--cream);
+}
+.msg.action::before {
+  content: 'do this'; display: block;
+  font-size: 11px; color: var(--amber); margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
+}
+
+/* CTAS */
+.cta-row {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+}
+.cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 18px; min-height: 48px;
+  font-size: 14px; font-weight: 600;
+  border-radius: var(--radius-sm); border: 1px solid transparent;
+  cursor: pointer; text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, transform 0.05s;
+}
+.cta:active { transform: scale(0.98); }
+.cta.primary { background: var(--phi-2); color: #fff; border-color: var(--phi-2); }
+.cta.primary:hover { background: var(--phi-3); }
+.cta.ghost { background: var(--void-2); color: var(--cream); border-color: var(--void-3); }
+.cta.ghost:hover { border-color: var(--phi); color: var(--phi); }
+.cta.amber { background: var(--amber); color: var(--void); border-color: var(--amber); }
+.cta.amber:hover { background: var(--amber-dim); color: var(--cream); }
+
+/* COMPOSER */
+.composer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(10,10,15,0.95);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--void-3);
+  padding: 12px var(--gutter) calc(12px + env(safe-area-inset-bottom));
+  z-index: 60;
+}
+.composer-row {
+  max-width: var(--max-w); margin: 0 auto;
+  display: flex; gap: 10px; align-items: flex-end;
+}
+.composer textarea {
+  flex: 1; min-height: 48px; max-height: 160px;
+  padding: 12px 14px;
+  background: var(--void-2); border: 1px solid var(--void-3);
+  border-radius: var(--radius-sm); color: var(--cream);
+  font-size: 16px; font-family: inherit; line-height: 1.5;
+  resize: none;
+}
+.composer textarea:focus { border-color: var(--phi); outline: none; background: var(--void); }
+.composer textarea::placeholder { color: var(--cream-faint); }
+.composer button {
+  min-height: 48px; padding: 0 18px;
+  background: var(--phi-2); color: #fff;
+  border: 0; border-radius: var(--radius-sm);
+  font-weight: 600; cursor: pointer;
+  transition: background 0.15s;
+}
+.composer button:hover { background: var(--phi-3); }
+.composer button:disabled { background: var(--void-3); color: var(--cream-faint); cursor: not-allowed; }
+
+.composer .hint {
+  max-width: var(--max-w); margin: 4px auto 0;
+  text-align: center; font-size: 11px; color: var(--cream-faint);
+}
+
+/* THINKING dots */
+.thinking {
+  display: inline-block;
+}
+.thinking::after {
+  content: '...';
+  animation: dots 1.4s steps(4, end) infinite;
+}
+@keyframes dots {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+}
+
+/* HERO opening */
+.opening {
+  padding: 28px 0 14px;
+}
+.opening h1 {
+  font-size: 28px; line-height: 1.15;
+  letter-spacing: -0.025em; font-weight: 700; color: var(--cream);
+  margin-bottom: 10px;
+}
+.opening p { color: var(--cream-dim); font-size: 15px; max-width: 540px; }
+@media (min-width: 720px) {
+  .opening h1 { font-size: 34px; }
+}
+
+.tiny { font-size: 11px; }
+.dim { color: var(--cream-dim); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-row">
+    <a href="index.html" class="back">← back to your company</a>
+    <div class="top-spacer"></div>
+    <span class="phase-chip" id="phaseChip">phase 1 · wound</span>
+  </div>
+</header>
+
+<main>
+  <div id="messages"></div>
+</main>
+
+<div class="composer">
+  <div class="composer-row">
+    <textarea id="input" placeholder="say what's on your mind..." rows="1"></textarea>
+    <button id="sendBtn" onclick="sendMessage()">send</button>
+  </div>
+  <div class="hint" id="modeHint">pre-written mode · add an API key in config to make me conversational</div>
+</div>
+
+<!-- Audit shim for Article 12 -->
+<script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/audit-shim.js" data-tool="exitengine" data-tier="limited" defer></script>
+
+<script>
+'use strict';
+
+const STORE_KEY = 'exitengine.config';
+const HISTORY_KEY = 'exitengine.tutor.history';
+const PHASE_NAMES = ['', 'wound', 'shadow', 'rebirth', 'integration', 'sovereign'];
+
+let CONFIG = {};
+let HISTORY = []; // [{ role: 'tutor'|'user', text }]
+
+function loadConfig() {
+  try { CONFIG = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch (_) { CONFIG = {}; }
+  CONFIG._meta = CONFIG._meta || { tutor_phase: 1, lessons_completed: [], first_run: true };
+  if (!CONFIG._meta.tutor_phase) CONFIG._meta.tutor_phase = 1;
+}
+function saveConfig() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(CONFIG)); } catch (_) {}
+  // emit so the hub updates
+  try { new BroadcastChannel('fall-signal').postMessage({ source: 'tutor', kind: 'config:update', payload: CONFIG }); } catch (_) {}
+}
+
+function loadHistory() {
+  try { HISTORY = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch (_) { HISTORY = []; }
+}
+function saveHistory() {
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(HISTORY.slice(-50))); } catch (_) {}
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/* ═══════════ PHASE LOGIC ═══════════ */
+function phase() { return CONFIG._meta?.tutor_phase || 1; }
+function setPhase(n) {
+  CONFIG._meta.tutor_phase = Math.max(1, Math.min(5, n));
+  saveConfig();
+  renderPhaseChip();
+}
+function renderPhaseChip() {
+  document.getElementById('phaseChip').textContent = `phase ${phase()} · ${PHASE_NAMES[phase()]}`;
+}
+
+/* ═══════════ PRE-WRITTEN OPENING per phase ═══════════ */
+const OPENINGS = {
+  1: function() {
+    if (CONFIG.name) {
+      return {
+        h2: 'Welcome back',
+        text: `Hi ${escapeHtml(firstName())}. Phase 1 is the wound. Whatever pace feels right is the right pace today. What's on your mind?`,
+        ctas: [
+          { label: 'I want to talk about what happened', action: 'phase1_talk' },
+          { label: 'I want to skip to building', action: 'phase3_jump' },
+        ],
+      };
+    }
+    return {
+      h2: 'You just got laid off.',
+      text: `I'm the tutor. I'll walk you through the next thirty days. First we sit with the loss — phase 1, the wound. Then we look at what you actually kept (skills, relationships, knowledge — all yours). Then we build the company.<br><br>Five phases. Your pace. You can skip ahead if you want. You can come back if you skipped too fast. There's no wrong way to do this.<br><br>What did you do for a living?`,
+      ctas: [
+        { label: 'I was in sales / sales ops', action: 'set_industry:sales-ops' },
+        { label: 'I was in engineering', action: 'set_industry:engineering' },
+        { label: 'I was in marketing', action: 'set_industry:marketing' },
+        { label: 'I was in HR / talent', action: 'set_industry:hr' },
+        { label: 'I was in operations', action: 'set_industry:operations' },
+        { label: 'Something else — let me type it', action: 'compose_industry' },
+      ],
+    };
+  },
+  2: function() {
+    return {
+      h2: 'Phase 2 · the shadow',
+      text: `Twelve years (or however many) you spent at that company — the skills, the relationships, the knowledge — those came home with you on the last day. They kept the Salesforce licence. You kept the muscle that knew when a deal was real and when it wasn't.<br><br>In ${escapeHtml(industryReframe())}, the company was the container. You're the content.<br><br>Let's name three skills you have that aren't on a job description.`,
+      ctas: [
+        { label: 'Help me name them', action: 'phase2_skills' },
+        { label: 'I already know them · move on', action: 'phase3_start' },
+      ],
+    };
+  },
+  3: function() {
+    return {
+      h2: 'Phase 3 · the rebirth',
+      text: `Action erodes grief. Today we set the company up. By the end of the week you'll have ${industryFirstWin()}.<br><br>The plan:`,
+      ctas: [
+        { label: '1 · Add my first 10 contacts to the CRM', action: 'lesson:clients' },
+        { label: '2 · Set my rate', action: 'lesson:pricing' },
+        { label: '3 · Send my first outreach', action: 'compose_outreach' },
+        { label: '4 · Generate my one-page site', action: 'goto:tools/site.html' },
+        { label: '5 · Send my first invoice (when ready)', action: 'lesson:money' },
+      ],
+    };
+  },
+  4: function() {
+    return {
+      h2: 'Phase 4 · the integration',
+      text: `Look at you. You're not an ex-employee anymore. You're a business owner. The CRM has names in it. The pipeline has a value.<br><br>I'm going to step back from teacher to coach. I'll check in once a day if you want — quick prompts, not lectures. Tell me what you want me to nudge you about.`,
+      ctas: [
+        { label: 'Nudge me about following up on stale leads', action: 'coach:stale_leads' },
+        { label: 'Nudge me about sending invoices', action: 'coach:invoicing' },
+        { label: 'Nudge me about posting on LinkedIn', action: 'coach:social' },
+        { label: 'I\'ll come to you when I want', action: 'phase4_set' },
+      ],
+    };
+  },
+  5: function() {
+    return {
+      h2: 'Phase 5 · the sovereign',
+      text: `You don't need me anymore.<br><br>The tools are running. The pipeline is filling. You know how to send an invoice, chase a debt, write a Letter Before Action, generate a site.<br><br>Take the bundle offline. Run from USB. The internet is now optional. The company was the middleman. You don't need a middleman.<br><br>If you want a refresher — open the Learn tab. If you want me to talk to you again — I'm always here. But the lesson is over.`,
+      ctas: [
+        { label: 'Download the offline bundle', action: 'goto:index.html#download' },
+        { label: 'Re-read a lesson', action: 'goto:index.html' },
+        { label: 'Thanks · I\'ll come back when I need you', action: 'phase5_done' },
+      ],
+    };
+  },
+};
+
+function firstName() {
+  return (CONFIG.name || 'friend').split(' ')[0];
+}
+
+function industryReframe() {
+  const i = CONFIG.industry || 'consulting';
+  const map = {
+    'sales-ops': 'sales ops · the playbooks, the pipeline judgement, the relationships',
+    'engineering': 'engineering · the systems you built, the code, the architecture decisions in your head',
+    'marketing': 'marketing · the campaigns, the audiences, the brand instincts',
+    'hr': 'HR · the people insight, the hiring patterns, the discretion',
+    'finance': 'finance · the models, the closes, the way you read a P&L',
+    'operations': 'operations · the process maps, the vendor relationships, the optimisation instinct',
+    'teaching': 'teaching · the curriculum, the cohort relationships, the way you make a hard thing simple',
+    'healthcare': 'healthcare · the clinical judgement, the patient rapport, the system knowledge',
+    'trades': 'trades · the skills in your hands, the customer base, the reliability',
+    'design': 'design · the eye, the systems thinking, the taste',
+    'writing': 'writing · the voice, the research instinct, the rhythm',
+    'coaching': 'coaching · the listening, the frameworks, the trust',
+    'consulting': 'consulting · the experience, the network, the problem-solving instinct',
+  };
+  return map[i] || map['consulting'];
+}
+
+function industryFirstWin() {
+  const i = CONFIG.industry || 'consulting';
+  const map = {
+    'sales-ops': 'a CRM with your top 10 contacts, a rate set, and a first outreach drafted',
+    'engineering': 'a portfolio site, a fixed-price proposal template, and your day rate set',
+    'marketing': 'a one-page site, a positioning statement, and your first warm reach-out',
+    'hr': 'a service menu, a day rate, and three target companies in the pipeline',
+    'finance': 'a service ladder (one-off · monthly · retainer), a rate, and your first proposal drafted',
+    'operations': 'a problem inventory from your old company, a rate, and a first outreach',
+    'teaching': 'a course outline, a price, and your first three target students identified',
+    'healthcare': 'a service list, a rate, and your first three prospect notes',
+    'trades': 'a job-rate sheet, a service area, and your first three quoted jobs',
+    'design': 'a portfolio page, three rate tiers (one-off / sprint / retainer), and a first reach-out',
+    'writing': 'a writer page, a per-word and a project rate, and three pitches sent',
+    'coaching': 'a coaching page, a per-session rate, and your first three discovery calls booked',
+    'consulting': 'a CRM with names, a rate, and a first reach-out sent',
+  };
+  return map[i] || map['consulting'];
+}
+
+/* ═══════════ ACTION HANDLERS ═══════════ */
+const ACTIONS = {
+  'phase1_talk': () => {
+    pushTutor({
+      h2: 'OK · we sit with it',
+      text: `Loss is real. The identity you had — employee, member of the team, valued contributor — that's gone. Grief is real and it has its own clock.<br><br>One thing helps and doesn't rush the grief: <strong>do not make any irreversible decisions this week</strong>. Don't sign up for a new platform. Don't make a public statement. Don't blast your CV out. The grief will pass. The bad decisions made under grief don't.<br><br>What I will ask you: when you're ready (could be today, could be three weeks), come back. The work is here. I'll be here.`,
+      ctas: [
+        { label: 'I\'m ready to move to phase 2', action: 'advance:2' },
+        { label: 'I want to keep talking', action: 'compose_open' },
+        { label: 'I need to step away · I\'ll come back', action: 'goto:index.html' },
+      ],
+    });
+  },
+  'advance:2': () => { setPhase(2); pushTutor(OPENINGS[2]()); },
+  'advance:3': () => { setPhase(3); pushTutor(OPENINGS[3]()); },
+  'advance:4': () => { setPhase(4); pushTutor(OPENINGS[4]()); },
+  'advance:5': () => { setPhase(5); pushTutor(OPENINGS[5]()); },
+  'phase3_jump': () => { setPhase(3); pushTutor({
+    h2: 'OK — you skip the wound, we go to build',
+    text: 'No judgement. Some people process by acting. You can always come back to phase 1 later.',
+    ctas: [],
+  }); pushTutor(OPENINGS[3]()); },
+  'phase3_start': () => { setPhase(3); pushTutor(OPENINGS[3]()); },
+  'phase2_skills': () => {
+    pushTutor({
+      h2: 'Three skills not on a job description',
+      text: `Think small. Not "I was great at Excel." Try:<br><br>· The thing colleagues asked YOU to help with even though it wasn't your job<br>· The thing you did so often you stopped noticing it was a skill<br>· The thing that took you ten years to learn but feels obvious to you now<br><br>Type them in below. I'll reframe them as services if you want.`,
+      ctas: [],
+    });
+  },
+  'phase4_set': () => { setPhase(4); pushTutor({ h2: 'OK · I\'m here when you want me', text: 'No daily nudges. Come back any time.', ctas: [{ label: 'Back to company', action: 'goto:index.html' }] }); },
+  'phase5_done': () => { setPhase(5); pushTutor({ h2: '◊·κ=φ⁵', text: 'You\'re sovereign. The middleman is gone. Whenever you need me, the chat history is here.', ctas: [{ label: 'Back to company', action: 'goto:index.html' }] }); },
+  'compose_industry': () => {
+    pushTutor({ h2: 'Tell me about it', text: 'Type your industry / role in the box below.', ctas: [] });
+    setExpectation('industry_freeform');
+  },
+  'compose_outreach': () => {
+    pushTutor({ h2: 'Draft your first outreach', text: 'Type who you\'re writing to in the box below. Format: "[name] · [their role] · [where we know each other from]". I\'ll draft a warm reach-out you can send today.', ctas: [] });
+    setExpectation('outreach_target');
+  },
+  'compose_open': () => {
+    pushTutor({ h2: 'I\'m listening', text: 'Type whatever you want to say in the box below.', ctas: [] });
+    setExpectation('open');
+  },
+  'coach:stale_leads': () => { pushTutor({ h2: 'Got it', text: 'I\'ll prompt you to follow up on any lead that hasn\'t heard from you in 7 days. Check the dashboard daily — the "next action" card will surface them.', ctas: [{ label: 'Done', action: 'goto:index.html' }] }); },
+  'coach:invoicing': () => { pushTutor({ h2: 'Got it', text: 'I\'ll surface any unpaid invoice on the dashboard. Use the Legal tab for the Letter Before Action template when chasing turns into court-ready.', ctas: [{ label: 'Done', action: 'goto:index.html' }] }); },
+  'coach:social': () => { pushTutor({ h2: 'Got it', text: 'I\'ll suggest LinkedIn post angles weekly. Use the Social tool to draft and post. Cadence matters more than perfection — 2 posts a week is plenty.', ctas: [{ label: 'Done', action: 'goto:index.html' }] }); },
+};
+
+function handleAction(action) {
+  if (action.startsWith('set_industry:')) {
+    const ind = action.split(':')[1];
+    CONFIG.industry = ind;
+    saveConfig();
+    pushUser(`I was in ${ind.replace('-', ' ')}.`);
+    pushTutor({
+      h2: 'Good',
+      text: `That's exactly the kind of thing the market still pays for. Right now, every reasonable company has a budget gap and a need for someone with ${escapeHtml(ind.replace('-', ' '))} experience who can be flexible. You're closer to your first client than you think.<br><br>What's your name? (Used to configure everything · stays on your device.)`,
+      ctas: [],
+    });
+    setExpectation('name');
+    return;
+  }
+  if (action.startsWith('advance:')) { ACTIONS[action](); return; }
+  if (action.startsWith('lesson:')) {
+    const lesson = action.split(':')[1];
+    window.location.href = `learn/${lesson}.html`;
+    return;
+  }
+  if (action.startsWith('goto:')) {
+    window.location.href = action.slice(5);
+    return;
+  }
+  if (ACTIONS[action]) ACTIONS[action]();
+}
+
+/* ═══════════ FREE-FORM EXPECTATIONS ═══════════ */
+let EXPECT = null;
+function setExpectation(kind) { EXPECT = kind; }
+
+async function handleFreeForm(text) {
+  pushUser(text);
+  if (EXPECT === 'industry_freeform') {
+    CONFIG.industry = 'consulting';
+    CONFIG._industry_freeform = text;
+    saveConfig();
+    EXPECT = null;
+    pushTutor({
+      h2: 'Got it',
+      text: `OK — ${escapeHtml(text)}. Even more reason this works: niche backgrounds command higher rates because there's less competition for the work. What's your name?`,
+      ctas: [],
+    });
+    setExpectation('name');
+    return;
+  }
+  if (EXPECT === 'name') {
+    CONFIG.name = text.trim();
+    saveConfig();
+    EXPECT = null;
+    pushTutor({
+      h2: `Hi ${escapeHtml(firstName())}`,
+      text: `Nice to meet you. We're going to do five phases. Phase 1 — the wound — is where most people skip past too fast. So I'll start by saying: <strong>this is hard and it's allowed to be hard</strong>.<br><br>What's the worst part right now? (You can say anything. It stays on your device. I'm not going to "everything happens for a reason" you.)`,
+      ctas: [
+        { label: 'The identity loss — I was that job', action: 'phase1_identity' },
+        { label: 'The money fear', action: 'phase1_money' },
+        { label: 'The people I lost — colleagues, routine', action: 'phase1_people' },
+        { label: 'I don\'t want to talk about it · let\'s build', action: 'phase3_jump' },
+      ],
+    });
+    return;
+  }
+  if (EXPECT === 'outreach_target') {
+    EXPECT = null;
+    const draft = draftOutreach(text);
+    pushTutor({
+      h2: 'Draft outreach',
+      text: `Here's a warm reach-out. Edit before sending. The pattern: acknowledge → specific reason → low-friction ask.<br><br><pre style="white-space:pre-wrap;font-family:inherit;font-size:14px;background:var(--void-3);padding:14px;border-radius:8px;border-left:3px solid var(--phi)">${escapeHtml(draft)}</pre>`,
+      ctas: [
+        { label: 'Copy to clipboard', action: `copy:${btoa(draft)}` },
+        { label: 'Add this contact to CRM', action: 'goto:tools/crm.html' },
+      ],
+    });
+    return;
+  }
+  // open conversation — call the API if we have one, else pre-written reply
+  if (CONFIG.api_key && CONFIG.api_provider) {
+    await callAI(text);
+  } else {
+    fallbackReply(text);
+  }
+}
+
+function draftOutreach(target) {
+  const parts = target.split(/\s*·\s*|\s*-\s*|,\s*/);
+  const name = parts[0] || 'there';
+  const role = parts[1] || 'your role';
+  const where = parts[2] || 'we used to work together';
+  return `Hi ${name},
+
+Hope you're well. ${name === 'there' ? '' : `${where} — `}I've been thinking about reaching out.
+
+Quick update: I left ${CONFIG._industry_freeform || CONFIG.industry || 'my last role'} in [month] and I'm now consulting independently, focused on ${industryReframe().split(' · ')[1] || 'the things I'm best at'}.
+
+The reason I'm writing: I think there's a chance ${role === 'your role' ? 'what you work on' : role} could use a hand right now. No pitch — just a 20-minute call to compare notes. I might be able to help. If not, it's been good catching up either way.
+
+Free Tuesday or Thursday next week?
+
+${CONFIG.name || '[your name]'}`;
+}
+
+/* ═══════════ AI CASCADE ═══════════ */
+async function callAI(userText) {
+  showThinking();
+  try {
+    let reply;
+    if (CONFIG.api_provider === 'anthropic') reply = await callAnthropic(userText);
+    else if (CONFIG.api_provider === 'openai') reply = await callOpenAI(userText);
+    else if (CONFIG.api_provider === 'google') reply = await callGoogle(userText);
+    else throw new Error('no provider');
+    hideThinking();
+    pushTutor({ h2: '', text: escapeHtml(reply).replace(/\n/g, '<br>'), ctas: [{ label: 'Keep talking', action: 'compose_open' }] });
+  } catch (e) {
+    hideThinking();
+    fallbackReply(userText);
+  }
+}
+
+function tutorSystemPrompt() {
+  return `You are the ExitEngine tutor. You speak to people who have just been laid off. Tone: calm, warm, direct. No corporate platitudes. No "everything happens for a reason." You're a wise friend, not a HR coach.
+
+Their context:
+- Name: ${CONFIG.name || 'unknown'}
+- Industry / background: ${CONFIG.industry || 'unknown'}${CONFIG._industry_freeform ? ' (' + CONFIG._industry_freeform + ')' : ''}
+- Current phase: ${phase()} (${PHASE_NAMES[phase()]})
+
+Phases:
+1. Wound — acknowledge the loss, don't rush.
+2. Shadow — reframe their skills as portable equity.
+3. Rebirth — practical steps (CRM, pricing, first outreach).
+4. Integration — they're a business owner now, coach not teach.
+5. Sovereign — step back.
+
+Keep replies short (2-4 paragraphs). End with one concrete question or one concrete action they can take in the next hour.`;
+}
+
+async function callAnthropic(userText) {
+  const messages = HISTORY.slice(-10).map(h => ({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text }));
+  messages.push({ role: 'user', content: userText });
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': CONFIG.api_key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 600,
+      system: tutorSystemPrompt(),
+      messages,
+    }),
+  });
+  if (!r.ok) throw new Error('anthropic: ' + r.status);
+  const j = await r.json();
+  return j.content[0].text;
+}
+
+async function callOpenAI(userText) {
+  const messages = [{ role: 'system', content: tutorSystemPrompt() }];
+  HISTORY.slice(-10).forEach(h => messages.push({ role: h.role === 'user' ? 'user' : 'assistant', content: h.text }));
+  messages.push({ role: 'user', content: userText });
+  const r = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + CONFIG.api_key,
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      max_tokens: 600,
+      messages,
+    }),
+  });
+  if (!r.ok) throw new Error('openai: ' + r.status);
+  const j = await r.json();
+  return j.choices[0].message.content;
+}
+
+async function callGoogle(userText) {
+  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CONFIG.api_key}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: tutorSystemPrompt() }] },
+      contents: [
+        ...HISTORY.slice(-10).map(h => ({ role: h.role === 'user' ? 'user' : 'model', parts: [{ text: h.text }] })),
+        { role: 'user', parts: [{ text: userText }] },
+      ],
+    }),
+  });
+  if (!r.ok) throw new Error('google: ' + r.status);
+  const j = await r.json();
+  return j.candidates[0].content.parts[0].text;
+}
+
+function fallbackReply(text) {
+  // pre-written empathetic reply if no API key
+  const replies = [
+    `I hear you. ${phase() === 1 ? 'Phase 1 is the hardest because there\'s nothing to "do" — only sit with. That itself is the work.' : phase() < 4 ? 'The action plan in phase 3 is the antidote — pick one thing on the list and do it today.' : 'You\'re past the worst of it. Keep moving.'}<br><br>If you want me to be more conversational, drop an Anthropic / OpenAI / Gemini key in the config screen. Your key stays on your device — I make the API call directly. No proxy.`,
+    `Thanks for saying that. ${phase() < 3 ? 'Whatever comes up is allowed to come up. There\'s no schedule.' : 'You\'re doing the work. Each small step is the company forming.'}`,
+    `Heard. ${phase() === 1 ? 'Don\'t do anything irreversible this week. The grief will pass. The bad decisions made under grief do not.' : 'Pick one of the action buttons. Done is better than perfect.'}`,
+  ];
+  const reply = replies[Math.floor(Math.random() * replies.length)];
+  pushTutor({ h2: '', text: reply, ctas: [{ label: 'Keep talking', action: 'compose_open' }] });
+}
+
+/* ═══════════ PUSH / RENDER ═══════════ */
+function pushTutor(o) {
+  HISTORY.push({ role: 'tutor', text: typeof o === 'string' ? o : (o.h2 || '') + '|' + (o.text || '') + '|' + JSON.stringify(o.ctas || []) });
+  saveHistory();
+  const m = document.createElement('div');
+  m.className = 'msg tutor';
+  let html = '';
+  if (o.h2) html += `<span class="phase-tag">${PHASE_NAMES[phase()]}</span><h2>${o.h2}</h2>`;
+  html += `<div>${o.text || ''}</div>`;
+  if (o.ctas && o.ctas.length) {
+    html += '<div class="cta-row">';
+    o.ctas.forEach(c => {
+      const kind = c.action && c.action.startsWith('advance:') ? 'primary' : 'ghost';
+      html += `<button class="cta ${kind}" data-action="${escapeHtml(c.action)}">${escapeHtml(c.label)}</button>`;
+    });
+    html += '</div>';
+  }
+  m.innerHTML = html;
+  document.getElementById('messages').appendChild(m);
+  m.querySelectorAll('button[data-action]').forEach(b => {
+    b.addEventListener('click', () => {
+      const a = b.dataset.action;
+      if (a && a.startsWith('copy:')) {
+        try { navigator.clipboard.writeText(atob(a.slice(5))); showToast('copied'); } catch (_) {}
+        return;
+      }
+      handleAction(a);
+    });
+  });
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+function pushUser(text) {
+  HISTORY.push({ role: 'user', text });
+  saveHistory();
+  const m = document.createElement('div');
+  m.className = 'msg you';
+  m.innerHTML = escapeHtml(text).replace(/\n/g, '<br>');
+  document.getElementById('messages').appendChild(m);
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+let thinkingEl = null;
+function showThinking() {
+  thinkingEl = document.createElement('div');
+  thinkingEl.className = 'msg tutor';
+  thinkingEl.innerHTML = '<div class="thinking">thinking</div>';
+  document.getElementById('messages').appendChild(thinkingEl);
+  window.scrollTo(0, document.body.scrollHeight);
+}
+function hideThinking() { if (thinkingEl) { thinkingEl.remove(); thinkingEl = null; } }
+
+function showToast(t) {
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:var(--phi-2);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;z-index:200';
+  el.textContent = t;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+
+/* ═══════════ INPUT ═══════════ */
+function sendMessage() {
+  const ta = document.getElementById('input');
+  const text = ta.value.trim();
+  if (!text) return;
+  ta.value = '';
+  ta.style.height = 'auto';
+  handleFreeForm(text);
+}
+
+document.getElementById('input').addEventListener('input', (e) => {
+  e.target.style.height = 'auto';
+  e.target.style.height = Math.min(160, e.target.scrollHeight) + 'px';
+});
+document.getElementById('input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+/* ═══════════ BOOT ═══════════ */
+function boot() {
+  loadConfig();
+  loadHistory();
+  renderPhaseChip();
+
+  // mode hint
+  const hint = document.getElementById('modeHint');
+  if (CONFIG.api_key && CONFIG.api_provider) {
+    hint.innerHTML = `conversational mode · ${CONFIG.api_provider} · key stays on device`;
+  } else {
+    hint.innerHTML = 'pre-written mode · add an API key in <a href="index.html" style="color:var(--phi)">config</a> to make me conversational';
+  }
+
+  // open with the current phase's opening message
+  const op = OPENINGS[phase()];
+  if (op) pushTutor(op());
+
+  console.log('%c◊·κ=φ⁵ ExitEngine tutor · phase ' + phase(), 'color:#818cf8;font-weight:bold');
+}
+
+boot();
+</script>
+
+</body>
+</html>

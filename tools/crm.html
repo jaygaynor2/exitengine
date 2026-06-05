@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CRM · ExitEngine</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#0a0a0f;--void-2:#131319;--void-3:#1c1c25;--void-4:#2a2a35;
+  --cream:#e8e8ea;--cream-2:#c8c8ca;--cream-dim:#8a8a92;--cream-faint:#5a5a62;
+  --phi:#818cf8;--phi-2:#6366f1;--phi-3:#4f46e5;--phi-glow:rgba(129,140,248,0.12);
+  --amber:#f59e0b;--success:#10b981;--warn:#f59e0b;--danger:#ef4444;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --tap:48px;--gutter:16px;--radius:10px;--max-w:980px;
+}
+html,body{background:var(--void);color:var(--cream);font-family:var(--font);font-size:16px;line-height:1.5;min-height:100vh;-webkit-font-smoothing:antialiased}
+body{background-image:radial-gradient(circle at 0% 0%,var(--phi-glow),transparent 50%)}
+
+.top{position:sticky;top:0;z-index:50;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--void-3)}
+.top-row{display:flex;align-items:center;gap:12px;padding:12px var(--gutter);max-width:var(--max-w);margin:0 auto;min-height:var(--tap)}
+.back{background:none;border:0;color:var(--cream-dim);font-size:14px;padding:8px;cursor:pointer;text-decoration:none}
+.back:hover{color:var(--cream)}
+.brand{font-weight:600;font-size:15px;color:var(--cream)}
+.brand .hi{color:var(--phi)}
+.spacer{flex:1}
+
+main{max-width:var(--max-w);margin:0 auto;padding:var(--gutter)}
+
+.hero{padding:18px 0 14px}
+.hero h1{font-size:24px;font-weight:700;letter-spacing:-0.02em;margin-bottom:6px}
+.hero p{color:var(--cream-dim);font-size:14px}
+
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
+.stat{background:var(--void-2);border:1px solid var(--void-3);border-radius:var(--radius);padding:12px}
+.stat .num{font-size:22px;font-weight:700;color:var(--cream);font-family:var(--mono);line-height:1.1}
+.stat .num.info{color:var(--phi)}
+.stat .num.success{color:var(--success)}
+.stat .lbl{font-size:11px;color:var(--cream-dim);margin-top:4px;text-transform:uppercase;letter-spacing:0.06em}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:var(--tap);padding:8px 16px;font-size:14px;font-weight:600;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;text-decoration:none;transition:background 0.15s,border-color 0.15s,transform 0.05s;-webkit-appearance:none}
+.btn:active{transform:scale(0.98)}
+.btn-primary{background:var(--phi-2);color:#fff;border-color:var(--phi-2)}
+.btn-primary:hover{background:var(--phi-3)}
+.btn-ghost{background:var(--void-2);color:var(--cream);border-color:var(--void-3)}
+.btn-ghost:hover{border-color:var(--phi);color:var(--phi)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:var(--cream-dim);margin:20px 0 10px;font-weight:600}
+
+.stages{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0;overflow-x:auto}
+.stage-col{background:var(--void-2);border:1px solid var(--void-3);border-radius:var(--radius);padding:10px;min-width:140px}
+.stage-col h3{font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--cream-dim);margin-bottom:8px;font-weight:600;display:flex;justify-content:space-between}
+.stage-col h3 .ct{color:var(--phi)}
+.lead-card{background:var(--void-3);border:1px solid var(--void-4);border-radius:8px;padding:10px;margin-bottom:6px;cursor:pointer;font-size:13px}
+.lead-card:hover{border-color:var(--phi)}
+.lead-card .name{font-weight:600;color:var(--cream);margin-bottom:2px}
+.lead-card .val{font-size:11px;color:var(--phi);font-family:var(--mono)}
+
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:500;color:var(--cream-2);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em}
+.field input,.field textarea,.field select{width:100%;min-height:42px;padding:10px 12px;background:var(--void-2);border:1px solid var(--void-3);border-radius:8px;color:var(--cream);font-size:15px;font-family:inherit}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--phi);outline:none}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;z-index:100;padding:var(--gutter)}
+.modal.open{display:flex}
+.modal-inner{background:var(--void-2);border:1px solid var(--void-3);border-radius:var(--radius);padding:22px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto}
+.modal h3{font-size:18px;margin-bottom:6px;color:var(--cream)}
+.modal p{color:var(--cream-dim);font-size:13px;margin-bottom:12px}
+
+.empty{text-align:center;padding:40px 16px;color:var(--cream-dim)}
+.empty .emoji{font-size:42px;margin-bottom:10px;opacity:0.4}
+.empty h3{color:var(--cream-2);font-size:16px;margin-bottom:4px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--void-3);border:1px solid var(--void-4);color:var(--cream);padding:8px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity 0.2s,transform 0.2s;z-index:200}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:var(--success);color:var(--success)}
+
+@media (max-width:540px){
+  .stats{grid-template-columns:1fr 1fr}
+  .stages{grid-template-columns:1fr;gap:10px}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-row">
+    <a href="../index.html" class="back">← company</a>
+    <div class="brand">Exit<span class="hi">CRM</span></div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary btn-sm" style="min-height:36px;padding:6px 14px" onclick="newLead()">+ lead</button>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Pipeline</h1>
+    <p id="hint">Start with your top 10 contacts. The first client is almost always already in your phone.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="num info" id="statTotal">0</div><div class="lbl">leads</div></div>
+    <div class="stat"><div class="num success" id="statPipeline">0</div><div class="lbl">pipeline value</div></div>
+    <div class="stat"><div class="num" id="statWon">0</div><div class="lbl">won this month</div></div>
+  </div>
+
+  <div class="section-title">Stages</div>
+  <div class="stages" id="board"></div>
+
+  <div class="empty" id="empty" style="display:none">
+    <div class="emoji">📇</div>
+    <h3>No leads yet</h3>
+    <p>Click <strong>+ lead</strong> in the top right to add your first one.</p>
+    <button class="btn btn-primary" style="margin-top:14px" onclick="quickStart10()">Add my top 10 contacts</button>
+  </div>
+</main>
+
+<div class="modal" id="modal">
+  <div class="modal-inner">
+    <h3 id="modalTitle">Title</h3>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/audit-shim.js" data-tool="exitengine-crm" data-tier="minimal" defer></script>
+
+<script>
+'use strict';
+
+const STORE_KEY = 'exitengine.crm.leads';
+const CFG_KEY = 'exitengine.config';
+const STAGES = [
+  { id: 'new',         title: 'New' },
+  { id: 'contacted',   title: 'Contacted' },
+  { id: 'meeting',     title: 'Meeting set' },
+  { id: 'proposal',    title: 'Proposal sent' },
+  { id: 'won',         title: 'Won' },
+];
+
+let LEADS = [];
+let CONFIG = {};
+
+function loadAll() {
+  try { LEADS = JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch (_) { LEADS = []; }
+  try { CONFIG = JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); } catch (_) { CONFIG = {}; }
+}
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(LEADS)); } catch (_) {}
+  emit('crm:state_changed', { count: LEADS.length });
+}
+
+function emit(kind, payload) {
+  try { new BroadcastChannel('fall-signal').postMessage({ source: 'exitengine-crm', kind, payload }); } catch (_) {}
+}
+
+function fmtMoney(n) {
+  const sym = { GBP: '£', USD: '$', EUR: '€', AUD: 'A$', THB: '฿', SGD: 'S$', AED: 'د.إ' }[CONFIG.currency] || '£';
+  return sym + (+n || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
+}
+
+function genId() { return 'l_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+function newLead() {
+  const lead = { id: genId(), name: '', org: '', value: 0, stage: 'new', notes: '', last_touch: new Date().toISOString(), created: new Date().toISOString() };
+  editLead(lead, true);
+}
+
+function editLead(lead, isNew) {
+  const html = `
+    <div class="field"><label>Name</label><input id="ed_name" placeholder="Sarah Chen" value="${escapeHtml(lead.name)}"></div>
+    <div class="field"><label>Organisation</label><input id="ed_org" placeholder="Acme Co" value="${escapeHtml(lead.org)}"></div>
+    <div class="field-row">
+      <div class="field"><label>Deal value</label><input id="ed_value" type="number" placeholder="2500" value="${lead.value || ''}"></div>
+      <div class="field"><label>Stage</label><select id="ed_stage">${STAGES.map(s => `<option value="${s.id}"${lead.stage === s.id ? ' selected' : ''}>${s.title}</option>`).join('')}<option value="lost"${lead.stage === 'lost' ? ' selected' : ''}>Lost</option></select></div>
+    </div>
+    <div class="field"><label>Notes / where you know them from</label><textarea id="ed_notes" rows="3" placeholder="ex-colleague at Acme · sales ops lead 2018-2024">${escapeHtml(lead.notes)}</textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveEdit('${lead.id}', ${isNew})">${isNew ? 'add lead' : 'save'}</button>
+      ${!isNew ? `<button class="btn btn-ghost" onclick="deleteLead('${lead.id}')">delete</button>` : ''}
+      <button class="btn btn-ghost" onclick="closeModal()">cancel</button>
+    </div>
+  `;
+  document.getElementById('modalTitle').textContent = isNew ? 'New lead' : 'Edit lead';
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modal').classList.add('open');
+  if (isNew) LEADS.push(lead);
+}
+
+function saveEdit(id, isNew) {
+  const lead = LEADS.find(l => l.id === id);
+  if (!lead) return;
+  lead.name = document.getElementById('ed_name').value.trim();
+  lead.org = document.getElementById('ed_org').value.trim();
+  lead.value = +document.getElementById('ed_value').value || 0;
+  const oldStage = lead.stage;
+  lead.stage = document.getElementById('ed_stage').value;
+  lead.notes = document.getElementById('ed_notes').value.trim();
+  lead.last_touch = new Date().toISOString();
+  if (!lead.name) {
+    if (isNew) LEADS = LEADS.filter(l => l.id !== id);
+    closeModal();
+    return;
+  }
+  save();
+  closeModal();
+  render();
+  toast(isNew ? 'lead added' : 'saved', 'success');
+  if (oldStage !== 'won' && lead.stage === 'won') {
+    emit('crm:deal_won', { id: lead.id, name: lead.name, value: lead.value });
+    setTimeout(() => {
+      if (confirm(`Won! Send invoice for ${fmtMoney(lead.value)} to ${lead.name}?`)) {
+        location.href = '../tools/accounts.html?new=' + encodeURIComponent(JSON.stringify({ to: lead.name, org: lead.org, amount: lead.value }));
+      }
+    }, 100);
+  }
+}
+
+function deleteLead(id) {
+  if (!confirm('Delete this lead?')) return;
+  LEADS = LEADS.filter(l => l.id !== id);
+  save();
+  closeModal();
+  render();
+}
+
+function quickStart10() {
+  for (let i = 1; i <= 10; i++) {
+    LEADS.push({
+      id: genId(),
+      name: 'Contact ' + i,
+      org: '',
+      value: 0,
+      stage: 'new',
+      notes: 'edit me — type in someone from your old workplace, network, or LinkedIn',
+      last_touch: new Date().toISOString(),
+      created: new Date().toISOString(),
+    });
+  }
+  save();
+  render();
+  toast('10 placeholder leads added — edit each one', 'success');
+}
+
+function render() {
+  document.getElementById('empty').style.display = LEADS.length === 0 ? 'block' : 'none';
+  document.getElementById('board').style.display = LEADS.length === 0 ? 'none' : 'grid';
+
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  STAGES.forEach(s => {
+    const leads = LEADS.filter(l => l.stage === s.id);
+    const col = document.createElement('div');
+    col.className = 'stage-col';
+    let html = `<h3>${s.title} <span class="ct">${leads.length}</span></h3>`;
+    leads.forEach(l => {
+      html += `<div class="lead-card" onclick="editLead(${JSON.stringify(l).replace(/"/g, '&quot;')}, false)"><div class="name">${escapeHtml(l.name)}</div>${l.org ? `<div class="org" style="font-size:11px;color:var(--cream-dim)">${escapeHtml(l.org)}</div>` : ''}${l.value ? `<div class="val">${fmtMoney(l.value)}</div>` : ''}</div>`;
+    });
+    col.innerHTML = html;
+    board.appendChild(col);
+  });
+
+  const totalPipeline = LEADS.filter(l => !['won', 'lost'].includes(l.stage)).reduce((s, l) => s + (+l.value || 0), 0);
+  const monthStart = new Date(); monthStart.setDate(1);
+  const wonThisMonth = LEADS.filter(l => l.stage === 'won' && new Date(l.last_touch) >= monthStart).reduce((s, l) => s + (+l.value || 0), 0);
+  document.getElementById('statTotal').textContent = LEADS.length;
+  document.getElementById('statPipeline').textContent = fmtMoney(totalPipeline);
+  document.getElementById('statWon').textContent = fmtMoney(wonThisMonth);
+}
+
+function escapeHtml(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+
+let toastTimer;
+function toast(msg, kind) {
+  const t = document.getElementById('toast');
+  t.className = 'toast ' + (kind || '');
+  t.textContent = msg;
+  requestAnimationFrame(() => t.classList.add('show'));
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+loadAll();
+render();
+</script>
+</body>
+</html>

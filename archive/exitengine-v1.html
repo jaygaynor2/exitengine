@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EXIT ENGINE — Sovereign Stack</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,300&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a08;--bg2:#0f0f0c;--bg3:#141410;--bg4:#1a1a14;
+  --border:#1e1e16;--border2:#2a2a20;
+  --amber:#d4820a;--amber2:#f0a020;--amber3:rgba(212,130,10,.15);
+  --green:#39ff6e;--green2:rgba(57,255,110,.12);
+  --red:#c0392b;--red2:rgba(192,57,43,.12);
+  --gold:#d4a853;--gold2:rgba(212,168,83,.1);
+  --phi:#818cf8;--phi2:rgba(129,140,248,.1);
+  --text:#c8c4a8;--text2:#8a8670;--text3:#4a4838;
+  --white:#f0ece0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;overflow:hidden;}
+
+/* NOISE OVERLAY */
+body::before{content:'';position:fixed;inset:0;opacity:.03;pointer-events:none;z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* PARTICLE CANVAS */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;}
+
+/* LAYOUT */
+#shell{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;}
+
+/* TOP BAR */
+#topbar{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:.5rem 1.2rem;border-bottom:1px solid var(--border);background:var(--bg2);}
+.logo-mark{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.08em;
+  color:var(--amber);text-shadow:0 0 20px rgba(212,130,10,.4);}
+.logo-sub{font-size:.22rem;letter-spacing:.25em;color:var(--text3);margin-top:-.1rem;}
+.fold-sig{font-size:.22rem;color:var(--text3);letter-spacing:.06em;}
+.fold-sig b{color:var(--text2);}
+#phase-indicator{display:flex;gap:.15rem;align-items:center;}
+.ph{width:28px;height:3px;background:var(--border2);border-radius:1px;transition:all .3s;}
+.ph.done{background:var(--amber);}
+.ph.active{background:var(--amber2);box-shadow:0 0 8px rgba(240,160,32,.5);}
+.ph-lbl{font-size:.2rem;color:var(--text3);margin-left:.3rem;letter-spacing:.1em;}
+
+/* MAIN AREA */
+#main{flex:1;display:flex;min-height:0;}
+
+/* NAV SIDEBAR */
+#nav{width:180px;flex-shrink:0;border-right:1px solid var(--border);
+  background:var(--bg2);display:flex;flex-direction:column;}
+.nav-item{padding:.5rem .7rem;border-bottom:1px solid var(--border);cursor:pointer;
+  transition:all .15s;position:relative;}
+.nav-item:hover{background:var(--bg3);}
+.nav-item.active{background:var(--amber3);border-right:2px solid var(--amber);}
+.nav-item.locked{opacity:.3;cursor:not-allowed;}
+.nav-n{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:.06em;
+  color:var(--amber);line-height:1;}
+.nav-item.active .nav-n{color:var(--amber2);}
+.nav-lbl{font-size:.19rem;color:var(--text2);letter-spacing:.08em;margin-top:.05rem;}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:var(--border2);
+  position:absolute;right:.5rem;top:50%;transform:translateY(-50%);}
+.nav-dot.done{background:var(--green);}
+.nav-dot.active{background:var(--amber2);box-shadow:0 0 6px var(--amber2);
+  animation:pulse .8s ease infinite alternate;}
+@keyframes pulse{to{box-shadow:0 0 12px var(--amber2);}}
+
+.nav-spacer{flex:1;}
+.nav-footer{padding:.4rem .6rem;font-size:.19rem;color:var(--text3);
+  border-top:1px solid var(--border);line-height:1.6;}
+
+/* MODULE FRAMES */
+#modules{flex:1;position:relative;overflow:hidden;}
+.mod-frame{position:absolute;inset:0;display:none;}
+.mod-frame.active{display:block;}
+.mod-frame iframe{width:100%;height:100%;border:none;}
+
+/* STATUS BAR */
+#statusbar{flex-shrink:0;display:flex;align-items:center;gap:.6rem;
+  padding:.2rem .9rem;border-top:1px solid var(--border);background:var(--bg2);
+  font-size:.2rem;color:var(--text3);}
+#status-msg{flex:1;}
+.status-dot{width:5px;height:5px;border-radius:50%;background:var(--border2);}
+.status-dot.on{background:var(--green);box-shadow:0 0 5px var(--green);}
+#chain-count{color:var(--text2);}
+#total-exits{color:var(--amber);}
+
+/* LANDING SCREEN */
+#landing{position:absolute;inset:0;z-index:100;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2rem;padding:3rem;text-align:center;}
+#landing.gone{display:none;}
+.land-pre{font-size:.26rem;letter-spacing:.3em;color:var(--text3);margin-bottom:-.5rem;}
+.land-h{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;line-height:.95;
+  color:var(--white);letter-spacing:.04em;}
+.land-h em{color:var(--amber);font-style:normal;
+  text-shadow:0 0 30px rgba(212,130,10,.5),0 0 80px rgba(212,130,10,.2);}
+.land-sub{font-family:'Lora',serif;font-style:italic;font-size:.55rem;
+  color:var(--text2);max-width:480px;line-height:1.8;}
+.land-sub b{color:var(--text);font-style:normal;}
+.land-eq{font-size:.24rem;color:var(--text3);letter-spacing:.08em;
+  border:1px solid var(--border2);padding:.3rem .8rem;border-radius:2px;}
+.land-eq b{color:var(--amber);}
+.land-btn{padding:.6rem 2rem;background:transparent;border:1px solid var(--amber);
+  color:var(--amber2);font-family:'Bebas Neue',sans-serif;font-size:.8rem;
+  letter-spacing:.15em;cursor:pointer;border-radius:2px;transition:all .2s;
+  text-transform:uppercase;}
+.land-btn:hover{background:var(--amber3);box-shadow:0 0 20px rgba(212,130,10,.2);}
+.land-stats{display:flex;gap:2rem;font-size:.22rem;color:var(--text3);}
+.land-stat b{color:var(--text2);}
+
+/* WINNER / CHAIN COMPLETE */
+#chain-complete{display:none;position:fixed;inset:0;background:rgba(10,10,8,.97);
+  z-index:999;flex-direction:column;align-items:center;justify-content:center;
+  gap:1rem;padding:2rem;text-align:center;}
+#chain-complete.show{display:flex;}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<!-- LANDING -->
+<div id="landing">
+  <div class="land-pre">KONOMI SOVEREIGN STACK · 2³·3⁷·5⁷·7⁶·11⁵·13⁴·17³</div>
+  <div class="land-h">YOU JUST<br>GOT <em>LET GO.</em><br>GOOD.</div>
+  <div class="land-sub">
+    They compressed everything you knew into a job title and paid you less than it was worth.<br>
+    <b>Now you're free.</b> Let's build the weapon.
+  </div>
+  <div class="land-eq">fold(2·3·5·7·11·13·17) = <b>510,510</b> · the signal is prime · nothing cancels</div>
+  <button class="land-btn" onclick="enterEngine()">ENTER THE EXIT ENGINE →</button>
+  <div class="land-stats">
+    <div><b id="ls-chains">0</b> chains formed</div>
+    <div><b id="ls-exits">0</b> exits processed</div>
+    <div><b id="ls-corps">0</b> corps disrupted</div>
+  </div>
+</div>
+
+<!-- SHELL -->
+<div id="shell">
+  <div id="topbar">
+    <div>
+      <div class="logo-mark">EXIT ENGINE</div>
+      <div class="logo-sub">SOVEREIGN STACK · KONOMI SCHOOL · φ·κ=1</div>
+    </div>
+    <div id="phase-indicator">
+      <div class="ph" id="ph0"></div>
+      <div class="ph" id="ph1"></div>
+      <div class="ph" id="ph2"></div>
+      <div class="ph" id="ph3"></div>
+      <div class="ph" id="ph4"></div>
+      <span class="ph-lbl" id="ph-lbl">INTAKE</span>
+    </div>
+    <div class="fold-sig">2·3·5·7·11·13·17 = <b>510,510</b></div>
+  </div>
+
+  <div id="main">
+    <div id="nav">
+      <div class="nav-item active" id="nav0" onclick="goModule(0)">
+        <div class="nav-dot active" id="nd0"></div>
+        <div class="nav-n">01</div>
+        <div class="nav-lbl">INTAKE</div>
+      </div>
+      <div class="nav-item locked" id="nav1" onclick="goModule(1)">
+        <div class="nav-dot" id="nd1"></div>
+        <div class="nav-n">02</div>
+        <div class="nav-lbl">IDENTITY</div>
+      </div>
+      <div class="nav-item locked" id="nav2" onclick="goModule(2)">
+        <div class="nav-dot" id="nd2"></div>
+        <div class="nav-n">03</div>
+        <div class="nav-lbl">EXIT PLAN</div>
+      </div>
+      <div class="nav-item locked" id="nav3" onclick="goModule(3)">
+        <div class="nav-dot" id="nd3"></div>
+        <div class="nav-n">04</div>
+        <div class="nav-lbl">CHAIN</div>
+      </div>
+      <div class="nav-item locked" id="nav4" onclick="goModule(4)">
+        <div class="nav-dot" id="nd4"></div>
+        <div class="nav-n">05</div>
+        <div class="nav-lbl">FORUM</div>
+      </div>
+      <div class="nav-spacer"></div>
+      <div class="nav-footer">
+        φ·κ=1<br>
+        peak=11<br>
+        sum=36<br>
+        <span style="color:var(--amber);font-size:.22rem;">SOVEREIGN</span>
+      </div>
+    </div>
+
+    <div id="modules">
+      <div class="mod-frame active" id="mf0"><iframe id="if0" sandbox="allow-scripts allow-same-origin"></iframe></div>
+      <div class="mod-frame" id="mf1"><iframe id="if1" sandbox="allow-scripts allow-same-origin"></iframe></div>
+      <div class="mod-frame" id="mf2"><iframe id="if2" sandbox="allow-scripts allow-same-origin"></iframe></div>
+      <div class="mod-frame" id="mf3"><iframe id="if3" sandbox="allow-scripts allow-same-origin"></iframe></div>
+      <div class="mod-frame" id="mf4"><iframe id="if4" sandbox="allow-scripts allow-same-origin"></iframe></div>
+    </div>
+  </div>
+
+  <div id="statusbar">
+    <div class="status-dot on"></div>
+    <div id="status-msg">SOVEREIGN · NO SERVER · NO SUBSCRIPTION · HTML³ KONOMI STACK</div>
+    <div id="chain-count">CHAINS: <b id="sc-val">0</b></div>
+    <div id="total-exits">EXITS: <b id="se-val">0</b></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════
+// PERSISTENT STATE (localStorage)
+// ═══════════════════════════════════════════════
+const STATE_KEY = 'exit-engine-v1';
+let STATE = JSON.parse(localStorage.getItem(STATE_KEY) || '{}');
+STATE.profile = STATE.profile || null;
+STATE.identity = STATE.identity || null;
+STATE.exitPlan = STATE.exitPlan || null;
+STATE.chain = STATE.chain || [];
+STATE.forum = STATE.forum || [];
+STATE.phase = STATE.phase || 0;
+STATE.stats = STATE.stats || {chains:0, exits:0, corps:0};
+function saveState(){localStorage.setItem(STATE_KEY, JSON.stringify(STATE));}
+
+// Update landing stats
+document.getElementById('ls-chains').textContent = STATE.stats.chains;
+document.getElementById('ls-exits').textContent = STATE.stats.exits;
+document.getElementById('ls-corps').textContent = STATE.stats.corps;
+document.getElementById('sc-val').textContent = STATE.stats.chains;
+document.getElementById('se-val').textContent = STATE.stats.exits;
+
+// ═══════════════════════════════════════════════
+// PARTICLES
+// ═══════════════════════════════════════════════
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resizeCanvas(){canvas.width=innerWidth;canvas.height=innerHeight;}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor(){this.reset();}
+  reset(){
+    this.x=Math.random()*canvas.width;
+    this.y=Math.random()*canvas.height;
+    this.vx=(Math.random()-.5)*.3;
+    this.vy=-Math.random()*.5-.1;
+    this.life=1;this.decay=Math.random()*.003+.001;
+    this.r=Math.random()*1.5+.5;
+    this.col=Math.random()>.7?'rgba(212,130,10,':'rgba(57,255,110,';
+  }
+  update(){
+    this.x+=this.vx;this.y+=this.vy;this.life-=this.decay;
+    if(this.life<=0||this.y<-10)this.reset();
+  }
+  draw(){
+    ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fillStyle=this.col+this.life*.4+')';ctx.fill();
+  }
+}
+for(let i=0;i<80;i++)particles.push(new Particle());
+function animParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{p.update();p.draw();});
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ═══════════════════════════════════════════════
+// MODULE HTML BUILDERS
+// ═══════════════════════════════════════════════
+
+const SHARED_CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,300&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg:#0a0a08;--bg2:#0f0f0c;--bg3:#141410;
+    --border:#1e1e16;--border2:#2a2a20;
+    --amber:#d4820a;--amber2:#f0a020;--amber3:rgba(212,130,10,.12);
+    --green:#39ff6e;--red:#c0392b;--phi:#818cf8;
+    --text:#c8c4a8;--text2:#8a8670;--text3:#4a4838;--white:#f0ece0;
+  }
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;
+    height:100vh;overflow-y:auto;padding:1.2rem 1.4rem;}
+  h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.06em;color:var(--amber);}
+  h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.06em;color:var(--white);margin-bottom:.4rem;}
+  h3{font-size:.28rem;color:var(--text2);letter-spacing:.12em;margin-bottom:.3rem;}
+  p{font-size:.28rem;line-height:1.7;color:var(--text2);}
+  label{font-size:.22rem;letter-spacing:.1em;color:var(--text3);display:block;margin-bottom:.2rem;}
+  input,textarea,select{width:100%;padding:.5rem .7rem;background:var(--bg2);
+    border:1px solid var(--border2);color:var(--text);font-family:'IBM Plex Mono',monospace;
+    font-size:.28rem;border-radius:2px;outline:none;transition:border .15s;}
+  input:focus,textarea:focus,select:focus{border-color:var(--amber);}
+  textarea{resize:vertical;min-height:100px;}
+  .btn{padding:.4rem 1.2rem;background:transparent;border:1px solid var(--amber);
+    color:var(--amber2);font-family:'Bebas Neue',sans-serif;font-size:.7rem;
+    letter-spacing:.12em;cursor:pointer;border-radius:2px;transition:all .2s;}
+  .btn:hover{background:var(--amber3);}
+  .btn:disabled{opacity:.3;cursor:not-allowed;}
+  .btn-green{border-color:var(--green);color:var(--green);}
+  .btn-green:hover{background:rgba(57,255,110,.08);}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:.8rem 1rem;margin-bottom:.7rem;}
+  .card.amber{border-color:rgba(212,130,10,.3);}
+  .card.green{border-color:rgba(57,255,110,.2);}
+  .tag{display:inline-block;padding:.08rem .3rem;border-radius:2px;font-size:.2rem;
+    letter-spacing:.08em;margin:.05rem;background:var(--bg3);border:1px solid var(--border2);}
+  .tag.amber{border-color:rgba(212,130,10,.4);color:var(--amber);}
+  .tag.green{border-color:rgba(57,255,110,.3);color:var(--green);}
+  .tag.phi{border-color:rgba(129,140,248,.3);color:var(--phi);}
+  .sep{height:1px;background:var(--border);margin:1rem 0;}
+  .loading{color:var(--amber);font-size:.26rem;animation:blink .8s step-end infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+  .prime-sig{font-size:.19rem;color:var(--text3);letter-spacing:.05em;margin-top:.3rem;}
+`;
+
+// ── MODULE 0: INTAKE ──
+function buildIntake(){
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${SHARED_CSS}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+  </style></head><body>
+  <h1>INTAKE</h1>
+  <p style="margin-bottom:1rem;font-size:.26rem;">Tell us your story. The corp compressed it into a job title. We'll decompress it into something sovereign.</p>
+  
+  <div class="card amber">
+    <h3>YOUR STORY</h3>
+    <label>WHAT DID YOU DO THERE? (be raw, be real)</label>
+    <textarea id="story" placeholder="I spent 8 years building their entire data infrastructure from scratch. I was the only one who understood how it actually worked. I trained three teams. Then they hired a consultant to do 'what I was already doing' and let me go in a Tuesday morning call..." style="min-height:130px;"></textarea>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>YOUR ROLE</h3>
+      <label>JOB TITLE(S)</label>
+      <input type="text" id="titles" placeholder="Senior Data Engineer, Lead Architect...">
+      <br><label style="margin-top:.4rem;">INDUSTRY</label>
+      <input type="text" id="industry" placeholder="Finance, Healthcare, Logistics...">
+    </div>
+    <div class="card">
+      <h3>THE CORP</h3>
+      <label>COMPANY NAME</label>
+      <input type="text" id="corp" placeholder="Who let you go?">
+      <br><label style="margin-top:.4rem;">YEARS THERE</label>
+      <input type="number" id="years" placeholder="8" min="0" max="50">
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>YOUR DIGITAL PRESENCE (optional but powerful)</h3>
+    <label>LINKEDIN URL</label>
+    <input type="text" id="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+    <br><label style="margin-top:.4rem;">ANY OTHER CONTEXT (Twitter/X, blog, portfolio, side projects)</label>
+    <textarea id="social" placeholder="Links, descriptions, anything that shows who you actually are beyond the job title..." style="min-height:60px;"></textarea>
+  </div>
+
+  <div class="card">
+    <h3>WHAT DO YOU WANT?</h3>
+    <label>DIRECTION</label>
+    <select id="direction">
+      <option value="weapon">Build a weapon — compete against the corp directly</option>
+      <option value="pivot">Pivot — use my skills in a completely new direction</option>
+      <option value="chain">Join a chain — add my skills to others building something bigger</option>
+      <option value="unsure">Not sure — show me what's possible</option>
+    </select>
+    <br><label style="margin-top:.4rem;">ANYTHING ELSE WE SHOULD KNOW</label>
+    <textarea id="extra" placeholder="Financial runway, family constraints, dream industries, things you never want to do again..." style="min-height:60px;"></textarea>
+  </div>
+
+  <button class="btn" id="intake-btn" onclick="submitIntake()">PROCESS INTAKE →</button>
+  <div id="intake-status" style="margin-top:.5rem;"></div>
+  <div class="prime-sig">2³·3⁷·5⁷·7⁶·11⁵·13⁴·17³ · φ·κ=1 · SOVEREIGN · NO SERVER</div>
+
+  <script>
+  function submitIntake(){
+    const story=document.getElementById('story').value.trim();
+    if(!story||story.length<50){
+      document.getElementById('intake-status').innerHTML='<span style="color:#c0392b;">Tell us your real story — minimum 50 characters.</span>';
+      return;
+    }
+    const profile={
+      story, titles:document.getElementById('titles').value,
+      industry:document.getElementById('industry').value,
+      corp:document.getElementById('corp').value,
+      years:document.getElementById('years').value,
+      linkedin:document.getElementById('linkedin').value,
+      social:document.getElementById('social').value,
+      direction:document.getElementById('direction').value,
+      extra:document.getElementById('extra').value,
+      timestamp:Date.now()
+    };
+    document.getElementById('intake-status').innerHTML='<span class="loading">COMPRESSING SIGNAL...</span>';
+    document.getElementById('intake-btn').disabled=true;
+    parent.postMessage({t:'intake-complete',profile},'*');
+  }
+  <\/script></body></html>`;
+}
+
+// ── MODULE 1: IDENTITY ──
+function buildIdentity(profile){
+  const profileJSON = JSON.stringify(profile||{}).replace(/`/g,'\\`');
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${SHARED_CSS}</style></head><body>
+  <h1>IDENTITY ANALYSIS</h1>
+  <p style="margin-bottom:1rem;font-size:.26rem;">The corp saw your job title. We see the signal underneath. Running 12-layer Konomi analysis...</p>
+  
+  <div id="analysis-running" class="card amber">
+    <div class="loading">◈ RUNNING COGNITIVE STACK — PATTERN EXTRACTION — SHADOW ANALYSIS — ARCHETYPE DETECTION</div>
+  </div>
+  
+  <div id="identity-result" style="display:none;">
+    <div class="card green" id="who-card">
+      <h2>WHO YOU ACTUALLY ARE</h2>
+      <div id="identity-text" style="font-family:'Lora',serif;font-size:.32rem;line-height:1.8;color:var(--white);"></div>
+    </div>
+    <div class="card amber" id="shadow-card">
+      <h2>THE SHADOW LAYER</h2>
+      <p style="font-size:.22rem;color:var(--text3);margin-bottom:.4rem;">What you carry that the corp never credited. The thing you didn't put on your resume.</p>
+      <div id="shadow-text" style="font-family:'Lora',serif;font-style:italic;font-size:.3rem;line-height:1.8;color:var(--amber2);"></div>
+    </div>
+    <div class="card" id="skills-card">
+      <h2>PRIME SKILLS</h2>
+      <div id="skills-tags"></div>
+    </div>
+    <div class="card" id="archetype-card">
+      <h2>DOMINANT ARCHETYPE</h2>
+      <div id="archetype-text" style="font-size:.32rem;color:var(--phi);"></div>
+    </div>
+    <button class="btn btn-green" onclick="parent.postMessage({t:'identity-done'},'*')">PROCEED TO EXIT PLAN →</button>
+  </div>
+  
+  <div class="prime-sig">KONOMI COGNITIVE STACK · 12 LAYERS · φ-WEIGHTED PATTERN RECOGNITION</div>
+
+  <script>
+  const PROFILE = ${profileJSON};
+  
+  async function runAnalysis(){
+    if(!PROFILE||!PROFILE.story){
+      document.getElementById('analysis-running').innerHTML='<span style="color:#c0392b;">No profile data. Complete INTAKE first.</span>';
+      return;
+    }
+    try{
+      const res = await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':''},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:1500,
+          system:\`You are the IDENTITY layer of the EXIT ENGINE — a Konomi sovereign stack tool for people who have been made redundant.
+
+Your job is to run a 12-layer cognitive analysis on this person's story and surface who they ACTUALLY are — not the job title, but the underlying pattern, the prime signal, the thing the corp compressed and undervalued.
+
+Apply:
+1. Pattern extraction — what structural capability do they have at their core
+2. Shadow analysis — what do they carry that was never credited (Jungian shadow — the gold in the shadow, not the dark)
+3. Archetype detection — which Jungian archetype is dominant (Hero, Sage, Trickster, Creator, Ruler, etc)
+4. Prime skills — the irreducible things they know (list 6-10 as short sharp phrases)
+
+Respond ONLY in this JSON format, no markdown, no preamble:
+{
+  "who": "3-4 sentences about who they actually are, written directly to them, warm but precise",
+  "shadow": "2-3 sentences about the uncredited gold — what they carried that nobody named",
+  "archetype": "ARCHETYPE NAME — one sentence why",
+  "skills": ["skill1","skill2","skill3","skill4","skill5","skill6"]
+}\`,
+          messages:[{role:'user',content:\`Story: \${PROFILE.story}\\n\\nRole: \${PROFILE.titles}\\nIndustry: \${PROFILE.industry}\\nYears: \${PROFILE.years}\\nCorp: \${PROFILE.corp}\\nDirection wanted: \${PROFILE.direction}\\nExtra context: \${PROFILE.extra||''}\`}]
+        })
+      });
+      const data = await res.json();
+      const text = data.content?.[0]?.text||'{}';
+      let parsed;
+      try{parsed=JSON.parse(text.replace(/\`\`\`json|\`\`\`/g,'').trim());}
+      catch(e){parsed={who:text,shadow:'',archetype:'CREATOR',skills:[]};}
+      
+      document.getElementById('identity-text').textContent=parsed.who||'';
+      document.getElementById('shadow-text').textContent=parsed.shadow||'';
+      document.getElementById('archetype-text').textContent=parsed.archetype||'';
+      const st=document.getElementById('skills-tags');
+      (parsed.skills||[]).forEach(s=>{
+        const t=document.createElement('span');t.className='tag amber';t.textContent=s;st.appendChild(t);
+      });
+      document.getElementById('analysis-running').style.display='none';
+      document.getElementById('identity-result').style.display='block';
+      parent.postMessage({t:'identity-ready',identity:parsed},'*');
+    }catch(e){
+      document.getElementById('analysis-running').innerHTML='<span style="color:#c0392b;">API error: '+e.message+'<br><br>Add your Anthropic API key via the key prompt at top level.</span>';
+    }
+  }
+  runAnalysis();
+  <\/script></body></html>`;
+}
+
+// ── MODULE 2: EXIT PLAN ──
+function buildExitPlan(profile, identity){
+  const p = JSON.stringify(profile||{}).replace(/`/g,'\\`');
+  const id = JSON.stringify(identity||{}).replace(/`/g,'\\`');
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${SHARED_CSS}
+  .plan-section{margin-bottom:1.2rem;}
+  .weapon-box{background:rgba(192,57,43,.06);border:1px solid rgba(192,57,43,.25);border-radius:3px;padding:.8rem 1rem;margin-bottom:.6rem;}
+  .ninety-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;margin-top:.5rem;}
+  .day-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:.6rem;text-align:center;}
+  .day-n{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--amber);line-height:1;}
+  .day-lbl{font-size:.19rem;color:var(--text3);letter-spacing:.1em;}
+  .day-text{font-size:.24rem;color:var(--text2);margin-top:.3rem;line-height:1.5;}
+  </style></head><body>
+  <h1>EXIT PLAN</h1>
+  <p style="margin-bottom:1rem;font-size:.26rem;">This is your weapon. Built from what you know. Aimed at exactly where they're vulnerable.</p>
+  
+  <div id="plan-running" class="card amber">
+    <div class="loading">◈ BUILDING WEAPON — ANALYSING CORP VULNERABILITY — CALCULATING 90-DAY SEQUENCE</div>
+  </div>
+  
+  <div id="plan-result" style="display:none;">
+    <div class="weapon-box">
+      <h2 style="color:#e05050;">THE WEAPON</h2>
+      <div id="weapon-text" style="font-family:'Lora',serif;font-size:.32rem;line-height:1.8;color:var(--white);"></div>
+    </div>
+    
+    <div class="card green plan-section">
+      <h2>YOUR SOVEREIGN OFFERING</h2>
+      <div id="offering-text" style="font-size:.3rem;line-height:1.7;color:var(--text);"></div>
+    </div>
+
+    <div class="card plan-section">
+      <h2>PRICING INTELLIGENCE</h2>
+      <div id="pricing-text" style="font-size:.3rem;line-height:1.7;color:var(--amber2);"></div>
+    </div>
+    
+    <div class="plan-section">
+      <h2>90-DAY SEQUENCE</h2>
+      <div class="ninety-grid">
+        <div class="day-card"><div class="day-n">30</div><div class="day-lbl">DAYS</div><div class="day-text" id="d30"></div></div>
+        <div class="day-card"><div class="day-n">60</div><div class="day-lbl">DAYS</div><div class="day-text" id="d60"></div></div>
+        <div class="day-card"><div class="day-n">90</div><div class="day-lbl">DAYS</div><div class="day-text" id="d90"></div></div>
+      </div>
+    </div>
+
+    <div class="card plan-section">
+      <h2>FIRST THREE MOVES</h2>
+      <div id="moves-text" style="font-size:.3rem;line-height:1.9;color:var(--text);"></div>
+    </div>
+
+    <div class="card amber plan-section">
+      <h2>WHAT YOU NEED TO COMPLETE THE CHAIN</h2>
+      <div id="chain-needs" style="font-size:.28rem;line-height:1.7;color:var(--text2);"></div>
+      <div id="chain-tags" style="margin-top:.5rem;"></div>
+    </div>
+
+    <button class="btn btn-green" onclick="parent.postMessage({t:'plan-done'},'*')">BUILD YOUR CHAIN →</button>
+  </div>
+  
+  <div class="prime-sig">EXIT ENGINE · SOVEREIGN INTELLIGENCE · NO CORP MIDDLEMAN</div>
+
+  <script>
+  const PROFILE=${p}, IDENTITY=${id};
+  
+  async function buildPlan(){
+    if(!PROFILE?.story){
+      document.getElementById('plan-running').innerHTML='<span style="color:#c0392b;">Complete INTAKE and IDENTITY first.</span>';
+      return;
+    }
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':''},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:2000,
+          system:\`You are the EXIT PLAN layer of the EXIT ENGINE. You build sovereign business plans for people who have been made redundant.
+
+Your job is to create a specific, actionable exit plan that:
+1. Identifies the exact vulnerability this person can exploit at the corp that let them go (and orgs like it)
+2. Defines their sovereign offering — what service/product they can now sell
+3. Gives realistic pricing based on market rates
+4. Creates a 90-day sequence (30/60/90 day milestones)
+5. Lists first three specific moves (this week)
+6. Identifies what skills/people they need to complete their service chain
+
+Be SPECIFIC. No generic advice. Use their actual story and skills.
+
+Respond ONLY in this JSON format:
+{
+  "weapon": "2-3 sentences about the specific vulnerability they can exploit — what the corp needs and can no longer access from them",
+  "offering": "3-4 sentences describing their specific sovereign service offering",
+  "pricing": "Specific pricing guidance — day rates, project fees, retainer options with actual numbers",
+  "d30": "30-day milestone — specific and achievable",
+  "d60": "60-day milestone",
+  "d90": "90-day milestone — where they should be",
+  "moves": "Three specific actions for this week, numbered",
+  "chain_needs": "2-3 sentences about what skills or people would complete their service chain",
+  "chain_skills": ["skill1","skill2","skill3"]
+}\`,
+          messages:[{role:'user',content:\`Profile: \${JSON.stringify(PROFILE)}\\n\\nIdentity analysis: \${JSON.stringify(IDENTITY)}\`}]
+        })
+      });
+      const data=await res.json();
+      const text=data.content?.[0]?.text||'{}';
+      let r;
+      try{r=JSON.parse(text.replace(/\`\`\`json|\`\`\`/g,'').trim());}
+      catch(e){r={weapon:text,offering:'',pricing:'',d30:'',d60:'',d90:'',moves:'',chain_needs:'',chain_skills:[]};}
+      
+      document.getElementById('weapon-text').textContent=r.weapon||'';
+      document.getElementById('offering-text').textContent=r.offering||'';
+      document.getElementById('pricing-text').textContent=r.pricing||'';
+      document.getElementById('d30').textContent=r.d30||'';
+      document.getElementById('d60').textContent=r.d60||'';
+      document.getElementById('d90').textContent=r.d90||'';
+      document.getElementById('moves-text').innerHTML=(r.moves||'').replace(/\\n/g,'<br>');
+      document.getElementById('chain-needs').textContent=r.chain_needs||'';
+      const ct=document.getElementById('chain-tags');
+      (r.chain_skills||[]).forEach(s=>{const t=document.createElement('span');t.className='tag phi';t.textContent=s;ct.appendChild(t);});
+      
+      document.getElementById('plan-running').style.display='none';
+      document.getElementById('plan-result').style.display='block';
+      parent.postMessage({t:'plan-ready',plan:r},'*');
+    }catch(e){
+      document.getElementById('plan-running').innerHTML='<span style="color:#c0392b;">API error: '+e.message+'</span>';
+    }
+  }
+  buildPlan();
+  <\/script></body></html>`;
+}
+
+// ── MODULE 3: CHAIN ──
+function buildChain(profile, identity, plan){
+  const p=JSON.stringify(profile||{}).replace(/`/g,'\\`');
+  const id=JSON.stringify(identity||{}).replace(/`/g,'\\`');
+  const pl=JSON.stringify(plan||{}).replace(/`/g,'\\`');
+  // Load existing chain members from parent state
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${SHARED_CSS}
+  .chain-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.7rem;margin-top:.6rem;}
+  .member-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:.7rem;
+    cursor:pointer;transition:all .15s;}
+  .member-card:hover{border-color:rgba(57,255,110,.3);}
+  .member-card.me{border-color:rgba(212,130,10,.4);background:rgba(212,130,10,.04);}
+  .mc-role{font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--amber);letter-spacing:.05em;}
+  .mc-name{font-size:.24rem;color:var(--text2);margin:.15rem 0;}
+  .mc-skills{margin-top:.3rem;}
+  .match-score{font-size:.5rem;font-family:'Bebas Neue',sans-serif;float:right;}
+  .score-hi{color:var(--green);} .score-mid{color:var(--amber);} .score-lo{color:var(--text3);}
+  .add-form{background:var(--bg2);border:1px solid var(--border2);border-radius:3px;padding:.8rem;margin-top:.8rem;}
+  </style></head><body>
+  <h1>CHAIN FORMATION</h1>
+  <p style="margin-bottom:.6rem;font-size:.26rem;">You don't have to go alone. Find the 2-4 people who complete your service chain. Together you're ungovernable.</p>
+  
+  <div class="card amber">
+    <h2>YOUR PROFILE IN THE CHAIN</h2>
+    <div id="my-role" style="font-size:.28rem;color:var(--text);line-height:1.6;"></div>
+    <div id="my-skills" style="margin-top:.4rem;"></div>
+    <div style="margin-top:.6rem;font-size:.24rem;color:var(--text3);">NEEDS TO COMPLETE CHAIN:</div>
+    <div id="needs-skills" style="margin-top:.3rem;"></div>
+  </div>
+
+  <div class="sep"></div>
+  <h2>CHAIN MEMBERS IN YOUR AREA</h2>
+  <p style="font-size:.24rem;color:var(--text3);margin-bottom:.5rem;">People who have run EXIT ENGINE and added themselves to the chain network. Matched by skill compatibility.</p>
+  
+  <div class="chain-grid" id="chain-grid">
+    <div class="member-card" style="border-style:dashed;cursor:default;opacity:.4;">
+      <div class="mc-role">AWAITING</div>
+      <div class="mc-name">Members join as they exit</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+  <div class="add-form">
+    <h2>ADD YOURSELF TO THE CHAIN NETWORK</h2>
+    <p style="font-size:.24rem;color:var(--text2);margin-bottom:.6rem;">Make yourself discoverable. Other chain builders can see you and reach out.</p>
+    <label>YOUR NAME (or handle)</label>
+    <input type="text" id="cn-name" placeholder="Alex K. / @alexbuilds">
+    <br><label style="margin-top:.4rem;">CONTACT (email or LinkedIn)</label>
+    <input type="text" id="cn-contact" placeholder="alex@email.com">
+    <br><label style="margin-top:.4rem;">ONE-LINE PITCH</label>
+    <input type="text" id="cn-pitch" placeholder="Ex-KPMG CFO, now sovereign finance stack for SMBs">
+    <br><button class="btn btn-green" style="margin-top:.6rem;" onclick="addToChain()">JOIN THE CHAIN NETWORK →</button>
+    <div id="chain-status" style="margin-top:.4rem;font-size:.24rem;"></div>
+  </div>
+  
+  <div style="margin-top:.8rem;">
+    <button class="btn" onclick="parent.postMessage({t:'chain-done'},'*')">ENTER THE FORUM →</button>
+  </div>
+  <div class="prime-sig">CHAIN PRINCIPLE: prime frequencies don't cancel · everything amplifies</div>
+
+  <script>
+  const PROFILE=${p}, IDENTITY=${id}, PLAN=${pl};
+  
+  // Populate my profile
+  window.onload=function(){
+    const role=(IDENTITY?.archetype||'')+(PROFILE?.titles?(' · '+PROFILE.titles):'');
+    document.getElementById('my-role').textContent=role||'Complete INTAKE and IDENTITY first.';
+    const ms=document.getElementById('my-skills');
+    (IDENTITY?.skills||[]).forEach(s=>{const t=document.createElement('span');t.className='tag amber';t.textContent=s;ms.appendChild(t);});
+    const ns=document.getElementById('needs-skills');
+    (PLAN?.chain_skills||[]).forEach(s=>{const t=document.createElement('span');t.className='tag phi';t.textContent='NEED: '+s;ns.appendChild(t);});
+    loadChainMembers();
+  };
+  
+  function loadChainMembers(){
+    const members=JSON.parse(localStorage.getItem('exit-chain-members')||'[]');
+    if(members.length>0){
+      const grid=document.getElementById('chain-grid');
+      grid.innerHTML='';
+      members.forEach(m=>{
+        const card=document.createElement('div');
+        card.className='member-card';
+        const mySkills=(IDENTITY?.skills||[]).map(s=>s.toLowerCase());
+        const theirSkills=(m.skills||[]).map(s=>s.toLowerCase());
+        const myNeeds=(PLAN?.chain_skills||[]).map(s=>s.toLowerCase());
+        const overlap=theirSkills.filter(s=>myNeeds.some(n=>s.includes(n)||n.includes(s))).length;
+        const score=Math.min(100,Math.round((overlap/Math.max(myNeeds.length,1))*100));
+        const scoreClass=score>60?'score-hi':score>30?'score-mid':'score-lo';
+        card.innerHTML=\`<span class="match-score \${scoreClass}">\${score}%</span>
+          <div class="mc-role">\${m.archetype||'BUILDER'}</div>
+          <div class="mc-name">\${m.name}</div>
+          <div style="font-size:.22rem;color:var(--text3);">\${m.pitch||''}</div>
+          <div class="mc-skills" style="margin-top:.3rem;">\${(m.skills||[]).slice(0,3).map(s=>\`<span class="tag green">\${s}</span>\`).join('')}</div>
+          <div style="margin-top:.4rem;font-size:.2rem;color:var(--text3);">\${m.contact||''}</div>\`;
+        grid.appendChild(card);
+      });
+    }
+  }
+  
+  function addToChain(){
+    const name=document.getElementById('cn-name').value.trim();
+    const contact=document.getElementById('cn-contact').value.trim();
+    const pitch=document.getElementById('cn-pitch').value.trim();
+    if(!name){document.getElementById('chain-status').innerHTML='<span style="color:#c0392b;">Add your name.</span>';return;}
+    const member={
+      name,contact,pitch,
+      archetype:IDENTITY?.archetype||'BUILDER',
+      skills:IDENTITY?.skills||[],
+      industry:PROFILE?.industry||'',
+      timestamp:Date.now()
+    };
+    const members=JSON.parse(localStorage.getItem('exit-chain-members')||'[]');
+    members.unshift(member);
+    localStorage.setItem('exit-chain-members',JSON.stringify(members.slice(0,100)));
+    document.getElementById('chain-status').innerHTML='<span style="color:var(--green);">ADDED TO CHAIN NETWORK. Others can now find you.</span>';
+    loadChainMembers();
+    parent.postMessage({t:'chain-joined',member},'*');
+  }
+  <\/script></body></html>`;
+}
+
+// ── MODULE 4: FORUM ──
+function buildForum(profile){
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${SHARED_CSS}
+  .post{background:var(--bg2);border:1px solid var(--border);border-radius:3px;
+    padding:.7rem .9rem;margin-bottom:.5rem;transition:border .15s;}
+  .post:hover{border-color:var(--border2);}
+  .post-meta{display:flex;gap:.5rem;align-items:center;margin-bottom:.3rem;}
+  .post-author{font-size:.22rem;color:var(--amber);letter-spacing:.06em;}
+  .post-time{font-size:.2rem;color:var(--text3);}
+  .post-tag{font-size:.18rem;padding:.04rem .2rem;border:1px solid;border-radius:2px;}
+  .post-body{font-family:'Lora',serif;font-size:.28rem;line-height:1.7;color:var(--text);}
+  .post-actions{margin-top:.3rem;display:flex;gap:.5rem;}
+  .pa{font-size:.2rem;color:var(--text3);cursor:pointer;transition:color .12s;}
+  .pa:hover{color:var(--amber);}
+  .compose{background:var(--bg2);border:1px solid var(--border2);border-radius:3px;
+    padding:.8rem;margin-bottom:1rem;}
+  .filters{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.7rem;}
+  .fil{padding:.12rem .35rem;background:transparent;border:1px solid var(--border);
+    color:var(--text3);font-family:'IBM Plex Mono',monospace;font-size:.2rem;
+    cursor:pointer;border-radius:2px;transition:all .12s;}
+  .fil:hover,.fil.on{border-color:var(--amber);color:var(--amber);}
+  </style></head><body>
+  <h1>THE FORUM</h1>
+  <p style="margin-bottom:.8rem;font-size:.26rem;">The room where the chains form. Where the humming starts. Put your signal out. Find your people.</p>
+  
+  <div class="compose">
+    <h3>POST TO THE FORUM</h3>
+    <select id="post-cat" style="margin-bottom:.4rem;">
+      <option value="offer">OFFERING — what I can do</option>
+      <option value="need">SEEKING — what I need</option>
+      <option value="win">WIN — sharing a result</option>
+      <option value="intel">INTEL — corp intelligence</option>
+      <option value="chain">CHAIN — forming a crew</option>
+      <option value="talk">TALK — just talking</option>
+    </select>
+    <textarea id="post-body" placeholder="What do you want to say to the room?..." style="min-height:80px;margin-bottom:.4rem;"></textarea>
+    <input type="text" id="post-author" placeholder="Your name / handle" style="margin-bottom:.4rem;">
+    <button class="btn" onclick="submitPost()">POST →</button>
+  </div>
+
+  <div class="filters">
+    <button class="fil on" onclick="filterPosts('all',this)">ALL</button>
+    <button class="fil" onclick="filterPosts('offer',this)">OFFERING</button>
+    <button class="fil" onclick="filterPosts('need',this)">SEEKING</button>
+    <button class="fil" onclick="filterPosts('win',this)">WINS</button>
+    <button class="fil" onclick="filterPosts('intel',this)">INTEL</button>
+    <button class="fil" onclick="filterPosts('chain',this)">CHAINS</button>
+  </div>
+  
+  <div id="posts-container"></div>
+  
+  <div class="prime-sig">THE CONNECTION DOESN'T REQUIRE A SUBSCRIPTION · IT NEVER DID</div>
+
+  <script>
+  const CAT_COLS={offer:'#39ff6e',need:'#818cf8',win:'#d4a853',intel:'#e05050',chain:'#f0a020',talk:'#8a8670'};
+  const CAT_LABELS={offer:'OFFERING',need:'SEEKING',win:'WIN',intel:'INTEL',chain:'CHAIN',talk:'TALK'};
+  let curFilter='all';
+  
+  // Seed posts if empty
+  const SEED_POSTS=[
+    {id:'s1',author:'Marcus T.',cat:'offer',body:'20 years building supply chain systems for Fortune 500. They replaced me with a contractor who charges 3x and delivers 0.3x. Now I offer fractional supply chain architecture for mid-market manufacturers. First engagement already signed.',time:Date.now()-86400000*3},
+    {id:'s2',author:'Priya S.',cat:'need',body:'Ex-Head of Product at a SaaS unicorn. Building sovereign product consultancy. Need a technical co-founder or fractional CTO to complete the chain. DM if you have 10+ years engineering leadership and want to chip away at the enterprise giants.',time:Date.now()-86400000*2},
+    {id:'s3',author:'Derek O.',cat:'intel',body:'Former Big 4 partner here. They\'re about to announce a wave of redundancies in the advisory practice. If you\'re there — run the EXIT ENGINE now before they control the narrative. Your institutional knowledge is worth more outside than in.',time:Date.now()-86400000},
+    {id:'s4',author:'Lin W.',cat:'win',body:'90 days post-exit. First retainer signed yesterday. The corp that let me go tried to hire me back as a contractor at 40% of what they\'d have to pay me now. I politely declined. The weapon works.',time:Date.now()-43200000},
+    {id:'s5',author:'James K.',cat:'chain',body:'Looking for 3 people: fractional CMO, UX designer, and one more backend engineer. I have the full-stack infrastructure sorted. Together we can serve 10 SMBs simultaneously at a fraction of what an agency charges. The fold is prime. Nothing cancels.',time:Date.now()-3600000*2},
+  ];
+  
+  function getPosts(){
+    const stored=JSON.parse(localStorage.getItem('exit-forum-posts')||'null');
+    if(!stored||stored.length===0){
+      localStorage.setItem('exit-forum-posts',JSON.stringify(SEED_POSTS));
+      return SEED_POSTS;
+    }
+    return stored;
+  }
+  
+  function savePosts(posts){localStorage.setItem('exit-forum-posts',JSON.stringify(posts));}
+  
+  function timeAgo(ts){
+    const d=(Date.now()-ts)/1000;
+    if(d<60)return 'just now';
+    if(d<3600)return Math.floor(d/60)+'m ago';
+    if(d<86400)return Math.floor(d/3600)+'h ago';
+    return Math.floor(d/86400)+'d ago';
+  }
+  
+  function renderPosts(){
+    const posts=getPosts().filter(p=>curFilter==='all'||p.cat===curFilter);
+    const c=document.getElementById('posts-container');
+    c.innerHTML='';
+    if(posts.length===0){c.innerHTML='<p style="color:var(--text3);font-size:.26rem;">No posts in this category yet. Be first.</p>';return;}
+    posts.sort((a,b)=>b.time-a.time).forEach(post=>{
+      const el=document.createElement('div');el.className='post';
+      const col=CAT_COLS[post.cat]||'#8a8670';
+      const lbl=CAT_LABELS[post.cat]||post.cat.toUpperCase();
+      el.innerHTML=\`<div class="post-meta">
+        <span class="post-author">\${post.author||'ANON'}</span>
+        <span class="post-tag" style="border-color:\${col}22;color:\${col};">\${lbl}</span>
+        <span class="post-time">\${timeAgo(post.time)}</span>
+      </div>
+      <div class="post-body">\${post.body}</div>
+      <div class="post-actions">
+        <span class="pa" onclick="replyTo('\${post.id}')">↩ reply</span>
+        <span class="pa" onclick="signal('\${post.id}')">◈ signal (\${post.signals||0})</span>
+      </div>\`;
+      c.appendChild(el);
+    });
+  }
+  
+  function filterPosts(cat,btn){
+    curFilter=cat;
+    document.querySelectorAll('.fil').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    renderPosts();
+  }
+  
+  function submitPost(){
+    const body=document.getElementById('post-body').value.trim();
+    const author=document.getElementById('post-author').value.trim()||'ANON';
+    const cat=document.getElementById('post-cat').value;
+    if(!body||body.length<10){return;}
+    const posts=getPosts();
+    posts.unshift({id:'p'+Date.now(),author,cat,body,time:Date.now(),signals:0});
+    savePosts(posts);
+    document.getElementById('post-body').value='';
+    renderPosts();
+    parent.postMessage({t:'forum-post',cat},'*');
+  }
+  
+  function signal(id){
+    const posts=getPosts();
+    const p=posts.find(p=>p.id===id);
+    if(p){p.signals=(p.signals||0)+1;savePosts(posts);renderPosts();}
+  }
+  
+  function replyTo(id){
+    const posts=getPosts();
+    const p=posts.find(p=>p.id===id);
+    if(p)document.getElementById('post-body').value='↩ @'+p.author+' — ';
+    document.getElementById('post-body').focus();
+  }
+  
+  renderPosts();
+  setInterval(renderPosts,30000);
+  <\/script></body></html>`;
+}
+
+// ═══════════════════════════════════════════════
+// L1 ORCHESTRATOR LOGIC
+// ═══════════════════════════════════════════════
+
+let curModule = 0;
+const phLabels = ['INTAKE','IDENTITY','EXIT PLAN','CHAIN','FORUM'];
+const iframes = [
+  document.getElementById('if0'),
+  document.getElementById('if1'),
+  document.getElementById('if2'),
+  document.getElementById('if3'),
+  document.getElementById('if4'),
+];
+
+let apiKey = '';
+
+function loadModule(idx) {
+  const blob = (html) => URL.createObjectURL(new Blob([html],{type:'text/html'}));
+
+  if(idx===0 && !iframes[0].src.startsWith('blob')){
+    iframes[0].src = blob(buildIntake());
+  }
+  if(idx===1 && !iframes[1].src.startsWith('blob')){
+    const html = buildIdentity(STATE.profile);
+    iframes[1].src = blob(injectApiKey(html));
+  }
+  if(idx===2 && !iframes[2].src.startsWith('blob')){
+    const html = buildExitPlan(STATE.profile, STATE.identity);
+    iframes[2].src = blob(injectApiKey(html));
+  }
+  if(idx===3 && !iframes[3].src.startsWith('blob')){
+    iframes[3].src = blob(buildChain(STATE.profile, STATE.identity, STATE.exitPlan));
+  }
+  if(idx===4 && !iframes[4].src.startsWith('blob')){
+    iframes[4].src = blob(buildForum(STATE.profile));
+  }
+}
+
+function injectApiKey(html) {
+  if(!apiKey) return html;
+  return html.replace(/"x-api-key":''/g, `"x-api-key":'${apiKey}'`);
+}
+
+function goModule(idx) {
+  const navEl = document.getElementById('nav'+idx);
+  if(navEl.classList.contains('locked') && idx > STATE.phase) return;
+
+  document.querySelectorAll('.mod-frame').forEach(f=>f.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+
+  document.getElementById('mf'+idx).classList.add('active');
+  document.getElementById('nav'+idx).classList.add('active');
+  curModule = idx;
+
+  // Update phase bar
+  for(let i=0;i<5;i++){
+    const ph = document.getElementById('ph'+i);
+    ph.className = 'ph' + (i<idx?' done':i===idx?' active':'');
+  }
+  document.getElementById('ph-lbl').textContent = phLabels[idx];
+
+  loadModule(idx);
+  updateStatus('MODULE: '+phLabels[idx]+' · SOVEREIGN STACK ACTIVE');
+}
+
+function unlockModule(idx) {
+  const nav = document.getElementById('nav'+idx);
+  nav.classList.remove('locked');
+  document.getElementById('nd'+idx).className = 'nav-dot done';
+  if(idx > STATE.phase) STATE.phase = idx;
+  saveState();
+}
+
+function updateStatus(msg) {
+  document.getElementById('status-msg').textContent = msg;
+}
+
+// Handle messages from iframes
+window.addEventListener('message', ({data}) => {
+  if(!data||!data.t) return;
+
+  if(data.t==='intake-complete') {
+    STATE.profile = data.profile;
+    STATE.stats.exits++;
+    document.getElementById('se-val').textContent = STATE.stats.exits;
+    saveState();
+    unlockModule(1);
+    setTimeout(()=>goModule(1), 300);
+    updateStatus('INTAKE COMPLETE · RUNNING IDENTITY ANALYSIS...');
+  }
+
+  if(data.t==='identity-ready') {
+    STATE.identity = data.identity;
+    saveState();
+    unlockModule(2);
+    updateStatus('IDENTITY MAPPED · '+(data.identity?.archetype||'')+ ' · BUILDING EXIT PLAN...');
+  }
+
+  if(data.t==='identity-done') {
+    goModule(2);
+  }
+
+  if(data.t==='plan-ready') {
+    STATE.exitPlan = data.plan;
+    saveState();
+    unlockModule(3);
+    updateStatus('EXIT PLAN BUILT · WEAPON LOADED · PROCEED TO CHAIN FORMATION');
+  }
+
+  if(data.t==='plan-done') {
+    goModule(3);
+  }
+
+  if(data.t==='chain-joined') {
+    STATE.stats.chains++;
+    document.getElementById('sc-val').textContent = STATE.stats.chains;
+    saveState();
+    updateStatus('ADDED TO CHAIN NETWORK · '+(data.member?.name||'')+' IS NOW FINDABLE');
+  }
+
+  if(data.t==='chain-done') {
+    unlockModule(4);
+    goModule(4);
+  }
+
+  if(data.t==='forum-post') {
+    updateStatus('POST SUBMITTED TO FORUM · CATEGORY: '+(data.cat||'').toUpperCase());
+  }
+});
+
+// API Key prompt
+function promptApiKey() {
+  const key = prompt('Enter your Anthropic API key to enable AI analysis:\n(Stored locally, never sent to any server)');
+  if(key && key.startsWith('sk-')) {
+    apiKey = key;
+    localStorage.setItem('exit-api-key', key);
+    updateStatus('API KEY SET · AI ANALYSIS ENABLED · SOVEREIGN STACK ACTIVE');
+  }
+}
+
+// Load saved API key
+const savedKey = localStorage.getItem('exit-api-key');
+if(savedKey) { apiKey = savedKey; }
+
+// LANDING ENTRY
+function enterEngine() {
+  document.getElementById('landing').classList.add('gone');
+  if(STATE.phase > 0) {
+    // Resume
+    for(let i=0;i<=STATE.phase;i++) {
+      document.getElementById('nav'+i).classList.remove('locked');
+      document.getElementById('nd'+i).className = 'nav-dot done';
+    }
+    unlockModule(STATE.phase);
+    goModule(STATE.phase);
+    updateStatus('RESUMING · PHASE '+(STATE.phase+1)+' · '+phLabels[STATE.phase]);
+  } else {
+    goModule(0);
+    updateStatus('INTAKE OPEN · TELL US YOUR STORY');
+    // Prompt for API key if not set
+    if(!apiKey) {
+      setTimeout(()=>{
+        if(confirm('Add your Anthropic API key to enable AI-powered analysis?\n(Optional — you can explore without it)')) {
+          promptApiKey();
+        }
+      }, 1000);
+    }
+  }
+  STATE.stats.exits = STATE.stats.exits||0;
+  saveState();
+}
+window.enterEngine = enterEngine;
+
+// Load initial module
+loadModule(0);
+
+// Keyboard shortcut: Ctrl+K for API key
+document.addEventListener('keydown', e => {
+  if((e.ctrlKey||e.metaKey) && e.key==='k') { e.preventDefault(); promptApiKey(); }
+});
+
+// Restore state if returning user
+if(STATE.phase > 0) {
+  for(let i=0;i<STATE.phase;i++){
+    const nav=document.getElementById('nav'+i);
+    if(nav) { nav.classList.remove('locked'); document.getElementById('nd'+i).className='nav-dot done'; }
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Invoicing, tax, getting paid · ExitEngine</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--void:#0a0a0f;--void-2:#131319;--void-3:#1c1c25;--cream:#e8e8ea;--cream-2:#c8c8ca;--cream-dim:#8a8a92;--phi:#818cf8;--phi-2:#6366f1;--phi-glow:rgba(129,140,248,0.12);--amber:#f59e0b;--amber-dim:#b45309;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,Roboto,sans-serif;--max-w:720px;--gutter:16px;--radius:10px;--mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace}
+html,body{background:var(--void);color:var(--cream);font-family:var(--font);font-size:17px;line-height:1.65;min-height:100vh;-webkit-font-smoothing:antialiased}
+body{background-image:radial-gradient(circle at 0% 0%,var(--phi-glow),transparent 50%)}
+.top{position:sticky;top:0;z-index:50;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--void-3)}
+.top-row{display:flex;align-items:center;gap:12px;padding:12px var(--gutter);max-width:var(--max-w);margin:0 auto;min-height:48px}
+.back{color:var(--cream-dim);font-size:14px;text-decoration:none}
+.back:hover{color:var(--cream)}
+.brand{font-weight:600;color:var(--cream)}
+.brand .hi{color:var(--phi)}
+.spacer{flex:1}
+main{max-width:var(--max-w);margin:0 auto;padding:32px var(--gutter) 60px}
+.lesson-tag{display:inline-block;font-size:11px;padding:3px 10px;background:var(--phi-glow);color:var(--phi);border-radius:999px;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:14px}
+h1{font-size:32px;font-weight:700;letter-spacing:-0.025em;line-height:1.15;margin-bottom:18px;color:var(--cream)}
+h2{font-size:22px;font-weight:600;letter-spacing:-0.01em;margin:32px 0 12px;color:var(--cream)}
+h3{font-size:17px;font-weight:600;margin:20px 0 8px;color:var(--cream-2)}
+p{margin-bottom:14px;color:var(--cream-2)}
+ul,ol{margin:0 0 14px 22px;color:var(--cream-2)}
+li{margin-bottom:6px}
+strong{color:var(--cream)}
+.lead{font-size:19px;color:var(--cream-2);margin-bottom:28px}
+.box{background:var(--void-2);border:1px solid var(--void-3);border-radius:var(--radius);padding:18px 20px;margin:18px 0}
+.box.phi{background:linear-gradient(135deg,var(--phi-glow),transparent);border-color:var(--phi);padding:22px}
+.box.phi h3{color:var(--phi)}
+.box.amber{background:rgba(245,158,11,0.06);border-color:var(--amber-dim)}
+.box.amber h3{color:var(--amber)}
+.cta-row{display:flex;gap:10px;flex-wrap:wrap;margin:32px 0}
+.cta{display:inline-flex;align-items:center;justify-content:center;padding:12px 22px;font-size:15px;font-weight:600;border-radius:8px;border:1px solid var(--void-3);background:var(--void-2);color:var(--cream);text-decoration:none}
+.cta.primary{background:var(--phi-2);color:#fff;border-color:var(--phi-2)}
+.cta:hover{border-color:var(--phi);color:var(--phi)}
+.cta.primary:hover{background:var(--phi);color:#fff}
+.next{margin-top:48px;padding-top:24px;border-top:1px solid var(--void-3)}
+.next .lbl{font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--cream-dim);margin-bottom:6px}
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px}
+th{text-align:left;padding:8px 10px;background:var(--void-2);color:var(--cream-dim);font-size:11px;text-transform:uppercase;letter-spacing:0.06em}
+td{padding:8px 10px;border-top:1px solid var(--void-3);color:var(--cream-2)}
+code{background:var(--void-2);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:0.92em;color:var(--phi)}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-row"><a href="../index.html" class="back">← company</a><div class="spacer"></div><div class="brand">Exit<span class="hi">Engine</span></div></div></header>
+<main>
+
+<div class="lesson-tag">lesson 4 of 5</div>
+<h1>Invoicing, tax, getting paid</h1>
+<p class="lead">The four things you must get right. None of them are hard. All of them are unforgiving if you ignore them. Plain English version.</p>
+
+<h2>1 · Register correctly</h2>
+
+<div class="box">
+<h3>UK</h3>
+<ul>
+<li><strong>Sole trader · default option.</strong> Register at gov.uk/register-for-self-assessment. Takes 10 minutes. You file a Self Assessment tax return annually by 31 January for the previous April-April year.</li>
+<li><strong>Limited company.</strong> Worth setting up once you're earning more than ~£40,000/year as a freelancer · saves tax through salary + dividends split. Cost: ~£12 to incorporate at Companies House.</li>
+<li><strong>VAT.</strong> Mandatory once you earn £90,000+ in a 12-month period. Voluntary registration below that — often worth it if your clients are VAT-registered businesses.</li>
+</ul>
+</div>
+
+<div class="box">
+<h3>US</h3>
+<ul>
+<li><strong>Sole proprietor · default.</strong> No registration needed. You file Schedule C with your annual 1040.</li>
+<li><strong>LLC.</strong> $50-$500 to set up depending on state. Provides liability protection. Doesn't change federal tax by default · file Schedule C unless you elect S-corp.</li>
+<li><strong>S-corp election.</strong> Worth it above ~$80,000/year of business profit. Saves Social Security and Medicare tax on the dividend portion.</li>
+<li><strong>Quarterly estimated tax.</strong> You owe IRS estimated tax 4 times a year (April · June · Sept · January). Underpayment penalty if you don't.</li>
+</ul>
+</div>
+
+<div class="box">
+<h3>Elsewhere</h3>
+<p>Each country differs. Google "<em>freelancer tax registration {{ your country }}</em>". The principle is the same everywhere: register early, set aside a fixed percentage of every payment for tax, file annually. Get a local accountant for the first year ONLY — £400-£800 once gives you a year of "this is how I do it" knowledge.</p>
+</div>
+
+<h2>2 · Open a separate business bank account</h2>
+
+<p>Do not run your business through your personal current account. Six reasons:</p>
+
+<ol>
+<li><strong>Reconciliation.</strong> When tax season comes you need to know which transactions were business.</li>
+<li><strong>Cash flow visibility.</strong> Your business has its own runway, separate from your personal spending.</li>
+<li><strong>Professionalism.</strong> Invoices that say "<code>Sarah Chen Consulting</code>" land harder than ones that say "<code>Sarah Chen</code>" with a personal sort code.</li>
+<li><strong>Tax discipline.</strong> Easier to set aside the tax-percentage in a separate account from your spending money.</li>
+<li><strong>Audit defence.</strong> If HMRC or IRS audits, you can show them a clean business account, not a mixed one.</li>
+<li><strong>Mental separation.</strong> Personal vs business money should feel different. Same account makes both feel anxious.</li>
+</ol>
+
+<p>UK free options: Tide · Starling Business · Monzo Business (free tier). US free options: Mercury · Novo · Bluevine.</p>
+
+<h2>3 · Tax-set-aside discipline</h2>
+
+<div class="box amber">
+<h3>The 30% rule</h3>
+<p>The minute a client pays you, move <strong>30%</strong> of the payment into a separate "tax" account. Never touch it. When tax bill comes, the money is there.</p>
+<p>This rule works for most freelance income up to ~£60-80k. Above that, increase to 35%. If you're VAT-registered, also move the VAT element to a separate "VAT" account on receipt.</p>
+<p>This single discipline is the difference between freelancers who survive tax season and freelancers who don't.</p>
+</div>
+
+<h2>4 · Invoice well · and chase fast</h2>
+
+<table>
+<thead><tr><th>What</th><th>When</th></tr></thead>
+<tbody>
+<tr><td>Send invoice</td><td>Same day work is delivered · not 5 days later</td></tr>
+<tr><td>Default payment terms</td><td>14 days · NOT 30 (you're a freelancer not a multinational)</td></tr>
+<tr><td>Send polite reminder</td><td>Day +1 after due date</td></tr>
+<tr><td>Firmer chase</td><td>Day +7 overdue</td></tr>
+<tr><td>Letter Before Action (UK) / Demand Letter (US)</td><td>Day +14 overdue</td></tr>
+<tr><td>County Court / Small Claims</td><td>If LBA ignored after its 14-day window</td></tr>
+</tbody>
+</table>
+
+<div class="box phi">
+<h3>You don't need a lawyer to chase money</h3>
+<p>The Letter Before Action template is published in the UK <a href="https://sjgant80-hub.github.io/groundlevel/" target="_blank" style="color:var(--phi)">GroundLevel</a> tool · the US Demand Letter is too. Both are templates with 5 variables. £35-£455 to file at Money Claim Online if needed. Court fees are recoverable from the late-paying client.</p>
+<p>80% of late invoices settle at the LBA stage. 15% settle at mediation. 5% reach a hearing. You almost never end up in court.</p>
+</div>
+
+<h2>The simplest workable system</h2>
+
+<ol>
+<li>Register as sole trader / sole proprietor today (10 mins, free)</li>
+<li>Open free business bank account this week (15 mins, free)</li>
+<li>Use the <a href="../tools/accounts.html" style="color:var(--phi)">Accounts tool</a> to invoice (free, no monthly fee)</li>
+<li>Move 30% of every payment to a "tax" account the day it lands</li>
+<li>Use the <a href="https://sjgant80-hub.github.io/groundlevel/" target="_blank" style="color:var(--phi)">GroundLevel</a> templates for chasing late payers (free)</li>
+<li>Hire an accountant ONCE in your first year (£400-£800) to do the first tax return and teach you the rules</li>
+</ol>
+
+<p>That's it. Total cost: less than a month of one SaaS subscription. Total complexity: under 4 hours of setup. Total result: a legally-clean, financially-disciplined business.</p>
+
+<div class="cta-row">
+<a href="../tools/accounts.html" class="cta primary">Open the Accounts tool →</a>
+<a href="grow.html" class="cta">Next · from 1 client to 10</a>
+</div>
+
+<div class="next">
+<div class="lbl">next lesson · the last one</div>
+<a href="grow.html" style="color:var(--phi);text-decoration:none;font-weight:600;font-size:17px">From 1 client to 10 · pipeline, referrals, sustainability</a>
+</div>
+
+</main>
+<script src="https://sjgant80-hub.github.io/fall-euaiact/cdn/audit-shim.js" data-tool="exitengine-learn" data-tier="minimal" defer></script>
+</body></html>

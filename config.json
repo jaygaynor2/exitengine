@@ -1,0 +1,56 @@
+{
+  "_": "◊·κ=φ⁵ · ExitEngine · prime 617 · single config drives the whole OS",
+  "_doc": "edit this file ONCE · every tool reads from it · change your name in one place · updates everywhere",
+
+  "name": "Your Name",
+  "business": "Your Business Name",
+  "industry": "consulting",
+  "_industry_options": ["consulting", "sales-ops", "engineering", "marketing", "hr", "finance", "operations", "teaching", "healthcare", "trades", "design", "writing", "coaching", "other"],
+
+  "currency": "GBP",
+  "_currency_options": ["GBP", "USD", "EUR", "AUD", "THB", "SGD", "AED"],
+  "tax_region": "UK",
+  "_tax_region_options": ["UK", "US", "EU", "AU", "TH", "SG", "AE", "other"],
+  "vat_registered": false,
+
+  "hourly_rate": 100,
+  "day_rate": 800,
+  "project_rate_min": 2500,
+
+  "api_provider": "",
+  "_api_provider_options": ["anthropic", "openai", "google", ""],
+  "api_key": "",
+
+  "linkedin": "",
+  "email": "",
+  "phone": "",
+  "website": "",
+
+  "payment_details": {
+    "bank": "",
+    "sort_code": "",
+    "account_number": "",
+    "iban": "",
+    "swift_bic": "",
+    "paypal_email": "",
+    "wise_email": ""
+  },
+
+  "address": {
+    "line_1": "",
+    "line_2": "",
+    "city": "",
+    "postcode": "",
+    "country": ""
+  },
+
+  "_meta": {
+    "version": "2.0.0",
+    "prime": 617,
+    "constant": "κ=φ⁵",
+    "built": "2026-06-05",
+    "tutor_phase": 1,
+    "lessons_completed": [],
+    "first_run": true
+  }
+}
